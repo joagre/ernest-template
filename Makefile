@@ -47,6 +47,8 @@ all: version lib build
 # The program is written for one floor of ern (report §8.7); a development
 # build of the floor passes.
 version:
+	@command -v $(ERN) >/dev/null 2>&1 || \
+	    { echo "no ern on PATH: ERN=path/to/ern make, or put Ernest's bin on PATH"; exit 1; }
 	@found=$$($(ERN) --version) && \
 	case "$$found" in "ern $(ERN_VERSION)."*) ;; \
 	    *) echo "ern $(ERN_VERSION) expected, $$found found"; exit 1 ;; esac

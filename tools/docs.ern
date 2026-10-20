@@ -35,8 +35,13 @@ let measure : Int = 100
 export fn main() : Unit = {
     let files = tracked();
     let tops = directories();
-    List.forEach(List.flatMap(List.filter(files, isMeasured), paragraphsIn),
-                 fn(paragraph) = Io.println(shown(paragraph)));
+    let long = List.flatMap(List.filter(files, isMeasured), paragraphsIn);
+    if List.isEmpty(long) then
+        Unit
+    else {
+        Io.println("paragraphs past about a hundred words, to read again for a turn they may hide:");
+        List.forEach(long, fn(paragraph) = Io.println(shown(paragraph)))
+    };
     let missing =
         List.unique(List.flatMap(List.filter(files, isOwn), fn(file) = missingIn(file, tops)));
     List.forEach(missing, Io.printlnError);

@@ -31,7 +31,9 @@ A file is in the template only where it has content on the first day. `README.md
 
 Under `docs/` stand `plan.md`, `log.md`, `design.md`, `release.md` and `style.md`, the last a verbatim cut of Ernest's rules for its programs, named as a copy with the release it was cut from, which no application edits.
 
-What appears when needed, named in `CLAUDE.md` so that nothing waits for a decision about where it goes: `language_feedback.md` at its first line and `findings.md` while a review's findings are open, both under `docs/`; `docs/proposals/` with the first proposal; `test/`, a second source root for a program run end to end, built into `test/build/`; `erl/`, one read-only git submodule per Erlang application the program stands on, pinned and never a copy; `THIRD_PARTY_LICENSES` with the first borrowed file and `ACKNOWLEDGMENTS.md` with the first name; for a library, `examples/`, a source root built into `examples/build/` whose every program `make test` runs with one argument, `build/examples/<name>` and the Makefile's `EXAMPLE_SUFFIX`, and `docs/man/`.
+What appears when needed, named in `CLAUDE.md` so that nothing waits for a decision about where it goes: `language_feedback.md` at its first line and `findings.md` while a review's findings are open, both under `docs/`; `docs/proposals/` with the first proposal; `test/`, a second source root for a program run end to end, built into `test/build/`; `erl/`, one read-only git submodule per Erlang application the program stands on, pinned and never a copy.
+
+Also when needed: `THIRD_PARTY_LICENSES` with the first borrowed file and `ACKNOWLEDGMENTS.md` with the first name; for a library, `examples/`, a source root built into `examples/build/` whose every program `make test` runs with one argument, `build/examples/<name>` and the Makefile's `EXAMPLE_SUFFIX`, and `docs/man/`.
 
 Not committed: `build/`, each root's `build/`, `lib/` and `.ernest/`.
 
