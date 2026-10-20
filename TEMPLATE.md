@@ -25,7 +25,7 @@ Everything the template does, the toolchain does already; the template only choo
 
 ## 3. The tree
 
-A file is in the template only where it has content on the first day. `README.md`, `CLAUDE.md`, `LICENSE`, `VERSION`, `Makefile` and `.gitignore` at the top; `bin/name`, the launcher, renamed for the program on the copy.
+A file is in the template only where it has content on the first day. `README.md`, `CLAUDE.md`, `LICENSE`, the Zero-Clause BSD license as Ernest's own, which the README names, `VERSION`, `Makefile` and `.gitignore` at the top; `bin/name`, the launcher, renamed for the program on the copy.
 
 `src/name.ern` is the entry module, a placeholder the copy renames and writes, so that the template's own `make test` is green and a copy begins green. `tools/docs.ern` is the checker, a source root of its own built into `tools/build/` and outside the archive.
 
