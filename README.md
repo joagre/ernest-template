@@ -11,6 +11,7 @@ make            builds: lib/ filled, each dependency and then the program compil
 make test       the layout, every module's tests, the documents, and test/ where it exists
 make run        runs the program through its launcher, bin/NAME
 make release    the archive, build/NAME-VERSION.tar.gz
+make man        a library's manual pages into docs/man/, committed with its release
 ```
 
 `make lib` fills `lib/` with Ernest's own libraries the Makefile's `LIBS` names, linked from the installation, each dependency `DEPS` names by the URL of its release archive, fetched and unpacked once, and each Erlang application `ERL_DEPS` names, a git submodule under `erl/` built by its own `make` and linked.

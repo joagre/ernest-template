@@ -11,6 +11,8 @@
 #                 fetched and unpacked where it is not there, and each Erlang
 #                 application under erl/ built by its own make and linked
 #   make doc      the documentation of every module, as CommonMark under build/
+#   make man      the pages copied into docs/man/, which a library's release
+#                 commits, its index the directory's README
 #   make format   lays every module out
 #   make release  the archive, build/NAME-VERSION.tar.gz, tests first
 #   make clean    removes what the build and make lib wrote
@@ -36,7 +38,7 @@ LOAD_PATH   = $(addprefix --load-path ,$(shell ls -d lib/*/build lib/*/ebin 2>/d
 DEP_DIRS    = $(addprefix lib/,$(notdir $(basename $(basename $(DEPS)))))
 VERSION     = $(shell cat VERSION)
 
-.PHONY: all version lib build test run doc format release clean
+.PHONY: all version lib build test run doc man format release clean
 
 all: version lib build
 
@@ -97,6 +99,15 @@ run: all
 
 doc: all
 	$(ERN) doc --source-root src --build-root build $(LOAD_PATH) src
+
+# The pages ern doc wrote under build/, mirrored into docs/man/ as Ernest's
+# make man mirrors its own; the release archive's staging directory is left
+# out, and the index becomes the README.
+man: doc
+	@rm -rf docs/man && mkdir -p docs/man
+	@cd build && find . -name '*.md' ! -name index.md ! -path './$(NAME)-*/*' | \
+	    tar cf - -T - | (cd ../docs/man && tar xf -)
+	@cp build/index.md docs/man/README.md
 
 format:
 	$(ERN) format src tools $(wildcard test)

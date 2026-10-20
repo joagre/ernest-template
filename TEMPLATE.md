@@ -25,7 +25,11 @@ Everything the template does, the toolchain does already; the template only choo
 
 ## 3. The tree
 
-A file is in the template only where it has content on the first day. `README.md`, `CLAUDE.md`, `LICENSE`, `VERSION`, `Makefile` and `.gitignore` at the top; `bin/name`, the launcher, renamed for the program on the copy; `src/name.ern`, the entry module, a placeholder the copy renames and writes, so that the template's own `make test` is green and a copy begins green; `tools/docs.ern`, the checker, a source root of its own built into `tools/build/` and outside the archive; under `docs/`, `plan.md`, `log.md`, `design.md`, `release.md` and `style.md`, the last a verbatim cut of Ernest's rules for its programs, named as a copy with the release it was cut from, which no application edits.
+A file is in the template only where it has content on the first day. `README.md`, `CLAUDE.md`, `LICENSE`, `VERSION`, `Makefile` and `.gitignore` at the top; `bin/name`, the launcher, renamed for the program on the copy.
+
+`src/name.ern` is the entry module, a placeholder the copy renames and writes, so that the template's own `make test` is green and a copy begins green. `tools/docs.ern` is the checker, a source root of its own built into `tools/build/` and outside the archive.
+
+Under `docs/` stand `plan.md`, `log.md`, `design.md`, `release.md` and `style.md`, the last a verbatim cut of Ernest's rules for its programs, named as a copy with the release it was cut from, which no application edits.
 
 What appears when needed, named in `CLAUDE.md` so that nothing waits for a decision about where it goes: `language_feedback.md` at its first line and `findings.md` while a review's findings are open, both under `docs/`; `docs/proposals/` with the first proposal; `test/`, a second source root for a program run end to end, built into `test/build/`; `erl/`, one read-only git submodule per Erlang application the program stands on, pinned and never a copy; `THIRD_PARTY_LICENSES` with the first borrowed file and `ACKNOWLEDGMENTS.md` with the first name; for a library, `examples/` and `docs/man/`.
 
@@ -33,9 +37,11 @@ Not committed: `build/`, each root's `build/`, `lib/` and `.ernest/`.
 
 ## 4. The Makefile, the launcher and the archive
 
-One Makefile at the top, its variables first, `NAME`, `ERN_VERSION`, `LIBS`, `DEPS` and `ERL_DEPS`, and the same eight targets in every application: `all`, `test`, `format`, `doc`, `run`, `lib`, `release` and `clean`. There is no light run and no full run, since an application's whole suite runs in seconds, and where one day it does not, that is a defect of the tests to measure.
+One Makefile at the top, its variables first, `NAME`, `ERN_VERSION`, `LIBS`, `DEPS` and `ERL_DEPS`, and the same nine targets in every application: `all`, `test`, `format`, `doc`, `man`, `run`, `lib`, `release` and `clean`. `man` mirrors the pages `ern doc` wrote into `docs/man/`, as Ernest's `make man` does, which a library's release commits. There is no light run and no full run, since an application's whole suite runs in seconds, and where one day it does not, that is a defect of the tests to measure.
 
-**The load path.** Everything a program loads beyond the standard library stands under `lib/`, which `make lib` fills: `lib/<name>/build` for one of Ernest's own libraries, linked from beside `ern`, and for a dependency, a release archive fetched by its URL and unpacked once; `lib/<app>/ebin` for an Erlang application built by its own `make` under `erl/`, its `priv` linked beside it. The load path is the one glob, `lib/*/build` and `lib/*/ebin`, in the Makefile and the launcher both, and no path is written twice. `DEPS` and `ERL_DEPS` are in build order, a dependency before what needs it; the template resolves nothing, which is Ernest's decision for another day.
+**The load path.** Everything a program loads beyond the standard library stands under `lib/`, which `make lib` fills: `lib/<name>/build` for one of Ernest's own libraries, linked from beside `ern`, and for a dependency, a release archive fetched by its URL and unpacked once; `lib/<app>/ebin` for an Erlang application built by its own `make` under `erl/`, its `priv` linked beside it. The load path is the one glob, `lib/*/build` and `lib/*/ebin`, in the Makefile and the launcher both, and no path is written twice.
+
+`DEPS` and `ERL_DEPS` are in build order, a dependency before what needs it; the template resolves nothing, which is Ernest's decision for another day.
 
 **The build.** `all` checks the floor, fills `lib/`, builds each dependency's `src/` into its own `build/` with the consumer's own `ern`, and then the program's `src/`.
 
@@ -47,7 +53,11 @@ One Makefile at the top, its variables first, `NAME`, `ERN_VERSION`, `LIBS`, `DE
 
 ## 5. The working rules
 
-`CLAUDE.md` is a cut of Ernest's, under about a hundred lines, in the same order. Most rules are kept as they are. What changes is what the report shaped: the normative document is `docs/design.md` with the plan item being built, and the design changes first; where the design is silent, the sentence is added to it or the input refused; every section of the design has a test whose doc block names it; a message that reports code work ends with *Design conformance*; a defect or a gap of Ernest's goes to `language_feedback.md` and what needed it waits, never worked around; the program is Ernest, and `foreign` is only what the host alone can do. Dropped: the soundness paragraph, the revision date and the fixed section numbers, since the design is not cited by number from outside, and the three reviews, replaced by `release.md`'s two readers.
+`CLAUDE.md` is a cut of Ernest's, under about a hundred lines, in the same order. Most rules are kept as they are.
+
+What changes is what the report shaped: the normative document is `docs/design.md` with the plan item being built, and the design changes first; where the design is silent, the sentence is added to it or the input refused; every section of the design has a test whose doc block names it; a message that reports code work ends with *Design conformance*; a defect or a gap of Ernest's goes to `language_feedback.md` and what needed it waits, never worked around; the program is Ernest, and `foreign` is only what the host alone can do.
+
+Dropped: the soundness paragraph, the revision date and the fixed section numbers, since the design is not cited by number from outside, and the three reviews, replaced by `release.md`'s two readers.
 
 ## 6. The release
 
@@ -55,11 +65,13 @@ One Makefile at the top, its variables first, `NAME`, `ERN_VERSION`, `LIBS`, `DE
 
 ## 7. What the template asks of Ernest
 
-Ernest's `docs/language_feedback.md`, lines 119 to 122: the style rules an application follows are not installed; a program cannot ask where Ernest's libraries are; a program cannot know its own version; and nothing resolves a dependency's dependencies.
+Lines 119 to 122 of Ernest's `language_feedback.md`, under its `docs/`: the style rules an application follows are not installed; a program cannot ask where Ernest's libraries are; a program cannot know its own version; and nothing resolves a dependency's dependencies.
 
 ## 8. What the template does not do
 
-It does not ship an empty file or directory. It does not copy Ernest's EUnit, its reviews or its language-only documents. It does not invent a dependency tool. It does not run in a continuous-integration service: a workflow would have to install OTP 29 and build Ernest before the application's seconds of tests, and a release archive of Ernest that installs without a build would change that. It does not let the rules live in two places: an application is a copy, a copy is never updated from the template, and what an application learns goes back here by hand and from here into the next copy; `docs/style.md` and `tools/docs.ern` are refreshed in an application by copying the file again.
+It does not ship an empty file or directory. It does not copy Ernest's EUnit, its reviews or its language-only documents. It does not invent a dependency tool. It does not run in a continuous-integration service: a workflow would have to install OTP 29 and build Ernest before the application's seconds of tests, and a release archive of Ernest that installs without a build would change that.
+
+It does not let the rules live in two places: an application is a copy, a copy is never updated from the template, and what an application learns goes back here by hand and from here into the next copy; `docs/style.md` and `tools/docs.ern` are refreshed in an application by copying the file again.
 
 ## 9. How it is used
 
@@ -69,3 +81,4 @@ The repository is a GitHub template repository: *Use this template* makes the co
 
 - *2026-10-20, `ernest-epx`, `v0.2.0`.* An Erlang application is not a dependency `make lib` fetches: epx is Erlang with a NIF and its own Makefile, tree_db beside it. An Erlang application is a read-only git submodule under `erl/`, named in `ERL_DEPS`, built by its own `make` and linked as `lib/<app>/ebin` and `priv`; the load path gained `lib/*/ebin`. rebar3 was set aside: epx's port configuration is rebar2's, its dependency unpinned, the tool absent. Tried before being written: a pixmap made, filled and read through the NIF from a scratch Ernest program.
 - *2026-10-20, `v0.3.0`.* This document, moved here from Ernest's proposal, since a record that changes with the template has the template as its owner.
+- *2026-10-20, `ernest-epx`.* A library's release commits its manual pages, as Ernest's does: `make man`, and `release.md`'s fourth line. The checker reads no path in `docs/man/`, whose pages `ern doc` writes.

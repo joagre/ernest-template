@@ -37,7 +37,8 @@ export fn main() : Unit = {
     let tops = directories();
     List.forEach(List.flatMap(List.filter(files, isMeasured), paragraphsIn),
                  fn(paragraph) = Io.println(shown(paragraph)));
-    let missing = List.unique(List.flatMap(files, fn(file) = missingIn(file, tops)));
+    let missing =
+        List.unique(List.flatMap(List.filter(files, isOwn), fn(file) = missingIn(file, tops)));
     List.forEach(missing, Io.printlnError);
     if List.isEmpty(missing) then Unit else Os.exit(1)
 }
@@ -152,12 +153,15 @@ fn isFence(line : String) : Bool = {
 // The paragraphs
 //
 
-// Whether a file's paragraphs are measured: the log is history, a proposal
-// is thinking, and a manual page is written by ern doc.
+// Whether a file is the repository's own writing: a manual page is written
+// by ern doc, and what it names is the module's.
+fn isOwn(file : String) : Bool =
+    String.startsWith(file, "docs/man/") == false
+
+// Whether a file's paragraphs are measured: the log is history and a
+// proposal is thinking.
 fn isMeasured(file : String) : Bool =
-    file != "docs/log.md"
-        && String.startsWith(file, "docs/proposals/") == false
-        && String.startsWith(file, "docs/man/") == false
+    isOwn(file) && file != "docs/log.md" && String.startsWith(file, "docs/proposals/") == false
 
 fn paragraphsIn(file : String) : List(Paragraph) =
     paragraphsOf(file, contents(file))
