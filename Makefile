@@ -23,7 +23,9 @@ ERN_VERSION = 0.4
 LIBS        =
 DEPS        =
 ERL_DEPS    =
-EXAMPLE_SUFFIX =                  # what each example of examples/ writes, named by make test
+# What each program of examples/ writes, named by make test: the suffix of
+# the one path it is given.
+EXAMPLE_SUFFIX =
 
 # The ern on PATH, or ERN=path/to/ern; where its libraries are, beside it as
 # an installation and a checkout each lay them out.
@@ -58,7 +60,8 @@ lib:
 	@for name in $(LIBS); do \
 	    test -e lib/$$name/build && continue; \
 	    test -n "$(ERNEST_LIBS)" || \
-	        { echo "no libraries beside $(ERN): neither lib/ernest/build/libs nor build/libs"; exit 1; }; \
+	        { echo "no libraries beside $(ERN):" \
+	               "neither lib/ernest/build/libs nor build/libs"; exit 1; }; \
 	    test -d "$(ERNEST_LIBS)/$$name" || \
 	        { echo "Ernest has no library $$name under $(ERNEST_LIBS)"; exit 1; }; \
 	    mkdir -p lib/$$name && ln -s "$(ERNEST_LIBS)/$$name" lib/$$name/build; \
@@ -83,7 +86,8 @@ lib:
 # lists them, a dependency before what needs it; then the program.
 build:
 	@for dir in $(DEP_DIRS); do \
-	    $(ERN) build --source-root $$dir/src --build-root $$dir/build $(LOAD_PATH) $$dir/src || exit 1; \
+	    $(ERN) build --source-root $$dir/src --build-root $$dir/build $(LOAD_PATH) \
+	        $$dir/src || exit 1; \
 	done
 	$(ERN) build --source-root src --build-root build $(LOAD_PATH) src
 
@@ -94,15 +98,18 @@ test: all
 	$(ERN) test tools/build
 	$(ERN) run tools/build/docs.erc
 	@if test -d test; then \
-	    $(ERN) build --source-root test --build-root test/build --load-path build $(LOAD_PATH) test && \
+	    $(ERN) build --source-root test --build-root test/build --load-path build \
+	        $(LOAD_PATH) test && \
 	    $(ERN) test --load-path build $(LOAD_PATH) test/build; \
 	fi
 	@if test -d examples; then \
-	    $(ERN) build --source-root examples --build-root examples/build --load-path build $(LOAD_PATH) examples && \
+	    $(ERN) build --source-root examples --build-root examples/build --load-path build \
+	        $(LOAD_PATH) examples && \
 	    mkdir -p build/examples && \
 	    for program in examples/build/*.erc; do \
 	        name=$$(basename $$program .erc); \
-	        $(ERN) run --load-path build $(LOAD_PATH) $$program build/examples/$$name$(EXAMPLE_SUFFIX) || exit 1; \
+	        $(ERN) run --load-path build $(LOAD_PATH) $$program \
+	            build/examples/$$name$(EXAMPLE_SUFFIX) || exit 1; \
 	        echo "examples/$$name.ern wrote build/examples/$$name$(EXAMPLE_SUFFIX)"; \
 	    done; \
 	fi
@@ -131,14 +138,16 @@ format:
 # README and the license. One shape for an application and a library, so
 # that any archive can be a dependency.
 release: test
-	@case "$$($(ERN) --version)" in *-dev) echo "a release is not made with a development build of ern"; exit 1 ;; esac
+	@case "$$($(ERN) --version)" in \
+	    *-dev) echo "a release is not made with a development build of ern"; exit 1 ;; esac
 	rm -rf build/$(NAME)-$(VERSION) && mkdir -p build/$(NAME)-$(VERSION)
 	cp -R src build/$(NAME)-$(VERSION)/src
 	mkdir -p build/$(NAME)-$(VERSION)/build && \
 	    find build -path build/$(NAME)-$(VERSION) -prune -o -name '*.erc' -print | \
 	    cpio -pdm --quiet build/$(NAME)-$(VERSION)/
 	test -d lib && cp -RL lib build/$(NAME)-$(VERSION)/lib || true
-	test -x bin/$(NAME) && mkdir -p build/$(NAME)-$(VERSION)/bin && cp bin/$(NAME) build/$(NAME)-$(VERSION)/bin/ || true
+	test -x bin/$(NAME) && mkdir -p build/$(NAME)-$(VERSION)/bin && \
+	    cp bin/$(NAME) build/$(NAME)-$(VERSION)/bin/ || true
 	cp README.md LICENSE build/$(NAME)-$(VERSION)/
 	tar -czf build/$(NAME)-$(VERSION).tar.gz -C build $(NAME)-$(VERSION)
 	rm -rf build/$(NAME)-$(VERSION)
