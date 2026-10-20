@@ -13,7 +13,9 @@ make run        runs the program through its launcher, bin/NAME
 make release    the archive, build/NAME-VERSION.tar.gz
 ```
 
-`make lib` fills `lib/` with Ernest's own libraries the Makefile's `LIBS` names, linked from the installation, and each dependency `DEPS` names by the URL of its release archive, fetched and unpacked once. Everything the program loads beyond the standard library stands under `lib/<name>/build`, which is the whole load path. `make doc` writes each module's documentation under `build/`, `make format` lays the modules out, and `make clean` removes what the build and `make lib` wrote.
+`make lib` fills `lib/` with Ernest's own libraries the Makefile's `LIBS` names, linked from the installation, each dependency `DEPS` names by the URL of its release archive, fetched and unpacked once, and each Erlang application `ERL_DEPS` names, a git submodule under `erl/` built by its own `make` and linked.
+
+Everything the program loads beyond the standard library stands under `lib/`, a library's `build` or an Erlang application's `ebin`, which is the whole load path. A repository with an `erl/` is cloned with `--recursive`. `make doc` writes each module's documentation under `build/`, `make format` lays the modules out, and `make clean` removes what the build and `make lib` wrote.
 
 ## Running
 
@@ -39,5 +41,5 @@ Make a repository from the template, *Use this template* on GitHub or a clone wi
 1. Replace `NAME` in `Makefile`, `CLAUDE.md` and this file with the program's name, one lowercase word or words joined by `_`, and rename `bin/name` to it; a library has no launcher, and removes it.
 2. Write `src/<name>.ern`, the module `Name` whose `main` is the entry point, with its first test, and `make test`.
 3. Say what the program does above and in `docs/design.md`, and begin `docs/plan.md`'s first milestone; `docs/log.md`'s first entry names the template's tag, which `docs/style.md` and `tools/docs.ern` are refreshed from.
-4. Set `LICENSE`, `VERSION` and the Makefile's `LIBS` and `DEPS` as the program needs them; `THIRD_PARTY_LICENSES` appears with the first borrowed file, and `ACKNOWLEDGMENTS.md` with the first name.
+4. Set `LICENSE`, `VERSION` and the Makefile's `LIBS`, `DEPS` and `ERL_DEPS` as the program needs them, an Erlang application as a submodule under `erl/`, read-only and pinned, never a copy; `THIRD_PARTY_LICENSES` appears with the first borrowed file, and `ACKNOWLEDGMENTS.md` with the first name.
 5. Remove this section.
