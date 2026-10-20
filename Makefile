@@ -4,8 +4,9 @@
 #
 #   make          builds: the floor checked, lib/ filled, each dependency and
 #                 then the program compiled
-#   make test     the layout, the tests of every module, the documents, and
-#                 test/ where it exists
+#   make test     the layout, the tests of every module, the documents,
+#                 test/ where it exists, and each program of examples/ where
+#                 it exists, built and run
 #   make run      runs the program through its launcher
 #   make lib      fills lib/: Ernest's own libraries linked, each dependency
 #                 fetched and unpacked where it is not there, and each Erlang
@@ -22,6 +23,7 @@ ERN_VERSION = 0.4
 LIBS        =
 DEPS        =
 ERL_DEPS    =
+EXAMPLE_SUFFIX =                  # what each example of examples/ writes, named by make test
 
 # The ern on PATH, or ERN=path/to/ern; where its libraries are, beside it as
 # an installation and a checkout each lay them out.
@@ -70,6 +72,7 @@ lib:
 	    $(MAKE) -C erl/$$app || exit 1; \
 	    mkdir -p lib/$$app && \
 	    for part in ebin priv; do \
+	        test -e erl/$$app/$$part || continue; \
 	        test -e lib/$$app/$$part || ln -s ../../erl/$$app/$$part lib/$$app/$$part; \
 	    done; \
 	done
@@ -83,7 +86,7 @@ build:
 	$(ERN) build --source-root src --build-root build $(LOAD_PATH) src
 
 test: all
-	$(ERN) format --check src tools $(wildcard test)
+	$(ERN) format --check src tools $(wildcard test) $(wildcard examples)
 	$(ERN) test $(LOAD_PATH) build
 	$(ERN) build --source-root tools --build-root tools/build tools
 	$(ERN) test tools/build
@@ -91,6 +94,15 @@ test: all
 	@if test -d test; then \
 	    $(ERN) build --source-root test --build-root test/build --load-path build $(LOAD_PATH) test && \
 	    $(ERN) test --load-path build $(LOAD_PATH) test/build; \
+	fi
+	@if test -d examples; then \
+	    $(ERN) build --source-root examples --build-root examples/build --load-path build $(LOAD_PATH) examples && \
+	    mkdir -p build/examples && \
+	    for program in examples/build/*.erc; do \
+	        name=$$(basename $$program .erc); \
+	        $(ERN) run --load-path build $(LOAD_PATH) $$program build/examples/$$name$(EXAMPLE_SUFFIX) || exit 1; \
+	        echo "examples/$$name.ern wrote build/examples/$$name$(EXAMPLE_SUFFIX)"; \
+	    done; \
 	fi
 
 run: all
@@ -110,7 +122,7 @@ man: doc
 	@cp build/index.md docs/man/README.md
 
 format:
-	$(ERN) format src tools $(wildcard test)
+	$(ERN) format src tools $(wildcard test) $(wildcard examples)
 
 # The archive unpacks to NAME-VERSION/: the launcher where there is one, the
 # source and the compiled modules, lib/ with each link copied through, the
@@ -130,4 +142,4 @@ release: test
 	rm -rf build/$(NAME)-$(VERSION)
 
 clean:
-	rm -rf build tools/build test/build lib
+	rm -rf build tools/build test/build examples/build lib

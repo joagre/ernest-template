@@ -63,7 +63,7 @@ Each fact has one owner. Every other document points at the owner and does not r
 
 ## Tests
 
-- **A test lives in the module it tests**, a `let` of type `Test.Case(m)` (Appendix E.24); `test/` holds only a program run end to end, as Ernest modules `ern test` runs. Every section of `docs/design.md` has a test whose doc block names it, and every exported function has one.
+- **A test lives in the module it tests**, a `let` of type `Test.Case(m)` (Appendix E.24); `test/` holds only a program run end to end, as Ernest modules `ern test` runs. Every section of `docs/design.md` has a test whose comment names it, `// design §2: ...`, a comment and not a doc block, which would put the test on the module's page; and every exported function has one.
 - **A test written after the code is a regression test.** Say so, and name what it does not cover.
 - **`make test` runs before every commit**, and before the commit that closes a plan item the same from a fresh clone where the item touched the build. Edits to a proposal under discussion are committed at a pause, by their paths.
 - **Readers run before a release**, as [`docs/release.md`](docs/release.md) says; a finding is fixed, planned or dropped, and the commit messages say which.
