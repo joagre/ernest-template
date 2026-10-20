@@ -33,7 +33,7 @@ Under `docs/` stand `plan.md`, `log.md`, `design.md`, `release.md` and `style.md
 
 What appears when needed, named in `CLAUDE.md` so that nothing waits for a decision about where it goes: `language_feedback.md` at its first line and `findings.md` while a review's findings are open, both under `docs/`; `docs/proposals/` with the first proposal; `test/`, a second source root for a program run end to end, built into `test/build/`; `erl/`, one read-only git submodule per Erlang application the program stands on, pinned and never a copy.
 
-Also when needed: `THIRD_PARTY_LICENSES` with the first borrowed file and `ACKNOWLEDGMENTS.md` with the first name; for a library, `examples/`, a source root built into `examples/build/` whose every program `make test` runs with one argument, `build/examples/<name>` and the Makefile's `EXAMPLE_SUFFIX`, and `docs/man/`.
+Also when needed: `THIRD_PARTY_LICENSES` with the first borrowed file, an Erlang application under `erl/` among them, since the archive carries its compiled code, and `ACKNOWLEDGMENTS.md` with the first name; for a library, `examples/`, a source root built into `examples/build/` whose every program `make test` runs with one argument, `build/examples/<name>` and the Makefile's `EXAMPLE_SUFFIX`, and `docs/man/`.
 
 Not committed: `build/`, each root's `build/`, `lib/` and `.ernest/`.
 
@@ -51,7 +51,7 @@ One Makefile at the top, its variables first, `NAME`, `ERN_VERSION`, `LIBS`, `DE
 
 **The launcher.** `bin/<name>` runs `ern run` on the module its own name names with `lib/*/build` and `lib/*/ebin` relative to its own directory, from a checkout and from an unpacked archive alike. It forwards a leading `--config-dir dir`, the one option an operator gives, and everything after it to the program; the working directory stays the caller's.
 
-**The archive.** `release` runs `test`, then writes `build/<name>-<version>.tar.gz`: the launcher where there is one, `src/`, `build/`, `lib/` with each link copied through, the README and the license. One shape for an application and a library, so that any archive can be a dependency. The source travels so that a consumer builds the modules with its own `ern`; the compiled modules travel so that an operator runs the application as it is, under any release of its floor. The `lib/` that travels serves the operator, for whom the archive is whole; a consumer lists every dependency itself.
+**The archive.** `release` runs `test`, then writes `build/<name>-<version>.tar.gz`: the launcher where there is one, `src/`, `build/`, `lib/` with each link copied through, the README, the license and `THIRD_PARTY_LICENSES` where there is one. One shape for an application and a library, so that any archive can be a dependency. The source travels so that a consumer builds the modules with its own `ern`; the compiled modules travel so that an operator runs the application as it is, under any release of its floor. The `lib/` that travels serves the operator, for whom the archive is whole; a consumer lists every dependency itself.
 
 ## 5. The working rules
 
