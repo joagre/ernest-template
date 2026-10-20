@@ -21,7 +21,7 @@ Each fact has one owner. Every other document points at the owner and does not r
 | [`docs/release.md`](docs/release.md) | what a release runs to be ready |
 | [`docs/style.md`](docs/style.md) | the rules an Ernest program is written by, Ernest's own, copied and not edited here |
 | the code and its tests | what is built |
-| `language_feedback.md`, under `docs/` from its first line | what writing Ernest felt against the principles, a line each, in the shape of Ernest's file of that name, so that a line is carried there by copy |
+| `language_feedback.md`, under `docs/` from its first line | what writing Ernest felt against the principles, a line each, in the shape of Ernest's file of that name, a queue: a line is carried there by copy, the log here cites Ernest's number, and the line then goes; the file goes when it is empty |
 | `findings.md`, under `docs/` while a review's findings are open | the findings, each line until a plan item decides it; it goes when every line is done, dropped or planned |
 
 **Proposals.** [`docs/proposals/`](docs/proposals/) holds what is designed, a directory for each: the proposal, its reasons, what other systems do, and its experiments or programs. Each directory's `README.md` says what its files are and which is current. Until a proposal is decided all of it is tentative, and nothing flows from it into the design, the plan or the log. A built proposal is kept as the record of its design, its status line saying so. A `scratch/` directory inside a proposal's own directory, untracked, is the user's own thinking: no session edits it, commits it or builds on it.

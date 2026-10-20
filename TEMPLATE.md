@@ -8,7 +8,7 @@ An application written in Ernest is not the language. It has no report of its ow
 
 The template holds that way of working in a form small enough that a new application starts from it in one copy and one edit. It is a template and not a framework: it holds no code of its own but a launcher and one checker, and it decides nothing about the program's design. A library starts from the same template, with no `main` and no launcher.
 
-The applications are where the language is used in anger. Each keeps `language_feedback.md` under `docs/` in the shape of Ernest's file of that name, so that a line is carried there by copy; that road back is the template's reason to exist.
+The applications are where the language is used in anger. Each keeps `language_feedback.md` under `docs/` in the shape of Ernest's file of that name, a queue: a line is carried there by copy and then goes, and the file goes when it is empty, Ernest's file being the record; that road back is the template's reason to exist.
 
 ## 2. What an application needs of the toolchain
 
@@ -86,5 +86,5 @@ The repository is a GitHub template repository: *Use this template* makes the co
 - *2026-10-20, `ernest-epx`, `v0.4.0`.* `make test` builds and runs `examples/` where it exists, each program given one output path; `make lib` links an application's `priv` only where it has one, which tree_db has not; and a test names its design section in a comment, since a doc block put every test on the module's page.
 - *2026-10-20, `ernest-epx`'s release review.* The first run of `release.md`: a fresh recursive clone passed in a minute; two readers, an Opus 5.5 session each at high effort, a cold one over the README, the examples and the page and a code reader over the module against the design and the shape rules, handed in thirty-six findings, sorted in `findings.md` with a verdict each.
 - *2026-10-20, the same review.* What it taught the template: `make` says when no `ern` is on `PATH`; the checker heads its list of long paragraphs as a notice, since a bare line read as a failure; the Makefile's lines are kept within 100 characters and a variable's comment stands on its own line, since make keeps the spaces before `#` in a value; and a tool that runs a doc block's `// =>` examples is wanted by every library, which no release has yet, Ernest's `language_feedback.md` 127.
-- *2026-10-20, the same review.* The archive serves the operator and not a consumer, and a library's README says so.
+- *2026-10-20, the same review.* The archive serves the operator and not a consumer, and a library's README says so. An application's `language_feedback.md` is a queue, emptied as its lines are carried, since a line in both files would have two owners.
 - *2026-10-20, `ernest-epx`.* A library's release commits its manual pages, as Ernest's does: `make man`, and `release.md`'s fourth line. The checker reads no path in `docs/man/`, whose pages `ern doc` writes.
