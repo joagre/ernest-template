@@ -36,10 +36,10 @@ The tests live in the modules they test, which `make test` runs; `test/`, where 
 
 ## Beginning from the template
 
-Make a repository from the template, *Use this template* on GitHub or a clone with its `.git` removed, and then:
+Make a repository from the template, *Use this template* on GitHub or a clone with its `.git` removed, and then (`TEMPLATE.md` says why the template is as it is):
 
 1. Replace `NAME` in `Makefile`, `CLAUDE.md` and this file with the program's name, one lowercase word or words joined by `_`, and rename `bin/name` to it; a library has no launcher, and removes it.
 2. Write `src/<name>.ern`, the module `Name` whose `main` is the entry point, with its first test, and `make test`.
 3. Say what the program does above and in `docs/design.md`, and begin `docs/plan.md`'s first milestone; `docs/log.md`'s first entry names the template's tag, which `docs/style.md` and `tools/docs.ern` are refreshed from.
 4. Set `LICENSE`, `VERSION` and the Makefile's `LIBS`, `DEPS` and `ERL_DEPS` as the program needs them, an Erlang application as a submodule under `erl/`, read-only and pinned, never a copy; `THIRD_PARTY_LICENSES` appears with the first borrowed file, and `ACKNOWLEDGMENTS.md` with the first name.
-5. Remove this section.
+5. Remove this section and `TEMPLATE.md`, the template's own design note.
