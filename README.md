@@ -4,7 +4,7 @@ What the program does, in a paragraph. This repository was begun from [`ernest-t
 
 ## Building
 
-It needs [Ernest](https://github.com/joagre/ernest) on your `PATH`, the floor the Makefile names, `ern 0.4`; `make` says so where another is found. `ERN=path/to/ern make` names another `ern`.
+It needs [Ernest](https://github.com/joagre/ernest) on your `PATH`, the floor the Makefile names, `ern 0.4`, and until Ernest 0.5.0 is released its `main`, whose development build passes the floor's check; `make` says so where another is found. `ERN=path/to/ern make` names another `ern`.
 
 ```
 make            builds: lib/ filled, each dependency and then the program compiled
