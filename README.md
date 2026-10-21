@@ -28,7 +28,6 @@ Everything the program loads beyond the standard library stands under `lib/`, a 
 - [`docs/plan.md`](docs/plan.md): where the program stands and what comes next.
 - [`docs/log.md`](docs/log.md): the dated rationale, never normative.
 - [`docs/release.md`](docs/release.md): what a release runs to be ready.
-- [`docs/style.md`](docs/style.md): the rules an Ernest program is written by, Ernest's own, copied and not edited here.
 - `docs/proposals/`: what is designed, a directory for each proposal, from the first one on.
 - `language_feedback.md`, from its first line: what writing Ernest felt against the principles, carried to Ernest by copy.
 - [`CLAUDE.md`](CLAUDE.md): the working rules.
@@ -45,6 +44,6 @@ Make a repository from the template, *Use this template* on GitHub or a clone wi
 
 1. Replace `NAME` in `Makefile`, `CLAUDE.md` and this file with the program's name, one lowercase word or words joined by `_`, and rename `bin/name` to it; a library has no launcher, and removes it.
 2. Write `src/<name>.ern`, the module `Name` whose `main` is the entry point, with its first test, and `make test`.
-3. Say what the program does above and in `docs/design.md`, and begin `docs/plan.md`'s first milestone; `docs/log.md`'s first entry names the template's tag, which `docs/style.md` and `tools/docs.ern` are refreshed from.
+3. Say what the program does above and in `docs/design.md`, and begin `docs/plan.md`'s first milestone; `docs/log.md`'s first entry names the template's tag, which `tools/docs.ern` is refreshed from.
 4. Set `LICENSE`, 0BSD as the template has it or another, with the README's sentence to match, `VERSION` and the Makefile's `LIBS`, `DEPS` and `ERL_DEPS` as the program needs them, an Erlang application as a submodule under `erl/`, read-only and pinned, never a copy; `THIRD_PARTY_LICENSES` appears with the first borrowed file, and `ACKNOWLEDGMENTS.md` with the first name.
 5. Remove this section and `TEMPLATE.md`, the template's own design note.

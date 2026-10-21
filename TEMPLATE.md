@@ -29,7 +29,7 @@ A file is in the template only where it has content on the first day. `README.md
 
 `src/name.ern` is the entry module, a placeholder the copy renames and writes, so that the template's own `make test` is green and a copy begins green. `tools/docs.ern` is the checker, a source root of its own built into `tools/build/` and outside the archive.
 
-Under `docs/` stand `plan.md`, `log.md`, `design.md`, `release.md` and `style.md`, the last a verbatim cut of Ernest's rules for its programs, named as a copy with the release it was cut from, which no application edits.
+Under `docs/` stand `plan.md`, `log.md`, `design.md` and `release.md`. The rules an Ernest program is written by are not among them: they are Ernest's `guide/style.md`, installed beside `ern`, which `CLAUDE.md` names and a session reads from the installation.
 
 What appears when needed, named in `CLAUDE.md` so that nothing waits for a decision about where it goes: `language_feedback.md` at its first line and `findings.md` while a review's findings are open, both under `docs/`; `docs/proposals/` with the first proposal; `test/`, a second source root for a program run end to end, built into `test/build/`; `erl/`, one read-only git submodule per Erlang application the program stands on, pinned and never a copy.
 
@@ -71,11 +71,13 @@ Dropped: the soundness paragraph, the revision date and the fixed section number
 
 Lines 119 to 122 of Ernest's `language_feedback.md`, under its `docs/`: the style rules an application follows are not installed; a program cannot ask where Ernest's libraries are; a program cannot know its own version; and nothing resolves a dependency's dependencies.
 
+The first two are answered on Ernest's `main` since 2026-10-21, released with 0.5.0: `guide/style.md` is installed with the guide, and the template's copy of the rules went the same day, so that the rules have one owner; and Ernest's own libraries stand on every job's load path, so that `ERNEST_LIBS` in the Makefile and the launcher can go once the floor is 0.5.
+
 ## 8. What the template does not do
 
 It does not ship an empty file or directory. It does not copy Ernest's EUnit, its reviews or its language-only documents. It does not invent a dependency tool. It does not run in a continuous-integration service: a workflow would have to install OTP 29 and build Ernest before the application's seconds of tests, and a release archive of Ernest that installs without a build would change that.
 
-It does not let the rules live in two places: an application is a copy, a copy is never updated from the template, and what an application learns goes back here by hand and from here into the next copy; `docs/style.md` and `tools/docs.ern` are refreshed in an application by copying the file again.
+It does not let the rules live in two places: an application is a copy, a copy is never updated from the template, and what an application learns goes back here by hand and from here into the next copy; `tools/docs.ern` is refreshed in an application by copying the file again, and the rules an Ernest program is written by are read from Ernest's installation, never copied.
 
 ## 9. How it is used
 

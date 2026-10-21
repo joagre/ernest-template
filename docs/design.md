@@ -10,4 +10,4 @@ How the program is arranged, stated as rules: its processes and what each owns, 
 
 ## Glossary
 
-The names that recur across modules, one for each concept, in every module. A name the report states takes the report's; the Ernest names of [`style.md`](style.md)'s glossary hold here too.
+The names that recur across modules, one for each concept, in every module. A name the report states takes the report's; the names of the glossary of Ernest's `guide/style.md` hold here too.
