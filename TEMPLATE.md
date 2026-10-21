@@ -18,7 +18,7 @@ Everything the template does, the toolchain does already; the template only choo
 - A module's namespace is its path under the source root (§4.2). Each directory between a load-path root and a module is lowercase words joined by `_`; the root's own name is not checked (§11.1, §11.2).
 - A test is a top-level `let` of type `Test.Case(m)` in the module it tests (Appendix E.24), and `ern test build` runs the tests of every module under the build root (§11.2), so unit tests live in their modules.
 - `ern format --check` names each module not in the layout (§11.6); `ern doc` writes a module's documentation (§11.4).
-- `--load-path dir` is a root under which modules are found by namespace (§11.2), and `ern run` adds each such directory to the host's code path, so an Erlang module a `foreign fn` names is found there as a `.beam`, and a NIF's library from `priv/` beside `ebin/` (§8.4). There is no package manager and no lockfile: a dependency is a directory.
+- `--load-path dir` is a root under which modules are found by namespace (§11.2), and `--libs-dir dir`, of `ern run`, `ern test` and `ern shell`, puts the `ebin` of each application under `dir` on the load path, so an Erlang module a `foreign fn` names is found there as a `.beam`, and a NIF's library from `priv/` beside `ebin/` (§8.4, §11.2). There is no package manager and no lockfile: a dependency is a directory.
 - A compiled module is tied to the `ern` that built it, and one compiled against another interface or another standard library is refused before anything runs (§11.1, §11.2); two patch levels stand on one floor (§8.7).
 - A program becomes a node by being started with `--config-dir dir` (§8.3, §11.3), whose `.ernest/` holds a private key. The operator's side is the deployment guide's, and the template restates none of it.
 - Until 1.0 a release of `ern` may refuse a program the previous release accepted, so an application is written for one floor of `ern`.
@@ -39,9 +39,9 @@ Not committed: `build/`, each root's `build/`, `lib/` and `.ernest/`.
 
 ## 4. The Makefile, the launcher and the archive
 
-One Makefile at the top, its variables first, `NAME`, `ERN_VERSION`, `LIBS`, `DEPS` and `ERL_DEPS`, and the same nine targets in every application: `all`, `test`, `format`, `doc`, `man`, `run`, `lib`, `release` and `clean`. `man` mirrors the pages `ern doc` wrote into `docs/man/`, as Ernest's `make man` does, which a library's release commits. There is no light run and no full run, since an application's whole suite runs in seconds, and where one day it does not, that is a defect of the tests to measure.
+One Makefile at the top, its variables first, `NAME`, `ERN_VERSION`, `DEPS` and `ERL_DEPS`, and the same nine targets in every application: `all`, `test`, `format`, `doc`, `man`, `run`, `lib`, `release` and `clean`. `man` mirrors the pages `ern doc` wrote into `docs/man/`, as Ernest's `make man` does, which a library's release commits. There is no light run and no full run, since an application's whole suite runs in seconds, and where one day it does not, that is a defect of the tests to measure.
 
-**The load path.** Everything a program loads beyond the standard library stands under `lib/`, which `make lib` fills: `lib/<name>/build` for one of Ernest's own libraries, linked from beside `ern`, and for a dependency, a release archive fetched by its URL and unpacked once; `lib/<app>/ebin` for an Erlang application built by its own `make` under `erl/`, its `priv` linked beside it. The load path is the one glob, `lib/*/build` and `lib/*/ebin`, in the Makefile and the launcher both, and no path is written twice.
+**The load path.** The libraries of Ernest's own stand on every job's load path by the toolchain's own rule (§11.1, §11.2). Everything else a program loads beyond the standard library stands under `lib/`, which `make lib` fills: `lib/<name>/build` for a dependency, a release archive fetched by its URL and unpacked once; `lib/<app>/ebin` for an Erlang application built by its own `make` under `erl/`, its `priv` linked beside it. The load path is `lib/*/build` for a dependency's modules and `--libs-dir lib` for the Erlang applications, in the Makefile and the launcher both, and no path is written twice.
 
 `DEPS` and `ERL_DEPS` are in build order, a dependency before what needs it; the template resolves nothing, which is Ernest's decision for another day.
 
@@ -49,7 +49,7 @@ One Makefile at the top, its variables first, `NAME`, `ERN_VERSION`, `LIBS`, `DE
 
 **The floor.** `version` compares the first two numbers of `ern --version` with `ERN_VERSION` and refuses another floor with both texts; a development build of the floor passes, since the applications are written against a checkout's `ern` to drive the language. `release` refuses a development build.
 
-**The launcher.** `bin/<name>` runs `ern run` on the module its own name names with `lib/*/build` and `lib/*/ebin` relative to its own directory, from a checkout and from an unpacked archive alike. It forwards a leading `--config-dir dir`, the one option an operator gives, and everything after it to the program; the working directory stays the caller's.
+**The launcher.** `bin/<name>` runs `ern run` on the module its own name names with each `lib/*/build` and `--libs-dir lib` relative to its own directory, from a checkout and from an unpacked archive alike. It forwards a leading `--config-dir dir`, the one option an operator gives, and everything after it to the program; the working directory stays the caller's.
 
 **The archive.** `release` runs `test`, then writes `build/<name>-<version>.tar.gz`: the launcher where there is one, `src/`, `build/`, `lib/` with each link copied through, the README, the license and `THIRD_PARTY_LICENSES` where there is one. One shape for an application and a library, so that any archive can be a dependency.
 
@@ -71,7 +71,7 @@ Dropped: the soundness paragraph, the revision date and the fixed section number
 
 Lines 119 to 122 of Ernest's `language_feedback.md`, under its `docs/`: the style rules an application follows are not installed; a program cannot ask where Ernest's libraries are; a program cannot know its own version; and nothing resolves a dependency's dependencies.
 
-The first two are answered on Ernest's `main` since 2026-10-21, released with 0.5.0: `guide/style.md` is installed with the guide, and the template's copy of the rules went the same day, so that the rules have one owner; and Ernest's own libraries stand on every job's load path, so that `ERNEST_LIBS` in the Makefile and the launcher can go once the floor is 0.5.
+The first two are answered on Ernest's `main` since 2026-10-21, and taken here 2026-10-22. The rules are read from Ernest's installation, `guide/style.md` installed with the guide, and the template's copy went, so that the rules have one owner. Ernest's own libraries stand on every job's load path, so they come off `make lib`, and `--libs-dir lib` puts the Erlang applications on the load path. The template therefore requires Ernest's `main` until 0.5.0 is tagged, while its floor says 0.4, decided with the user 2026-10-22.
 
 ## 8. What the template does not do
 
