@@ -71,7 +71,7 @@ Dropped: the soundness paragraph, the revision date and the fixed section number
 
 Lines 119 to 122 of Ernest's `language_feedback.md`, under its `docs/`: the style rules an application follows are not installed; a program cannot ask where Ernest's libraries are; a program cannot know its own version; and nothing resolves a dependency's dependencies.
 
-The first two are answered on Ernest's `main` since 2026-10-21, and taken here 2026-10-22. The rules are read from Ernest's installation, `guide/style.md` installed with the guide, and the template's copy went, so that the rules have one owner. Ernest's own libraries stand on every job's load path, so they come off `make lib`, and `--libs-dir lib` puts the Erlang applications on the load path. The template therefore requires Ernest's `main` until 0.5.0 is tagged, while its floor says 0.4, decided with the user 2026-10-22.
+The first two are answered on Ernest's `main` since 2026-10-21, and taken here 2026-10-22. The rules are read from Ernest's installation, `guide/style.md` installed with the guide, and the template's copy went, so that the rules have one owner. Ernest's own libraries stand on every job's load path, so they come off `make lib`, and `--libs-dir lib` puts the Erlang applications on the load path. The template required Ernest's `main` while its floor said 0.4, decided with the user 2026-10-22; Ernest 0.5.0 was tagged 2026-10-25 and the floor is 0.5 since.
 
 ## 8. What the template does not do
 

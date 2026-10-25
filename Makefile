@@ -19,7 +19,7 @@
 #   make clean    removes what the build and make lib wrote
 
 NAME        = name
-ERN_VERSION = 0.4
+ERN_VERSION = 0.5
 DEPS        =
 ERL_DEPS    =
 # What each program of examples/ writes, named by make test: the suffix of
