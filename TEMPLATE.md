@@ -63,6 +63,8 @@ What changes is what the report shaped: the normative document is `docs/design.m
 
 Dropped: the soundness paragraph, the revision date and the fixed section numbers, since the design is not cited by number from outside, and the three reviews, replaced by `release.md`'s two readers.
 
+Taken from Ernest's since, 2026-10-25: a session opened to discuss alone names each write before it is made; a finding is argued after the log and the program; a shim is written with the host's page open; an undiagnosed defect is planned with the shape of its fix; and a step sweeps what it leaves behind. `release.md` took the same day the cold reader's round over the review's own diff, the two models, the `since` of a new declaration, and the notes' two lines on where what changed is read and what the review did not run.
+
 ## 6. The release
 
 `docs/release.md`, in six lines: a fresh clone builds and passes; two readers, a cold one over the README and the program and a code reader over `src/` against the design and the principles; the findings fixed, planned or dropped; the version, the tag and the archive, published so that another repository's `make lib` can name it; notes that list none of the changes; and `language_feedback.md`'s lines carried to Ernest.
