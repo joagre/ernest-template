@@ -65,6 +65,8 @@ Dropped: the soundness paragraph, the revision date and the fixed section number
 
 Taken from Ernest's since, 2026-10-25: a session opened to discuss alone names each write before it is made; a finding is argued after the log and the program; a shim is written with the host's page open; an undiagnosed defect is planned with the shape of its fix; and a step sweeps what it leaves behind. `release.md` took the same day the cold reader's round over the review's own diff, the two models, the `since` of a new declaration, and the notes' two lines on where what changed is read and what the review did not run.
 
+Taken 2026-10-27: a refusal the design states is weighed on the principles, and a sentence that teaches a way around the program or Ernest is a gap.
+
 ## 6. The release
 
 `docs/release.md`, in six lines: a fresh clone builds and passes; two readers, a cold one over the README and the program and a code reader over `src/` against the design and the principles; the findings fixed, planned or dropped; the version, the tag and the archive, published so that another repository's `make lib` can name it; notes that list none of the changes; and `language_feedback.md`'s lines carried to Ernest.
@@ -73,7 +75,7 @@ Taken from Ernest's since, 2026-10-25: a session opened to discuss alone names e
 
 Lines 119 to 122 of Ernest's `language_feedback.md`, under its `docs/`: the style rules an application follows are not installed; a program cannot ask where Ernest's libraries are; a program cannot know its own version; and nothing resolves a dependency's dependencies.
 
-The first two are answered on Ernest's `main` since 2026-10-21, and taken here 2026-10-22. The rules are read from Ernest's installation, `guide/style.md` installed with the guide, and the template's copy went, so that the rules have one owner. Ernest's own libraries stand on every job's load path, so they come off `make lib`, and `--libs-dir lib` puts the Erlang applications on the load path. The template required Ernest's `main` while its floor said 0.4, decided with the user 2026-10-22; Ernest 0.5.0 was tagged 2026-10-25 and the floor is 0.5 since.
+The first two are answered on Ernest's `main` since 2026-10-21, and taken here 2026-10-22. The rules are read from Ernest's installation, `guide/style.md` installed with the guide, and the template's copy went, so that the rules have one owner. Ernest's own libraries stand on every job's load path, so they come off `make lib`, and `--libs-dir lib` puts the Erlang applications on the load path. The template required Ernest's `main` while its floor said 0.4, decided with the user 2026-10-22; Ernest 0.5.0 was tagged 2026-10-25 and the floor was 0.5; Ernest 0.6.0 was tagged the same night, and the floor is 0.6 since 2026-10-27.
 
 ## 8. What the template does not do
 
