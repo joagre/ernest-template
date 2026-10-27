@@ -1,10 +1,12 @@
 # NAME
 
+*The Importance of Being Ernest, a Trivial Comedy for Serious People*
+
 What the program does, in a paragraph. This repository was begun from [`ernest-template`](https://github.com/joagre/ernest-template), whose last section says how.
 
 ## Building
 
-It needs [Ernest](https://github.com/joagre/ernest) on your `PATH`, the floor the Makefile names, `ern 0.5`; `make` says so where another is found. `ERN=path/to/ern make` names another `ern`.
+It needs [Ernest](https://github.com/joagre/ernest) on your `PATH`, the floor the Makefile names, `ern 0.6`; `make` says so where another is found. `ERN=path/to/ern make` names another `ern`.
 
 ```
 make            builds: lib/ filled, each dependency and then the program compiled
