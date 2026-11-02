@@ -16,7 +16,12 @@ make test       the layout, every module's tests, the documents and the design's
 make examples   each program of examples/ built and run, what it writes under build/examples/
 make run        runs the program through its launcher, bin/NAME
 make release    the archive, build/NAME-VERSION.tar.gz
-make man        a library's manual pages into docs/man/, committed with its release
+make install    installs what stands built under PREFIX, /usr/local by default, from a
+                checkout or an unpacked archive: make install PREFIX=/home/me/opt/local
+make uninstall  removes from PREFIX what make install put there, then share/doc, share,
+                lib and bin under it, each where it is empty, and nothing else
+make man        a library's manual pages into docs/man/, committed with its release; an
+                application has none
 ```
 
 `make lib` fills `lib/` with each dependency `DEPS` names by the URL of its release archive, fetched and unpacked once, and each Erlang application `ERL_DEPS` names, a git submodule under `erl/` built by its own `make` and linked.
@@ -25,7 +30,7 @@ Everything the program loads beyond the standard library and Ernest's own librar
 
 ## Running
 
-`bin/<name> [--config-dir dir] [argument]...` runs the program from the checkout and from an unpacked release alike, with everything under `lib/` on the load path. `--config-dir dir` makes the run a node, as *Running Ernest*, the deployment guide of the installation, says; everything else goes to the program.
+`bin/<name> [--config-dir dir] [argument]...` runs the program from the checkout and from an unpacked release alike, with everything under `lib/` on the load path. Once `make install` has put it under a prefix, the installed `<name>` runs the same way, with everything under its own `lib/` on the load path. `--config-dir dir` makes the run a node, as *Running Ernest*, the deployment guide of the installation, says; everything else goes to the program.
 
 ## The documents
 
