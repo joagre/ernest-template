@@ -12,7 +12,8 @@ It needs [Ernest](https://github.com/joagre/ernest) on your `PATH`, the floor th
 make            builds: lib/ filled, each dependency and then the program compiled
 make test       the layout, every module's tests, the documents and the design's citations,
                 listing without failing any paragraph past about a hundred words,
-                test/ and examples/ where they exist
+                test/ and the examples where they exist
+make examples   each program of examples/ built and run, what it writes under build/examples/
 make run        runs the program through its launcher, bin/NAME
 make release    the archive, build/NAME-VERSION.tar.gz
 make man        a library's manual pages into docs/man/, committed with its release
