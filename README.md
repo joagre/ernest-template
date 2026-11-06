@@ -2,7 +2,7 @@
 
 *The Importance of Being Ernest, a Trivial Comedy for Serious People*
 
-What the program does, in a paragraph. This repository was begun from [`ernest-template`](https://github.com/joagre/ernest-template), whose last section says how.
+What the program is, for its reader, then where to begin, in a paragraph, with no argument its documents make. This repository was begun from [`ernest-template`](https://github.com/joagre/ernest-template), whose last section says how.
 
 ## Building
 
@@ -34,13 +34,7 @@ Everything the program loads beyond the standard library and Ernest's own librar
 
 ## The documents
 
-- [`docs/design.md`](docs/design.md): how the program is arranged, the normative document of this repository, and the glossary of its names.
-- [`docs/plan.md`](docs/plan.md): where the program stands and what comes next.
-- [`docs/log.md`](docs/log.md): the dated rationale, never normative.
-- [`docs/release.md`](docs/release.md): what a release runs to be ready.
-- `docs/proposals/`: what is designed, a directory for each proposal, from the first one on.
-- `language_feedback.md`, from its first line: what writing Ernest felt against the principles, carried to Ernest by copy.
-- [`CLAUDE.md`](CLAUDE.md): the working rules.
+`src/<name>.ern` is the entry module, and [`docs/README.md`](docs/README.md) says what each document is.
 
 The tests live in the modules they test, which `make test` runs; `test/`, where it exists, holds a program run end to end, and `tools/` the checker of the documents, `make test` runs them too.
 
@@ -56,4 +50,5 @@ Make a repository from the template, *Use this template* on GitHub or a clone wi
 2. Write `src/<name>.ern`, the module `Name` whose `main` is the entry point, with its first test, and `make test`.
 3. Say what the program does above and in `docs/design.md`, and begin `docs/plan.md`'s first milestone; `docs/log.md`'s first entry names the template's tag, which `tools/docs.ern` is refreshed from.
 4. Set `LICENSE`, 0BSD as the template has it or another, with the README's sentence to match, `VERSION` and the Makefile's `DEPS` and `ERL_DEPS` as the program needs them, an Erlang application as a submodule under `erl/`, read-only and pinned, never a copy; `THIRD_PARTY_LICENSES` appears with the first borrowed file, and `ACKNOWLEDGMENTS.md` with the first name.
-5. Remove this section and `TEMPLATE.md`, the template's own design note.
+5. Turn on private vulnerability reporting in the repository's settings, where `SECURITY.md` sends a reporter.
+6. Remove this section and `TEMPLATE.md`, the template's own design note.

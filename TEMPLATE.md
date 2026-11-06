@@ -8,7 +8,7 @@ An application written in Ernest is not the language. It has no report of its ow
 
 The template holds that way of working in a form small enough that a new application starts from it in one copy and one edit. It is a template and not a framework: it holds no code of its own but a launcher and one checker, and it decides nothing about the program's design. A library starts from the same template, with no `main` and no launcher.
 
-The applications are where the language is used in anger. Each keeps `language_feedback.md` under `docs/` in the shape of Ernest's file of that name, a queue: a line is carried there by copy and then goes, and the file goes when it is empty, Ernest's file being the record; that road back is the template's reason to exist.
+The applications are where the language is used in anger. Each keeps `language_feedback.md` under `docs/` in the shape of Ernest's file of that name, a queue: a line is carried there by Ernest's issue tracker, or, for an application built in Ernest's clean room, by a message to its session, and then goes, and the file goes when it is empty, Ernest's file being the record; that road back is the template's reason to exist.
 
 ## 2. What an application needs of the toolchain
 
@@ -25,11 +25,13 @@ Everything the template does, the toolchain does already; the template only choo
 
 ## 3. The tree
 
-A file is in the template only where it has content on the first day. `README.md`, `CLAUDE.md`, `LICENSE`, the Zero-Clause BSD license as Ernest's own, which the README names, `VERSION`, `Makefile` and `.gitignore` at the top; `bin/name`, the launcher, renamed for the program on the copy.
+A file is in the template only where it has content on the first day. `README.md`, `CLAUDE.md`, `LICENSE`, the Zero-Clause BSD license as Ernest's own, which the README names, `VERSION`, `Makefile`, `SECURITY.md` and `.gitignore` at the top; `bin/name`, the launcher, renamed for the program on the copy.
+
+`README.md` says what the program is for its reader, then where to begin, with central links only and no argument the program's own documents make. `docs/README.md` says what each document is. `SECURITY.md` says where a security hole goes, and GitHub shows it in the repository's *Security* tab; the setting that takes such a report is not copied with the template, so a copy turns it on.
 
 `src/name.ern` is the entry module, a placeholder the copy renames and writes, so that the template's own `make test` is green and a copy begins green. Its one test's comment cites every section of the starter design until real tests do. `tools/docs.ern` is the checker, a source root of its own built into `tools/build/` and outside the archive.
 
-Under `docs/` stand `plan.md`, `log.md`, `design.md` and `release.md`. The rules an Ernest program is written by are not among them: they are Ernest's `guide/style.md`, installed beside `ern`, which `CLAUDE.md` names and a session reads from the installation.
+Under `docs/` stand `README.md`, `plan.md`, `log.md`, `design.md` and `release.md`. The rules an Ernest program is written by are not among them: they are Ernest's `guide/style.md`, installed beside `ern`, which `CLAUDE.md` names and a session reads from the installation.
 
 What appears when needed, named in `CLAUDE.md` so that nothing waits for a decision about where it goes: `language_feedback.md` at its first line and `findings.md` while a review's findings are open, both under `docs/`; `docs/proposals/` with the first proposal; `test/`, a second source root for a program run end to end, built into `test/build/`; `erl/`, one read-only git submodule per Erlang application the program stands on, pinned and never a copy.
 
@@ -89,7 +91,7 @@ It does not let the rules live in two places: an application is a copy, a copy i
 
 ## 9. How it is used
 
-The repository is a GitHub template repository: *Use this template* makes the copy, and `README.md`'s last section says the five edits a copy makes. The template is tagged when the way of working changes, and the copy's first log entry names the tag.
+The repository is a GitHub template repository: *Use this template* makes the copy, and `README.md`'s last section says the six steps a copy takes. The template is tagged when the way of working changes, and the copy's first log entry names the tag.
 
 ## 10. What the applications taught it
 
