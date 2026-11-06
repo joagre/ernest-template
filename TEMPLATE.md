@@ -63,7 +63,7 @@ The source travels so that a consumer builds the modules with its own `ern`; the
 
 `CLAUDE.md` is a cut of Ernest's, in the same order. Most rules are kept as they are.
 
-What changes is what the report shaped: the normative document is `docs/design.md` with the plan item being built, and the design changes first; where the design is silent, the sentence is added to it or the input refused; every section of the design has a test whose comment names it; a message that reports code work ends with *Design conformance*; a defect or a gap of Ernest's goes to `language_feedback.md` and what needed it waits, never worked around; the program is Ernest, and `foreign` is only what the host alone can do.
+What changes is what the report shaped: the normative document is `docs/design.md` with the plan item being built, and the design changes first; where the design is silent, the sentence is added to it or the input refused; every section of the design has a test whose comment names it; a message that reports code work ends with *Design conformance*; a defect or a gap of Ernest's goes to `language_feedback.md` and what needed it waits, never worked around, but for a function Ernest can express; the program is Ernest, and `foreign` is only what the host alone can do.
 
 Dropped: the soundness paragraph, the revision date and the fixed section numbers, since the design is not cited by number from outside, and Ernest's reviews, replaced by `release.md`'s two readers and `full_review.md`'s four.
 
@@ -71,7 +71,7 @@ Taken from Ernest's since, 2026-10-25: a session opened to discuss alone names e
 
 Taken 2026-10-27: a refusal the design states is weighed on the principles, and a sentence that teaches a way around the program or Ernest is a gap.
 
-Cut again from Ernest's redraft, 2026-11-06, in its plain register, a chain of clauses split into sentences. A proposal refused or not taken up stays. The owner table names `docs/README.md` once for the documents under `docs/`. A good rule found in an application goes to the template, and from it to the other copies and to Ernest's file. A new file is added before its check runs, a flake is tested under what it was seen under, a proposal's pause pushes, and a log is split by day before GitHub stops rendering it.
+Cut again from Ernest's redraft, 2026-11-06, in its plain register, a chain of clauses split into sentences. A proposal refused or not taken up stays. The owner table names `docs/README.md` once for the documents under `docs/`. A good rule found in an application goes to the template, and from it to the other copies and to Ernest's file. A new file is added before its check runs, a flake is tested under what it was seen under, a proposal's pause pushes, and a log is split by day before GitHub stops rendering it. One gap of Ernest's no longer waits: a function the library lacks, which Ernest can express, is written in the program while its line waits, where the file had said both that it is written and that nothing goes around a gap.
 
 A copy takes the file whole but for its title and the sentence under it, which says what the program is, so no row and no rule differs between the copies.
 
