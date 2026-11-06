@@ -31,7 +31,7 @@ A file is in the template only where it has content on the first day. `README.md
 
 `src/name.ern` is the entry module, a placeholder the copy renames and writes, so that the template's own `make test` is green and a copy begins green. Its one test's comment cites every section of the starter design until real tests do. `tools/docs.ern` is the checker, a source root of its own built into `tools/build/` and outside the archive.
 
-Under `docs/` stand `README.md`, `plan.md`, `log.md`, `design.md` and `release.md`. The rules an Ernest program is written by are not among them: they are Ernest's `guide/style.md`, installed beside `ern`, which `CLAUDE.md` names and a session reads from the installation.
+Under `docs/` stand `README.md`, `plan.md`, `log.md`, `design.md`, `release.md` and `full_review.md`. The rules an Ernest program is written by are not among them: they are Ernest's `guide/style.md`, installed beside `ern`, which `CLAUDE.md` names and a session reads from the installation.
 
 What appears when needed, named in `CLAUDE.md` so that nothing waits for a decision about where it goes: `language_feedback.md` at its first line and `findings.md` while a review's findings are open, both under `docs/`; `docs/proposals/` with the first proposal; `test/`, a second source root for a program run end to end, built into `test/build/`; `erl/`, one read-only git submodule per Erlang application the program stands on, pinned and never a copy.
 
@@ -61,19 +61,25 @@ The source travels so that a consumer builds the modules with its own `ern`; the
 
 ## 5. The working rules
 
-`CLAUDE.md` is a cut of Ernest's, under about a hundred lines, in the same order. Most rules are kept as they are.
+`CLAUDE.md` is a cut of Ernest's, in the same order. Most rules are kept as they are.
 
 What changes is what the report shaped: the normative document is `docs/design.md` with the plan item being built, and the design changes first; where the design is silent, the sentence is added to it or the input refused; every section of the design has a test whose comment names it; a message that reports code work ends with *Design conformance*; a defect or a gap of Ernest's goes to `language_feedback.md` and what needed it waits, never worked around; the program is Ernest, and `foreign` is only what the host alone can do.
 
-Dropped: the soundness paragraph, the revision date and the fixed section numbers, since the design is not cited by number from outside, and the three reviews, replaced by `release.md`'s two readers.
+Dropped: the soundness paragraph, the revision date and the fixed section numbers, since the design is not cited by number from outside, and Ernest's reviews, replaced by `release.md`'s two readers and `full_review.md`'s four.
 
 Taken from Ernest's since, 2026-10-25: a session opened to discuss alone names each write before it is made; a finding is argued after the log and the program; a shim is written with the host's page open; an undiagnosed defect is planned with the shape of its fix; and a step sweeps what it leaves behind. `release.md` took the same day the cold reader's round over the review's own diff, the two models, the `since` of a new declaration, and the notes' two lines on where what changed is read and what the review did not run.
 
 Taken 2026-10-27: a refusal the design states is weighed on the principles, and a sentence that teaches a way around the program or Ernest is a gap.
 
+Cut again from Ernest's redraft, 2026-11-06, in its plain register, a chain of clauses split into sentences. A proposal refused or not taken up stays. The owner table names `docs/README.md` once for the documents under `docs/`. A good rule found in an application goes to the template, and from it to the other copies and to Ernest's file. A new file is added before its check runs, a flake is tested under what it was seen under, a proposal's pause pushes, and a log is split by day before GitHub stops rendering it.
+
+A copy takes the file whole but for its title and the sentence under it, which says what the program is, so no row and no rule differs between the copies.
+
 ## 6. The release
 
-`docs/release.md`, in six lines: a fresh clone builds and passes; two readers, a cold one over the README and the program and a code reader over `src/` against the design and the principles; the findings fixed, planned or dropped; the version, the tag and the archive, published so that another repository's `make lib` can name it; notes that list none of the changes; and `language_feedback.md`'s lines carried to Ernest.
+`docs/release.md`: a fresh clone builds and passes; two readers, a cold one over the README and the program and a code reader over `src/` against the design and the principles; the findings fixed, planned or dropped; the version, the tag and the archive, published so that another repository's `make lib` can name it; notes that list none of the changes; and `language_feedback.md`'s lines carried to Ernest.
+
+`docs/full_review.md`, since 2026-11-06, cut from Ernest's as `CLAUDE.md` is: four readers over the whole repository, a cold one who uses the program, one over all the code, one over the documents, and a security reader where the program takes input from outside. It runs only on the user's word, so a small program pays nothing for it. What a reader finds of Ernest's goes to `language_feedback.md`. A copy adds the readers its program alone needs.
 
 ## 7. What the template asks of Ernest
 
@@ -85,9 +91,9 @@ The template required Ernest's `main` while its floor said 0.4, decided with the
 
 ## 8. What the template does not do
 
-It does not ship an empty file or directory. It does not copy Ernest's EUnit, its reviews or its language-only documents. It does not invent a dependency tool. It does not run in a continuous-integration service: a workflow would have to install OTP 29 and build Ernest before the application's seconds of tests, and a release archive of Ernest that installs without a build would change that.
+It does not ship an empty file or directory. It does not copy Ernest's EUnit, its language-only documents or the readers of its reviews that read the language. It does not invent a dependency tool. It does not run in a continuous-integration service: a workflow would have to install OTP 29 and build Ernest before the application's seconds of tests, and a release archive of Ernest that installs without a build would change that.
 
-It does not let the rules live in two places: an application is a copy, a copy is never updated from the template, and what an application learns goes back here by hand and from here into the next copy; `tools/docs.ern` is refreshed in an application by copying the file again, and the rules an Ernest program is written by are read from Ernest's installation, never copied.
+It does not let the rules live in two places: an application is a copy, and what an application learns goes back here and from here into each copy; `CLAUDE.md`, `tools/docs.ern` and `docs/full_review.md` are refreshed in an application by taking the template's again, the first but for its title and the sentence under it and the last but for the readers the application added, and the rules an Ernest program is written by are read from Ernest's installation, never copied.
 
 ## 9. How it is used
 

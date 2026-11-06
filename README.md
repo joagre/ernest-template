@@ -11,7 +11,7 @@ It needs [Ernest](https://github.com/joagre/ernest) on your `PATH`, the floor th
 ```
 make            builds: lib/ filled, each dependency and then the program compiled
 make test       the layout, every module's tests, the documents and the design's citations,
-                listing without failing any paragraph past about a hundred words,
+                refusing any paragraph past 150 words,
                 test/ and the examples where they exist
 make examples   each program of examples/ built and run, what it writes under build/examples/
 make run        runs the program through its launcher, bin/NAME
@@ -48,7 +48,7 @@ Make a repository from the template, *Use this template* on GitHub or a clone wi
 
 1. Replace `NAME` in `Makefile`, `CLAUDE.md` and this file with the program's name, one lowercase word or words joined by `_`, and rename `bin/name` to it; a library has no launcher, and removes it.
 2. Write `src/<name>.ern`, the module `Name` whose `main` is the entry point, with its first test, and `make test`.
-3. Say what the program does above and in `docs/design.md`, and begin `docs/plan.md`'s first milestone; `docs/log.md`'s first entry names the template's tag, which `tools/docs.ern` is refreshed from.
+3. Say what the program does above and in `docs/design.md`, and begin `docs/plan.md`'s first milestone; `docs/log.md`'s first entry names the template's tag, which the files `CLAUDE.md` calls the template's are refreshed from.
 4. Set `LICENSE`, 0BSD as the template has it or another, with the README's sentence to match, `VERSION` and the Makefile's `DEPS` and `ERL_DEPS` as the program needs them, an Erlang application as a submodule under `erl/`, read-only and pinned, never a copy; `THIRD_PARTY_LICENSES` appears with the first borrowed file, and `ACKNOWLEDGMENTS.md` with the first name.
 5. Turn on private vulnerability reporting in the repository's settings, where `SECURITY.md` sends a reporter.
 6. Remove this section and `TEMPLATE.md`, the template's own design note.

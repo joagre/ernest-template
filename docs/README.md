@@ -6,6 +6,8 @@ What each document of this repository is. [`README.md`](../README.md) says what 
 - **[`plan.md`](plan.md)**: where the program stands and what comes next.
 - **[`log.md`](log.md)**: the dated rationale, never normative.
 - **[`release.md`](release.md)**: what a release runs to be ready.
+- **[`full_review.md`](full_review.md)**: what a review of the whole repository runs, on the user's word alone.
 - **`proposals/`**: what is designed, a directory for each proposal, from the first one on.
-- **`language_feedback.md`**, from its first line: what writing Ernest felt against the principles, carried to Ernest by its issue tracker, or, for an application built in Ernest's clean room, by a message to Ernest's session.
+- **`language_feedback.md`**, from its first line: what writing Ernest felt against the principles, a queue, carried to Ernest as `CLAUDE.md`'s *Defects and gaps* says.
+- **`findings.md`**, while a review's findings are open: the findings, a line each.
 - **[`CLAUDE.md`](../CLAUDE.md)**: the working rules.
