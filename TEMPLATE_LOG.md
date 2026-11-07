@@ -135,3 +135,7 @@ The release signs its tag with an SSH key GitHub holds as a signing key, since t
 ## The pictures, 2026-11-07
 
 The template has an icon and a social preview under `assets/`, as ernest-epx and ernest-httpd have, with a README saying what each is, since nothing else names them. *Use this template* copies them into every new repository, so the README's step 6 has a copy replace them with its own.
+
+## The archive carries the pictures, 2026-11-07
+
+From `ernest-epx`, read after the release cleanup. Its archived `README.md` shows its collage under `assets/` and its examples' README each example's picture there, but the archive left `assets/` out, so every picture was a broken link in the archive and in an installation. Ernest's own archive copies the logo its README shows for the same reason. `DOCS` takes the files git tracks under `assets/`, so `make release` and `make install` carry them, the icon and the social preview among them, which no document shows but which cost a few hundred kilobytes. Carrying only the pictures a document names was set aside, since it would read every document's links to save that.
