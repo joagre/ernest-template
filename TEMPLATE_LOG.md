@@ -118,6 +118,16 @@ Principle 1 decided: one command on one tree gives one answer, and a true senten
 
 Ernest's four repositories were read as a stranger reads them before the launch (Ernest's log, *The Release Cleanup*). `TEMPLATE.md` states the design in the present, and its history, its section 10 of lessons among it, moved here. The template's `docs/log.md` is the placeholder every copy begins with, so the template's own history has this file.
 
-An archive carries the user's documents alone, so `CLAUDE.md`, the plan, the log and the review checklists stay out of it. The release publishes a checksum beside the archive and signs its tag with the SSH key the pushes use. The note says what the release is and names the design's section a change, and no log entry, review or milestone. The issue form came, with blank issues off and a security hole sent to private reporting.
+An archive carries the user's documents alone, so `CLAUDE.md`, the plan, the log and the review checklists stay out of it. The release publishes a checksum beside the archive and signs its tag. The note says what the release is and names the design's section a change, and no log entry, review or milestone. The issue form came, with blank issues off and a security hole sent to private reporting.
 
 Two rules came from Ernest's. User-facing text names no milestone, plan item or date, a library's `since` line excepted. A comment names no milestone, plan item, review finding or date, and cites the design's section and the log entry by its title. Ernest's report has no revision date any more, so the template no longer says it drops one.
+
+## The rules held by the checker, 2026-11-07
+
+The two rules and the note's form held by the read-back alone, so `tools/docs.ern` holds them (Ernest's log, *Holding the Release Cleanup*). A comment of a module, a line that begins `//`, names no milestone, plan item, review finding, feedback line or date. A line of the README, of `CHANGES.md` or of a module under `src/` names no milestone. A section of `CHANGES.md` holds no date outside its heading and no `; *Title*`, and names neither the plan nor a review, its reader or a newcomer.
+
+The checks read lines and words, as Ernest's tests do. A first build read each module by its tokens and each form a character at a time, and doubled the checker; it was set aside for its size. A comment after code and a block comment are not read. A line under `src/` is read whole, its identifiers among it, since one that names a milestone is as wrong as a string that does. The README's step 3 named the plan's first milestone, which the check found, and it says `docs/plan.md` now.
+
+What it costs is stated here and kept. On `ernest-httpd`, about 11,000 lines of Ernest, the checker took about 420 ms and takes about 600 ms, `String.words` and `String.trimStart` about 6 µs a line each. A filter that skipped lines holding none of the forms would win most of it back and was not written, since it is a second reading kept only for speed.
+
+The release signs its tag with an SSH key GitHub holds as a signing key, since the pushes go over HTTPS and use none.

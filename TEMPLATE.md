@@ -79,7 +79,7 @@ A copy takes the file whole but for its title and the sentence under it, which s
 
 `docs/release.md`: a fresh clone builds and passes; a cold reader over the README and the program, and from the release on which the program is first recommended to others a code reader over `src/` against the design and the principles; the findings fixed, planned or dropped; the version; the tag; the archive and its checksum, published so that another repository's `make lib` can name the archive; the note; and `language_feedback.md`'s lines carried to Ernest.
 
-The tag is signed, `git tag -s`, with the SSH key the pushes use, so that GitHub marks it verified.
+The tag is signed, `git tag -s`, with an SSH key GitHub holds as a signing key, so that GitHub marks it verified.
 
 The note is the release's section of `CHANGES.md`, which the release step copies as the release's text on GitHub. It says what the release is and what a program or an operator of the previous release changes. Then comes one line a change, naming the design's section that states it. Its date stands in its heading alone, and it names no log entry, review or milestone.
 
