@@ -131,3 +131,7 @@ The checks read lines and words, as Ernest's tests do. A first build read each m
 What it costs is stated here and kept. On `ernest-httpd`, about 11,000 lines of Ernest, the checker took about 420 ms and takes about 600 ms, `String.words` and `String.trimStart` about 6 µs a line each. A filter that skipped lines holding none of the forms would win most of it back and was not written, since it is a second reading kept only for speed.
 
 The release signs its tag with an SSH key GitHub holds as a signing key, since the pushes go over HTTPS and use none.
+
+## The pictures, 2026-11-07
+
+The template has an icon and a social preview under `assets/`, as ernest-epx and ernest-httpd have, with a README saying what each is, since nothing else names them. *Use this template* copies them into every new repository, so the README's step 6 has a copy replace them with its own.
