@@ -21,13 +21,11 @@ make install    installs what stands built under PREFIX, /usr/local by default, 
                 checkout or an unpacked archive: make install PREFIX=/home/me/opt/local
 make uninstall  removes from PREFIX what make install put there, then share/doc, share,
                 lib and bin under it, each where it is empty, and nothing else
-make man        a library's manual pages into docs/man/, committed with its release; an
-                application has none
 ```
 
 `make lib` fills `lib/` with each dependency `DEPS` names by the URL of its release archive, fetched and unpacked once, and each Erlang application `ERL_DEPS` names, a git submodule under `erl/` built by its own `make` and linked.
 
-Everything the program loads beyond the standard library and Ernest's own libraries stands under `lib/`: a dependency's `build`, on the load path by `--load-path`, and an Erlang application's `ebin`, on it by `--libs-dir lib`. A repository with an `erl/` is cloned with `--recursive`. `make doc` writes each module's documentation under `build/`, `make format` lays the modules out, and `make clean` removes what the build and `make lib` wrote.
+Everything the program loads beyond the standard library and Ernest's own libraries stands under `lib/`: a dependency's `build`, on the load path by `--load-path`, and an Erlang application's `ebin`, on it by `--libs-dir lib`. A repository with an `erl/` is cloned with `--recursive`. `make doc` writes each module's page under `build/`, and a library's archive carries the pages under `docs/man/`. `make format` lays the modules out, and `make clean` removes what the build and `make lib` wrote.
 
 ## Running
 
