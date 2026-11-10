@@ -6,7 +6,7 @@ What the program is, for its reader, then where to begin, in a paragraph, with n
 
 ## Building
 
-It needs [Ernest](https://ernest-lang.org) on your `PATH`, the floor the Makefile names, `ern 0.9`; `make` says so where another is found. `ERN=path/to/ern make` names another `ern`: its directory stands first on `PATH` for everything the build starts, so whatever names `ern` by its name, a test or an example's shell, runs that one too. A file not called `ern` is not reached this way.
+It needs [Ernest](https://ernest-lang.org) on your `PATH`, the floor the Makefile names, `ern 0.10`; `make` says so where another is found. `ERN=path/to/ern make` names another `ern`: its directory stands first on `PATH` for everything the build starts, so whatever names `ern` by its name, a test or an example's shell, runs that one too. A file not called `ern` is not reached this way.
 
 ```
 make            builds: lib/ filled, each dependency and then the program compiled

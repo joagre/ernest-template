@@ -139,3 +139,9 @@ The template has an icon and a social preview under `assets/`, as ernest-epx and
 ## The archive carries the pictures, 2026-11-07
 
 From `ernest-epx`, read after the release cleanup. Its archived `README.md` shows its collage under `assets/` and its examples' README each example's picture there, but the archive left `assets/` out, so every picture was a broken link in the archive and in an installation. Ernest's own archive copies the logo its README shows for the same reason. `DOCS` takes the files git tracks under `assets/`, so `make release` and `make install` carry them, the icon and the social preview among them, which no document shows but which cost a few hundred kilobytes. Carrying only the pictures a document names was set aside, since it would read every document's links to save that.
+
+## The floor 0.10, 2026-11-10
+
+Ernest 0.10.0 was tagged on 2026-11-10, and the floor became 0.10 the same day (Ernest's log, *The Release Review Before 0.10.0*). Ernest's plan had set the template's rise at its MVP 4.4's item 4, later. It came now because ernest-httpd's floor is 0.10 already, and a copy ahead of its template cannot take the template's files whole.
+
+The template was run under 0.10.0 before it rose. One line changed: `tools/docs.ern`'s command for `git ls-files` is written `Os.command(program, arguments)`, since `Os.Command` gained `environment` and `workingDirectory`, and 0.9.0 has no `Os.command`, so no one line served both. 0.10.0's other three rules, a qualified name in its shortest form, `kill` taking a `Process` and a pipe into a parenthesized pipe, touch nothing in the template.
