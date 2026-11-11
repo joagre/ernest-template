@@ -4,4 +4,4 @@ The dated rationale for the design and the plan, newest last, and what was rejec
 
 ## Begun from the template
 
-*2026-10-20.* The repository was begun from `ernest-template` at its tag `v<tag>`, whose `CLAUDE.md`, `tools/docs.ern` and `docs/full_review.md` are refreshed from there, as `CLAUDE.md` says. The way of working is the template's; a change to it goes to the template first.
+*<date>.* The repository was begun from `ernest-template` at its tag `v<tag>`, whose `CLAUDE.md`, `tools/docs.ern` and `docs/full_review.md` are refreshed from there, as `CLAUDE.md` says. The way of working is the template's; a change to it goes to the template first.
