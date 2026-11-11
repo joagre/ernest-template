@@ -9,18 +9,18 @@ What the program is, for its reader, then where to begin, in a paragraph, with n
 It needs [Ernest](https://ernest-lang.org) on your `PATH`, the floor the Makefile names, `ern 0.10`; `make` says so where another is found. `ERN=path/to/ern make` names another `ern`: its directory stands first on `PATH` for everything the build starts, so whatever names `ern` by its name, a test or an example's shell, runs that one too. A file not called `ern` is not reached this way.
 
 ```
-make            builds: lib/ filled, each dependency and then the program compiled
-make test       the layout, every module's tests, test/ and the examples where they exist,
-                then the documents and the design's citations,
-                refusing any paragraph past 150 words and any comment or
-                text a user reads that names the project's history
-make examples   each program of examples/ built and run, what it writes under build/examples/
-make run        runs the program through its launcher, bin/NAME
-make release    the archive, build/NAME-VERSION.tar.gz, and its checksum beside it
-make install    installs what stands built under PREFIX, /usr/local by default, from a
-                checkout or an unpacked archive: make install PREFIX=/home/me/opt/local
-make uninstall  removes from PREFIX what make install put there, then share/doc, share,
-                lib and bin under it, each where it is empty, and nothing else
+make            # builds: lib/ filled, each dependency and then the program compiled
+make test       # the layout, every module's tests, test/ and the examples where they exist,
+                # then the documents and the design's citations,
+                # refusing any paragraph past 150 words and any comment or
+                # text a user reads that names the project's history
+make examples   # each program of examples/ built and run, what it writes under build/examples/
+make run        # runs the program through its launcher, bin/NAME
+make release    # the archive, build/NAME-VERSION.tar.gz, and its checksum beside it
+make install    # installs what stands built under PREFIX, /usr/local by default, from a
+                # checkout or an unpacked archive: make install PREFIX=/home/me/opt/local
+make uninstall  # removes from PREFIX what make install put there, then share/doc, share,
+                # lib and bin under it, each where it is empty, and nothing else
 ```
 
 `make lib` fills `lib/` with each dependency `DEPS` names by the URL of its release archive, fetched and unpacked once, and each Erlang application `ERL_DEPS` names, a git submodule under `erl/` built by its own `make` and linked.

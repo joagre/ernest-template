@@ -161,3 +161,9 @@ From `ernest-httpd`. `make release` copied `src/` whole, so an untracked file un
 From `ernest-epx`, which asked that a done item leave no line in the plan, since the line repeats *Where we are* and the log on a page read for what comes next. The rule stays: a done item's paragraph goes, and one line naming its log entries stands in its place until the milestone's row takes it.
 
 Principle 2 decided, read whole. Until a milestone closes, the line is the one place that says which entries argue its finished items, and the row is written from it. epx's milestone 9 named four entries there, none of which names the milestone, so without the line its row would be rebuilt from dates in a log where other work interleaves, and a missed entry is caught by no test. Principle 1 audited: where a plan's items are a numbered list, the line holds its item's number. CommonMark counts on from a list's first number, so a gap renumbers the rendered list, and a citation of an item stops matching the page.
+
+## The commands' comments, 2026-11-11
+
+From Ernest, on the user's word, so that one form holds across the repositories. The README's block of make targets writes each description after `#`, and each line that continues one begins with `#` under the first, as Ernest's README and its `development.md` write theirs. A block of commands is shell that a reader pastes, and a bare description pastes as arguments: `make test` followed by its description asks make for targets named `the` and `layout,`. Principle 1 decided. A copy takes the template's line word for word for each target it shares, and writes its own only for a target of its own.
+
+The checker does not hold the form. It cannot tell a block of commands from one of code or of output by its lines without guessing at the block's language, and the rules it holds are read exactly. The block is one in each repository and comes from the template whole.
