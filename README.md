@@ -12,8 +12,9 @@ It needs [Ernest](https://ernest-lang.org) on your `PATH`, the floor the Makefil
 make            # builds: lib/ filled, each dependency and then the program compiled
 make test       # the layout, every module's tests, test/ and the examples where they exist,
                 # then the documents and the design's citations,
-                # refusing any paragraph past 150 words and any comment or
-                # text a user reads that names the project's history
+                # refusing any paragraph past 150 words, any comment or
+                # text a user reads that names the project's history,
+                # and any command whose description stands without its #
 make examples   # each program of examples/ built and run, what it writes under build/examples/
 make run        # runs the program through its launcher, bin/NAME
 make release    # the archive, build/NAME-VERSION.tar.gz, and its checksum beside it
