@@ -155,3 +155,9 @@ The pages are `make doc`'s alone, under `build/`, the one copy a checkout holds 
 ## The archive's sources, 2026-11-11
 
 From `ernest-httpd`. `make release` copied `src/` whole, so an untracked file under it, and one git ignores, such as a stray `.erc` beside its source, went into the archive. The sources now go as the documents do: `SOURCES` names the files git tracks under `src/` in a checkout, and every file there in an unpacked archive, and the `tar` that copies `DOCS` copies them. `TEMPLATE.md`'s *The archive* says so. No test holds it, since `make release` runs `make test` first, and a test that ran the release from inside `make test` would recurse; the archive's sources are `git ls-files` by construction.
+
+## The done line stays, 2026-11-11
+
+From `ernest-epx`, which asked that a done item leave no line in the plan, since the line repeats *Where we are* and the log on a page read for what comes next. The rule stays: a done item's paragraph goes, and one line naming its log entries stands in its place until the milestone's row takes it.
+
+Principle 2 decided, read whole. Until a milestone closes, the line is the one place that says which entries argue its finished items, and the row is written from it. epx's milestone 9 named four entries there, none of which names the milestone, so without the line its row would be rebuilt from dates in a log where other work interleaves, and a missed entry is caught by no test. Principle 1 audited: where a plan's items are a numbered list, the line holds its item's number. CommonMark counts on from a list's first number, so a gap renumbers the rendered list, and a citation of an item stops matching the page.
