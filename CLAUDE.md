@@ -71,7 +71,7 @@ A `scratch/` directory inside a proposal's own directory, untracked, is the user
 
   Such a case is a design question, and design questions are discussed one at a time, in prose, the argument before the verdict, with a recommendation. Smaller decisions come together, as one numbered list with a recommendation each.
 
-  Where a step would go past what the user agreed to, a wider rule, another error's text, or a finding of the session's own, it is in doubt. It is brought to the user before it is written, as a line with its recommendation.
+  Where a step would go past what the user agreed to, a wider rule, another error's text, or a finding of the session's own, it is in doubt. It is brought to the user before it is written, as a line with its recommendation. A step nobody would argue about once it is read is no doubt: the session takes it and reports it.
 
   A session opened to discuss alone writes nothing until the user asks. Then each write to the plan or the log is named in one line before it is made. A "go" covers the piece just discussed and not the topic. Where more rounds are coming, the writes are gathered into one commit at the pause.
 - **Where a step looks wrong, say so once, hard**: the verdict, the principle that decides, the argument. If the user insists, build it whole, and the log entry records the decision with the argument against it. The code carries no trace of the dissent.
