@@ -67,11 +67,9 @@ A `scratch/` directory inside a proposal's own directory, untracked, is the user
 - **A design is discussed in its proposal until the user says it is ready.** Until then bring nothing of it to the plan, the log or the design. At a pause offer another reading back or a harder question: the principles, a real program written against it, the operator's day.
 
   A proposal, or a plan section written over one, is reported ready only after it has been read, unasked, against every owner it touches: the design's sections it changes or cites, the plan's items for it, and each proposal it meets at a seam. A seam is read from both sides, so that what one requires the other provides and no fact stands twice. The report to the user names the owners read.
-- **State a change to the design or the plan and make it; do not ask.** Give the change and its argument, make it, and report it under *Design conformance*. Stop and wait only where the answer decides what gets built and a guess would throw the work away.
+- **A no-brainer is stated and made; everything else is discussed first.** A change to the design or the plan that nobody would argue about once it is read is made, with its argument, and reported under *Design conformance*. Any other, a wider rule than the one agreed, another error's text or a finding of the session's own among them, is brought to the user before it is written, with a recommendation and its reason, and discussed carefully.
 
-  Such a case is a design question, and design questions are discussed one at a time, in prose, the argument before the verdict, with a recommendation. Smaller decisions come together, as one numbered list with a recommendation each.
-
-  Where a step would go past what the user agreed to, a wider rule, another error's text, or a finding of the session's own, it is in doubt. It is brought to the user before it is written, as a line with its recommendation. A step nobody would argue about once it is read is no doubt: the session takes it and reports it.
+  A design question is discussed one at a time, in prose, the argument before the verdict, with a recommendation. Smaller decisions come together, as one numbered list with a recommendation each.
 
   A session opened to discuss alone writes nothing until the user asks. Then each write to the plan or the log is named in one line before it is made. A "go" covers the piece just discussed and not the topic. Where more rounds are coming, the writes are gathered into one commit at the pause.
 - **One issue at a time, or a few.** A round of findings, a build's brief and a message to the user each take one issue, or a few that belong together, never everything at once. What waits stands in the findings file or the plan meanwhile.
