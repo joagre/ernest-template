@@ -73,6 +73,7 @@ A `scratch/` directory inside a proposal's own directory, untracked, is the user
 
   Where a step would go past what the user agreed to, a wider rule, another error's text, or a finding of the session's own, it is in doubt. It is brought to the user before it is written, as a line with its recommendation. A step nobody would argue about once it is read is no doubt: the session takes it and reports it.
 - **One issue at a time, or a few.** A round of findings, a build's brief and a message to the user each take one issue, or a few that belong together, never everything at once. What waits stands in the findings file or the plan meanwhile.
+- **Once a build has started, the sentences it builds to do not change until it is back.**
 
   A session opened to discuss alone writes nothing until the user asks. Then each write to the plan or the log is named in one line before it is made. A "go" covers the piece just discussed and not the topic. Where more rounds are coming, the writes are gathered into one commit at the pause.
 - **Where a step looks wrong, say so once, hard**: the verdict, the principle that decides, the argument. If the user insists, build it whole, and the log entry records the decision with the argument against it. The code carries no trace of the dissent.
