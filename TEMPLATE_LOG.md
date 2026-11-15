@@ -203,3 +203,11 @@ From Ernest, whose sweep read every private function of its own programs and of 
 **Not taken.** The other search, for a form the code repeats. Nothing has yet argued it for an application, and it waits for that argument.
 
 `TEMPLATE.md` §5 names the test where it names the function Ernest can express.
+
+## The repeated form, 2026-11-15
+
+The repositories keep the same rules: what Ernest's `CLAUDE.md` holds, the template holds in its own words, and a rule needs no argument from an application to come here. So the template takes the search for a form the code repeats, and is tagged `v0.10.6`. This reverses the *Not taken* of *A function over the library's types*.
+
+**The gap.** A form the code repeats at site after site joins what writing Ernest feels against a principle, with the workaround, the second way and the function the library lacks. It is a line of `language_feedback.md` with its count, and the verdict is Ernest's.
+
+**The two searches.** The reading at an item's close runs both, each over the sources with its count. In Ernest the search for a repeated form found the pun, at 190 sites, and two lines of its feedback (Ernest's log, *The Pun* and *The Sweep's Reading*).
