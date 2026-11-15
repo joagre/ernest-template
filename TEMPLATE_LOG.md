@@ -175,3 +175,19 @@ This reverses the second half of *The commands' comments*: `tools/docs.ern` hold
 The rule is Ernest's, for every fenced block but an Ernest one in the files whose paragraphs are measured. A command is a line that begins with `make`, or with `ern` or a launcher under `bin/` and a word, after an optional `sudo` and words `VAR=value`. It holds no two spaces before its `#`, and a line indented under it begins with `#`. A command that ends in `\` runs on to the next line. The line is cut at its first ` #`, so a comment with two spaces inside it reads as a comment. Two misses are accepted, since no document writes either: a `make` line in a block of another language is read as a command, and a ` #` inside an argument ends the command early. Ernest's test takes both of the template's departures from its own, so the two checks read one rule.
 
 It caught every line of the block at `v0.10.1`, and found nothing on `ernest-epx` and `ernest-httpd`, whose blocks hold 13 and 12 commands. On `ernest-httpd` the whole checker took 772 to 795 ms against 750 to 817 ms without it.
+
+## The rules read for clarity, 2026-11-15
+
+From Ernest, whose `CLAUDE.md` was rewritten where a session could take a sentence two ways (Ernest's log, *The Rules Read for Clarity*). The template takes the reading in its own words, and is tagged `v0.10.4`.
+
+**The agents' page.** The agents' rules move to `docs/agents.md`: the brief, an agent's report, what is checked before and after, and the models. `CLAUDE.md` keeps what goes to an agent and that its report is a claim, and has a session read the page before its first agent. The page is the template's and a copy takes it whole. `docs/full_review.md` and `docs/release.md` cite it for a reader's model. The cost is Ernest's: a pointer a session may not follow.
+
+**The owners' table.** Three rows go. `README.md` and `SECURITY.md` own what their names say, and *Style* names Ernest's `guide/style.md` with its path. The row of `CHANGES.md` points at `docs/release.md`, whose sixth step already says what a note holds. The rows of `deploy/README.md` and `examples/README.md` stay, since each places a file the template does not hold yet.
+
+**Rules that said two things.** The index was left as the user left it, while a new file was staged. A deletion was committed at once, under *Commit only after the checks pass*. A proposal's pause stood in *Tests* and in *Before code*. *Where the design is silent* let the code reject an input and add no sentence. Each says one thing now, as Ernest's does.
+
+**One path for a gap.** The path is said once. A defect of the program's own is fixed or planned, and a gap of Ernest's is a line of `language_feedback.md`. The function Ernest can express stays the one gap that does not wait.
+
+**Words with two meanings.** "The report" alone is Ernest's, and the session's is "the report to the user". The read-back is a diff read and the reading at an item's close. The checklist's lines each name their rule and no more.
+
+**Not taken.** What has no counterpart here: the design note, *Ernest or Erlang*, the refusal made for a later release's sake, the two searches of the read-back, and the ladder a cost goes by, whose contradiction this file never held.

@@ -35,7 +35,7 @@ A file is in the template only where it has content on the first day. `README.md
 
 `src/name.ern` is the entry module, a placeholder the copy renames and writes, so that the template's own `make test` is green and a copy begins green. Its one test's comment cites every section of the starter design until real tests do. `tools/docs.ern` is the checker, a source root of its own built into `tools/build/` and outside the archive.
 
-Under `docs/` stand `README.md`, `plan.md`, `log.md`, `design.md`, `release.md` and `full_review.md`. The rules an Ernest program is written by are not among them: they are Ernest's `guide/style.md`, installed beside `ern`, which `CLAUDE.md` names and a session reads from the installation.
+Under `docs/` stand `README.md`, `plan.md`, `log.md`, `design.md`, `release.md`, `full_review.md` and `agents.md`. The rules an Ernest program is written by are not among them: they are Ernest's `guide/style.md`, installed beside `ern`, which `CLAUDE.md` names and a session reads from the installation.
 
 What appears when needed, named in `CLAUDE.md` so that nothing waits for a decision about where it goes: `language_feedback.md` at its first line and `findings.md` while a review's findings are open, both under `docs/`; `docs/proposals/` with the first proposal; `test/`, a second source root for a program run end to end, built into `test/build/`; `erl/`, one read-only git submodule per Erlang application the program stands on, pinned and never a copy.
 
@@ -59,7 +59,7 @@ One Makefile at the top. The variables an application edits stand first, and the
 
 **The archive.** `release` runs `test`, then writes `build/<name>-<version>.tar.gz`: the launcher where there is one, the files git tracks under `src/`, `build/`, `lib/` with each link copied through, the user's documents, and the `Makefile` with `VERSION`, so that `make install` and `make run` run in the unpacked archive. One shape for an application and a library, so that any archive can be a dependency.
 
-An archive carries the user's documents alone, each where it exists: `README.md`, `LICENSE`, `THIRD_PARTY_LICENSES`, `CHANGES.md`, `docs/design.md`, `examples/`, `deploy/` and `assets/`, whose pictures the documents show, and a library's pages under `docs/man/`. Those are the pages `doc` writes under `build/`, the one copy a checkout holds, mirrored at the release with their index as the README, so that a dependent's `lib/` holds the pages of the release it stands on. `CLAUDE.md`, the plan, the log, `docs/release.md` and `docs/full_review.md` are the way of working, and stay in the repository. `release` writes the archive's checksum beside it, `build/<name>-<version>.tar.gz.sha256`, and the two are published together.
+An archive carries the user's documents alone, each where it exists: `README.md`, `LICENSE`, `THIRD_PARTY_LICENSES`, `CHANGES.md`, `docs/design.md`, `examples/`, `deploy/` and `assets/`, whose pictures the documents show, and a library's pages under `docs/man/`. Those are the pages `doc` writes under `build/`, the one copy a checkout holds, mirrored at the release with their index as the README, so that a dependent's `lib/` holds the pages of the release it stands on. `CLAUDE.md`, the plan, the log, `docs/release.md`, `docs/full_review.md` and `docs/agents.md` are the way of working, and stay in the repository. `release` writes the archive's checksum beside it, `build/<name>-<version>.tar.gz.sha256`, and the two are published together.
 
 **The installation.** `install`, from a checkout or an unpacked archive, puts what stands built under `PREFIX`, `/usr/local` by default, as Ernest's own `make install` does: the launcher in `bin/`, the compiled modules and `lib/` under `lib/<name>/`, and the documents under `share/doc/<name>/`, each at its path in the archive, so that the README's links resolve there. It builds nothing, so that an archive installs as it was compiled, replaces an installation already there whole, and refuses a launcher of another program's. `uninstall` removes exactly those, then `share/doc`, `share`, `lib` and `bin` under `PREFIX`, each where it is empty, and never `PREFIX` itself. A library has no launcher and nothing to install.
 
@@ -69,13 +69,15 @@ The source travels so that a consumer builds the modules with its own `ern`; the
 
 `CLAUDE.md` is a cut of Ernest's, in the same order. Most rules are kept as they are.
 
-What changes is what the report shaped: the normative document is `docs/design.md` with the plan item being built, and the design changes first; where the design is silent, the sentence is added to it or the input refused; every section of the design has a test whose comment names it; a message that reports code work ends with *Design conformance*; a defect or a gap of Ernest's goes to `language_feedback.md` and what needed it waits, never worked around, but for a function Ernest can express; the program is Ernest, and `foreign` is only what the host alone can do.
+What changes is what the report shaped: the normative document is `docs/design.md` with the plan item being built, and the design changes first; where the design is silent, a sentence is added to it, one that says what the input means or one that refuses it; every section of the design has a test whose comment names it; a message that reports code work ends with *Design conformance*; a defect or a gap of Ernest's goes to `language_feedback.md` and what needed it waits, never worked around, but for a function Ernest can express; the program is Ernest, and `foreign` is only what the host alone can do.
 
 Dropped: the soundness paragraph and the fixed section numbers, since the design is not cited by number from outside, and Ernest's reviews, replaced by `release.md`'s readers and `full_review.md`'s four.
 
 Two rules keep the project's history out of what a user and a reader of the code see. User-facing text, the README, the manual pages and what the program prints, names no milestone, plan item or date of the project's history; a library's `since` line is the exception. A comment names no milestone, plan item, review finding or date, and cites the design's section and the log entry by its title instead.
 
 A copy takes the file whole but for its title and the sentence under it, which says what the program is, so no row and no rule differs between the copies.
+
+`docs/agents.md` is cut from Ernest's page of that name: what a brief holds, where an agent's report goes, what is checked before agents start and after they end, and the model each job gets. `CLAUDE.md` keeps what goes to an agent, and has a session read the page before it starts its first. A copy takes the page whole.
 
 ## 6. The release
 
@@ -97,7 +99,7 @@ Two asks Ernest leaves to the program. A program's version is its own fact: a `l
 
 It does not ship an empty file or directory. It does not copy Ernest's EUnit, its language-only documents or the readers of its reviews that read the language. It does not invent a dependency tool. It does not run in a continuous-integration service: a workflow would have to install OTP 29 and build Ernest before the application's seconds of tests, and a release archive of Ernest that installs without a build would change that.
 
-It does not let the rules live in two places: an application is a copy, and what an application learns goes back here and from here into each copy, and into Ernest's `CLAUDE.md` where it applies there; `CLAUDE.md`, `tools/docs.ern` and `docs/full_review.md` are refreshed in an application by taking the template's again, the first but for its title and the sentence under it and the last but for the readers the application added, and the rules an Ernest program is written by are read from Ernest's installation, never copied.
+It does not let the rules live in two places: an application is a copy, and what an application learns goes back here and from here into each copy, and into Ernest's `CLAUDE.md` where it applies there; `CLAUDE.md`, `docs/agents.md`, `tools/docs.ern` and `docs/full_review.md` are refreshed in an application by taking the template's again, the first but for its title and the sentence under it and the last but for the readers the application added, and the rules an Ernest program is written by are read from Ernest's installation, never copied.
 
 ## 9. How it is used
 
