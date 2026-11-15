@@ -69,7 +69,7 @@ The source travels so that a consumer builds the modules with its own `ern`; the
 
 `CLAUDE.md` is a cut of Ernest's, in the same order. Most rules are kept as they are.
 
-What changes is what the report shaped: the normative document is `docs/design.md` with the plan item being built, and the design changes first; where the design is silent, a sentence is added to it, one that says what the input means or one that refuses it; every section of the design has a test whose comment names it; a message that reports code work ends with *Design conformance*; a defect or a gap of Ernest's goes to `language_feedback.md` and what needed it waits, never worked around, but for a function Ernest can express; the program is Ernest, and `foreign` is only what the host alone can do.
+What changes is what the report shaped: the normative document is `docs/design.md` with the plan item being built, and the design changes first; where the design is silent, a sentence is added to it, one that says what the input means or one that refuses it; every section of the design has a test whose comment names it; a message that reports code work ends with *Design conformance*; a defect or a gap of Ernest's goes to `language_feedback.md` and what needed it waits, never worked around, but for a function Ernest can express, which a private function over the library's types alone is only where Appendix E.0 admits it; the program is Ernest, and `foreign` is only what the host alone can do.
 
 Dropped: the soundness paragraph and the fixed section numbers, since the design is not cited by number from outside, and Ernest's reviews, replaced by `release.md`'s readers and `full_review.md`'s four.
 

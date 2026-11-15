@@ -191,3 +191,15 @@ From Ernest, whose `CLAUDE.md` was rewritten where a session could take a senten
 **Words with two meanings.** "The report" alone is Ernest's, and the session's is "the report to the user". The read-back is a diff read and the reading at an item's close. The checklist's lines each name their rule and no more.
 
 **Not taken.** What has no counterpart here: the design note, *Ernest or Erlang*, the refusal made for a later release's sake, the two searches of the read-back, and the ladder a cost goes by, whose contradiction this file never held.
+
+## A function over the library's types, 2026-11-15
+
+From Ernest, whose sweep read every private function of its own programs and of the applications by one test (Ernest's log, *A Library's Function in a Program* and *The Sweep's Reading*). The template takes the rule in its own words, for what is written from now on, and is tagged `v0.10.5`.
+
+**The test.** The rule on a function the library lacks fired on a feeling. Now a private function whose type names no type of the program's own is read against the admission rules of the report's Appendix E.0. Where a rule admits it, its line in `language_feedback.md` is written, and for no other function, so the queue gains no noise. The function is still written in the program meanwhile, and goes when a release brings the library's own. The reading is a first cut, since the installation holds the report, and the verdict stays Ernest's.
+
+**The search.** The reading at an item's close searches the sources for such a function, and gives its count. *The rules read for clarity* left the two searches of the read-back out as having no counterpart here, and the test of the type gives this one its counterpart.
+
+**Not taken.** The other search, for a form the code repeats. Nothing has yet argued it for an application, and it waits for that argument.
+
+`TEMPLATE.md` §5 names the test where it names the function Ernest can express.
