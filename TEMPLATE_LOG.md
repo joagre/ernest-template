@@ -211,3 +211,11 @@ The repositories keep the same rules: what Ernest's `CLAUDE.md` holds, the templ
 **The gap.** A form the code repeats at site after site joins what writing Ernest feels against a principle, with the workaround, the second way and the function the library lacks. It is a line of `language_feedback.md` with its count, and the verdict is Ernest's.
 
 **The two searches.** The reading at an item's close runs both, each over the sources with its count. In Ernest the search for a repeated form found the pun, at 190 sites, and two lines of its feedback (Ernest's log, *The Pun* and *The Sweep's Reading*).
+
+## Two hours for a hunt, 2026-11-16
+
+A flake's hunt gets a bound, taken from Ernest's `CLAUDE.md` in the template's words, and the template is tagged `v0.10.7` (Ernest's log, *Two Hours for a Hunt*).
+
+**The rule.** A flake is hunted for two hours at most, under what it was seen under, and the hunt ends at its first sighting. One that does not show is closed as not reproducible, and opened again where it shows again. A probe that makes the failure at will shows the cause and the fix, and no hunt follows. Where none can, the hunt runs to its third sighting, and the hunt after the fix runs three times the runs one sighting took.
+
+**Why.** A hunt must cost less than its flake does. Two hours is a budget, chosen and not measured. The rest is derived: one sighting shows that the hunt is the place, three give a rate, and three times a sighting's runs, run clean, leave about one chance in twenty that the flake still stands. In Ernest a hunt ran two hours before a fix and began two hours after it, where the flake had shown in the fourth minute and a probe had shown the cause.
