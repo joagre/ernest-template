@@ -261,3 +261,11 @@ The rule needs no mark in the page and no path beside the block. It also says mo
 **The template's line.** The template's README is the form a copy fills, so a visitor met `# NAME` and a placeholder, and learned what the repository is in the last section. A line under the title says it now, and the copy's last step removes the line.
 
 **In the tool.** The check asks whether a part's lines stand in a module's text, through `String.contains` over both texts with a line break before and after, which is the rule as it is stated and no way around a search the library lacks. The place a finding's line begins with, the file and the line, stood written out at five sites and is one function, `placeOf`. The tool's tests carry doc blocks where `CLAUDE.md` asks a test's comment to be none; `tools/` has no page, so the sentence's reason does not reach it, and they stay.
+
+## A plan's item and the user's idea are steps too, 2026-11-17
+
+`CLAUDE.md`'s rule for a step that looks wrong covers a plan's item and the user's own idea, before the work starts, taken from Ernest's `CLAUDE.md`, and the template is tagged `v0.10.12` (Ernest's log, *Twenty-Six Hosts Are the Cost*).
+
+**The rule.** A plan's item and the user's own idea are steps too: before work starts on one, say whether it is worth doing, and say no where it is not.
+
+**Why.** The rule read as one for a step met while building, and an item that stands in the plan read as decided. In Ernest a plan's item named the cost of the repository's own make. An evening went to measuring it and to a build that was stopped unfinished, before anyone asked who pays that cost. Only who builds Ernest from source does, so nothing was built. The question belonged before the first measurement, and the plan's word, or the user's, does not answer it.
