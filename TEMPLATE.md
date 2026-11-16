@@ -27,7 +27,9 @@ Everything the template does, the toolchain does already; the template only choo
 
 A file is in the template only where it has content on the first day. `README.md`, `CLAUDE.md`, `LICENSE`, the Zero-Clause BSD license as Ernest's own, which the README names, `CHANGES.md`, `VERSION`, `Makefile`, `SECURITY.md` and `.gitignore` at the top; `bin/name`, the launcher, renamed for the program on the copy.
 
-`README.md` says what the program is for its reader, then where to begin, with central links only and no argument the program's own documents make. `docs/README.md` says what each document is. `SECURITY.md` says where a security hole goes, and GitHub shows it in the repository's *Security* tab; the setting that takes such a report is not copied with the template, so a copy turns it on.
+`README.md` says what the program is for its reader and what it does, shows it once before *Building*, and then says where to begin, with central links only and no argument the program's own documents make. The showing is a picture, a session, or a few lines of the program's source. An Ernest block of the README is quoted and never written for the page: each of its parts, cut at its blank lines, stands in a tracked module once the module's comment lines are taken out, which `tools/docs.ern` holds. The template's own README names the template in a line under its title, since its top is the form a copy fills, and a copy removes the line.
+
+`docs/README.md` says what each document is. `SECURITY.md` says where a security hole goes, and GitHub shows it in the repository's *Security* tab; the setting that takes such a report is not copied with the template, so a copy turns it on.
 
 `.github/ISSUE_TEMPLATE/` holds a defect's issue form and a `config.yml`. The `config.yml` turns blank issues off and sends a security hole to private reporting. A copy changes the repository's address in it.
 

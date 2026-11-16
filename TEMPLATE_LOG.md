@@ -247,3 +247,17 @@ The step for the milestone's proposal went. `CLAUDE.md`'s *Proposals* has an ite
 **The rule.** Nothing is left, or recommended left, for its size or its difficulty: where it is right it is done in the item, or planned. Work is left only where it would hold nothing, decide nothing and remove nothing, and the reason given is that one, never the cost.
 
 **Why.** The rules said to decide every surprise, to act on it or leave it with its reason, and no rule said which reasons count. In Ernest a session closed an item and recommended three things left: some forty sites that wrote by hand what the item's new helper named, an answer that two like cases gave in two ways, and two paths without a test. Its reason each time was the work. Each was worth doing, and the three recommendations were taken back the same day. The other half keeps the rule from asking for work by rote: a tidy, a test or a measurement that would hold nothing, decide nothing and remove nothing is not done, however small.
+
+## The front page shows the program, 2026-11-16
+
+The README's form asks for one showing before *Building*, `tools/docs.ern` holds an Ernest block of the README to the program's modules, the template's own README says under its title what it is, and the template is tagged `v0.10.11` (Ernest's log, *The Front Page in the Announcement's Manner*).
+
+**The form.** The form's top asked for what the program is and where to begin, in a paragraph. Both applications followed it, and each page went from one sentence to *Building* and showed nothing. Ernest's own front page was written again to say what Ernest does and show it, and the two applications' pages followed the same day. The form now asks for what they hold: what the program is in a sentence a stranger can read, what it does, and one showing, a picture, a session or a few lines of the program's source. It still makes no argument the program's documents make.
+
+**The check.** A page that quotes the program can drift from it, and nothing held the two equal. Each part of a block fenced as `ernest` in `README.md`, its lines between blank lines, must stand as consecutive lines, compared whole, in one tracked module under `src/`, `test/` or `examples/`, once that module's comment lines are taken out. A part that stands nowhere is named by its first line, and `make test` fails.
+
+The rule needs no mark in the page and no path beside the block. It also says more than equality: an Ernest block of the README is never written for the page, so what a reader copies from it has been compiled, and run where it stands in an example.
+
+**The template's line.** The template's README is the form a copy fills, so a visitor met `# NAME` and a placeholder, and learned what the repository is in the last section. A line under the title says it now, and the copy's last step removes the line.
+
+**In the tool.** The check asks whether a part's lines stand in a module's text, through `String.contains` over both texts with a line break before and after, which is the rule as it is stated and no way around a search the library lacks. The place a finding's line begins with, the file and the line, stood written out at five sites and is one function, `placeOf`. The tool's tests carry doc blocks where `CLAUDE.md` asks a test's comment to be none; `tools/` has no page, so the sentence's reason does not reach it, and they stay.
