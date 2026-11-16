@@ -219,3 +219,17 @@ A flake's hunt gets a bound, taken from Ernest's `CLAUDE.md` in the template's w
 **The rule.** A flake is hunted for two hours at most, under what it was seen under, and the hunt ends at its first sighting. One that does not show is closed as not reproducible, and opened again where it shows again. A probe that makes the failure at will shows the cause and the fix, and no hunt follows. Where none can, the hunt runs to its third sighting, and the hunt after the fix runs three times the runs one sighting took.
 
 **Why.** A hunt must cost less than its flake does. Two hours is a budget, chosen and not measured. The rest is derived: one sighting shows that the hunt is the place, three give a rate, and three times a sighting's runs, run clean, leave about one chance in twenty that the flake still stands. In Ernest a hunt ran two hours before a fix and began two hours after it, where the flake had shown in the fourth minute and a probe had shown the cause.
+
+## The review documents read against the rules, 2026-11-16
+
+One reader read `docs/full_review.md` and `docs/release.md` at `8491145` against `CLAUDE.md` and `docs/agents.md`, beside Ernest's own two. The lines were decided with the user in Ernest's session, which wrote them here, and the template is tagged `v0.10.8` (Ernest's log, *The Review Documents Read Against the Rules*).
+
+**The full review owns what the release pointed at.** `full_review.md` is the template's and took its clone step and its sorting from `release.md`, which each copy owns and one copy had already changed. Both are stated in `full_review.md` now, and `release.md` points there. A file the template gives rests only on files the template gives.
+
+**A reader.** A reader is an agent, not a session. It is handed `CLAUDE.md` as every agent is, which a probe showed, so its brief stands in place of it, and `agents.md` names the exception. A reader held truly cold would be a session of its own outside the checkout, for the little `CLAUDE.md` gives away. The stronger model reads at the session's own effort. The list of what a reader finds of Ernest's follows `CLAUDE.md`'s, the repeated form among it.
+
+**A fix.** Who makes a fix is said once, with the sorting. An agent runs the program or the command a finding gives before it makes the fix, and hands back a line that does not fail, so that no fix is built on a failure nobody saw.
+
+**The release.** Its readers are the full review's K and C, run as it runs them, where step 2 restated them narrower. The round's cold reader reads the diff of what it reads, and the session reads the code's lines back. The note stands before the release step, since it is committed before the tag. The push and the release on GitHub wait for the user's word.
+
+The step for the milestone's proposal went. `CLAUDE.md`'s *Proposals* has an item of the milestone remove the directory before the release, and the step did it after the tag.
