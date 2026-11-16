@@ -233,3 +233,9 @@ One reader read `docs/full_review.md` and `docs/release.md` at `8491145` against
 **The release.** Its readers are the full review's K and C, run as it runs them, where step 2 restated them narrower. The round's cold reader reads the diff of what it reads, and the session reads the code's lines back. The note stands before the release step, since it is committed before the tag. The push and the release on GitHub wait for the user's word.
 
 The step for the milestone's proposal went. `CLAUDE.md`'s *Proposals* has an item of the milestone remove the directory before the release, and the step did it after the tag.
+
+## A reader's brief says that it stands in place, 2026-11-16
+
+`full_review.md` says that a reader's brief stands in place of `CLAUDE.md`. It now says that the brief tells the reader so in one line, and the template is tagged `v0.10.9` (Ernest's log, *The Review Documents Read Against the Rules*).
+
+**Why.** `CLAUDE.md` says of itself that it overrides, and a reader has it in its context. A brief that does not say it stands in its place leaves the promise to the session's memory. The first review under the sentence shows whether a reader keeps to its brief: a cold reader that cites the log or a rule of `CLAUDE.md` is the sign.
