@@ -239,3 +239,11 @@ The step for the milestone's proposal went. `CLAUDE.md`'s *Proposals* has an ite
 `full_review.md` says that a reader's brief stands in place of `CLAUDE.md`. It now says that the brief tells the reader so in one line, and the template is tagged `v0.10.9` (Ernest's log, *The Review Documents Read Against the Rules*).
 
 **Why.** `CLAUDE.md` says of itself that it overrides, and a reader has it in its context. A brief that does not say it stands in its place leaves the promise to the session's memory. The first review under the sentence shows whether a reader keeps to its brief: a cold reader that cites the log or a rule of `CLAUDE.md` is the sign.
+
+## Hard work and stupid work, 2026-11-16
+
+`CLAUDE.md`'s *Done* says that work is never left for its size, taken from Ernest's `CLAUDE.md`, and the template is tagged `v0.10.10` (Ernest's log, *Hard Work and Stupid Work*).
+
+**The rule.** Nothing is left, or recommended left, for its size or its difficulty: where it is right it is done in the item, or planned. Work is left only where it would hold nothing, decide nothing and remove nothing, and the reason given is that one, never the cost.
+
+**Why.** The rules said to decide every surprise, to act on it or leave it with its reason, and no rule said which reasons count. In Ernest a session closed an item and recommended three things left: some forty sites that wrote by hand what the item's new helper named, an answer that two like cases gave in two ways, and two paths without a test. Its reason each time was the work. Each was worth doing, and the three recommendations were taken back the same day. The other half keeps the rule from asking for work by rote: a tidy, a test or a measurement that would hold nothing, decide nothing and remove nothing is not done, however small.
