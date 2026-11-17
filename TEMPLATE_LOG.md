@@ -277,3 +277,13 @@ The rule needs no mark in the page and no path beside the block. It also says mo
 **The rule.** A plan's item, the user's own idea and a suggestion of the session's own are steps too: before work starts on one, say whether it is worth doing, and say no where it is not.
 
 **Why.** The sentence of `v0.10.12` named two cases, and a session that had it weighed a plan's item before it started the item. The same session made suggestions of its own that it had not weighed, a rule change among them, and took each back when asked whether it recommended it. A recommendation is what a session is for, and one made unweighed costs the trust in the next. The sentence worked where it named the case, so it names this one.
+
+## Agents bound by the processor run one at a time, 2026-11-17
+
+`docs/agents.md`'s *The brief* says that agents whose work is bound by the processor run one at a time, which the template's issue 2 asked for out of ernest-epx, and the template is tagged `v0.10.14`.
+
+**The rule.** Agents whose work is bound by the processor, a race's probe, a run under a sanitizer or a load test, run one at a time, and each runs its programs one after another: side by side is for work that waits or reads. The brief says so.
+
+**Why.** `CLAUDE.md` sends work that can run side by side to agents, and nothing said which work that is. In ernest-epx three agents were started side by side, each to write and run race probes: programs of two or three processes in tight loops, each run four times on two builds, one of them under the address sanitizer. Each agent ran its programs overlapping, an Erlang node of 24 schedulers apiece. The load of the 24-core machine, which is also the desktop the work is read on, passed 200 and stayed high for about an hour. One run at a time would have found the same. *The tools are fast* measures one run against its work, and says nothing of three at once.
+
+**What was left out.** The issue also asked that the first message to the user say how many cores the run takes and for how long. One run at a time leaves little to announce, and a session seldom knows the duration before the run. `CLAUDE.md` gets no pointer, since it already has a session read the page before its first agent.
