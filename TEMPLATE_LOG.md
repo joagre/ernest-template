@@ -269,3 +269,11 @@ The rule needs no mark in the page and no path beside the block. It also says mo
 **The rule.** A plan's item and the user's own idea are steps too: before work starts on one, say whether it is worth doing, and say no where it is not.
 
 **Why.** The rule read as one for a step met while building, and an item that stands in the plan read as decided. In Ernest a plan's item named the cost of the repository's own make. An evening went to measuring it and to a build that was stopped unfinished, before anyone asked who pays that cost. Only who builds Ernest from source does, so nothing was built. The question belonged before the first measurement, and the plan's word, or the user's, does not answer it.
+
+## The session's own suggestion is a step too, 2026-11-17
+
+`CLAUDE.md`'s rule for a step that looks wrong names a suggestion of the session's own beside a plan's item and the user's own idea, taken from Ernest's `CLAUDE.md`, and the template is tagged `v0.10.13` (Ernest's log, *The Session's Own Suggestion*).
+
+**The rule.** A plan's item, the user's own idea and a suggestion of the session's own are steps too: before work starts on one, say whether it is worth doing, and say no where it is not.
+
+**Why.** The sentence of `v0.10.12` named two cases, and a session that had it weighed a plan's item before it started the item. The same session made suggestions of its own that it had not weighed, a rule change among them, and took each back when asked whether it recommended it. A recommendation is what a session is for, and one made unweighed costs the trust in the next. The sentence worked where it named the case, so it names this one.
