@@ -319,3 +319,15 @@ The rule needs no mark in the page and no path beside the block. It also says mo
 **Why.** In Ernest twenty green runs of a flake's hunt had tested old code, since a pull chained before them failed unseen. A long run's result says something only of what it ran, and a first step that fails inside a chain leaves the run standing on what was there before. *Done* already reads make's exit status in a call of its own before a commit, and this is the same reading at a run's start. A flake's hunt here is such a run, so the rule holds for an application as it does for Ernest.
 
 **How it was found.** The template took the flake's rules from Ernest and not this one beside them. It was seen when Ernest's *Tests* was read for the sentence of `v0.10.16`, and the repositories keep the same rules.
+
+## What a timing test is, 2026-11-17
+
+`CLAUDE.md`'s rule on a timing test under another session's load says what a timing test is, which ernest-httpd's objection to the sentence of `v0.10.16` asked for, taken whole from Ernest's `CLAUDE.md`, and the template is tagged `v0.10.18` (Ernest's log, *A Load Another Session Makes*, its paragraph *What a timing test is, said the same evening*).
+
+**The rule.** A timing test is one whose failing assertion compares a measured time, or a ratio of measured times. The failure's text is read first: a test whose wait ran out of its deadline is no timing test but a flake, whatever the load.
+
+**Why.** The sentence of `v0.10.16` spoke of "a test that asserts a time, or a ratio of times", which did not say whether a test whose wait ran out of its deadline is one. In ernest-httpd `Sessions.startsAnew` failed the same day under another session's load of 54 to 261, at a `receive` that waited 5000 ms and gave up. It looked like a timing failure under load and was a defect: the tests' stand-in shell never told its session `Written`, so output that came in two reads was read once, and the load only made the terminal split the output. A probe made it fail at will on a quiet machine.
+
+Read as a timing test, the rule would have run it again on a quiet machine, seen it pass and closed a real defect with a log line. The rule saves a hunt, and there it would have hidden a defect, which is the costly way to be wrong. Its last sentence meant such a test for the flakes, and nothing forced that reading on a session that looks at a timeout under a load of 200.
+
+**The failing assertion.** A test may both wait and measure, so what decides is the assertion that failed, and the term is defined once before the rule uses it.
