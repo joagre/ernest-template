@@ -309,3 +309,13 @@ The rule needs no mark in the page and no path beside the block. It also says mo
 **Why.** The sentence of `v0.10.15` has a session read the load before it starts an agent, and said nothing of the test that fails under a load already there. Such a failure was neither no finding nor a flake to hunt. A test that asserts a time fails under several times the machine's threads by scheduling alone, which says nothing of the program. No target can make another session's load again, so a hunt under what the failure was seen under cannot be run. In Ernest a timing test failed once under a load of 69 on 24 threads that two other repositories' sessions made, and passed in the next full run on a quiet machine.
 
 **Narrow by design.** Any other test that fails under that load shows a race, so it is a flake, and the flake's rules keep it.
+
+## A long run's first step is checked alone, 2026-11-17
+
+`CLAUDE.md`'s *Tests* says that a step a long run rests on is checked in a call of its own before the run starts, taken whole from Ernest's `CLAUDE.md`, where it has stood since 2026-11-06, and the template is tagged `v0.10.17` (Ernest's log, *The Browser Test's Flake*).
+
+**The rule.** A step a long run rests on, a pull or a build, is checked in a call of its own before the run starts.
+
+**Why.** In Ernest twenty green runs of a flake's hunt had tested old code, since a pull chained before them failed unseen. A long run's result says something only of what it ran, and a first step that fails inside a chain leaves the run standing on what was there before. *Done* already reads make's exit status in a call of its own before a commit, and this is the same reading at a run's start. A flake's hunt here is such a run, so the rule holds for an application as it does for Ernest.
+
+**How it was found.** The template took the flake's rules from Ernest and not this one beside them. It was seen when Ernest's *Tests* was read for the sentence of `v0.10.16`, and the repositories keep the same rules.
