@@ -299,3 +299,13 @@ The rule needs no mark in the page and no path beside the block. It also says mo
 **The user says whether it waits.** The wording sent said that such a load is waited out. A session cannot know how long another session's work runs, and a wait with no deadline is one nobody decided. The user knows what the other sessions do, so the choice is the user's.
 
 **What was left for Ernest.** The wording sent also had a session read the load before it reads a timing test's failure as a finding. That is a rule of the tests and not of the agents: a session runs its tests itself, and one that starts no agent never reads this page. It belongs in `CLAUDE.md`'s *Tests*, beside the rule that a flake is tested under what it was seen under. That file is cut from Ernest's, so Ernest words it first and the template takes it whole.
+
+## A timing test under another session's load, 2026-11-17
+
+`CLAUDE.md`'s *Tests* says that a timing test which fails under another session's load is run again on a quiet machine and not hunted, taken whole from Ernest's `CLAUDE.md`, which worded it first at the template's asking, and the template is tagged `v0.10.16` (Ernest's log, *A Load Another Session Makes*).
+
+**The rule.** When a test that asserts a time, or a ratio of times, fails, the session reads the machine's load. Where another session made the load, the failure is said to the user with the load, and the test runs again on a quiet machine. Where it passes there, a log line naming the test and the load closes it, and no hunt follows.
+
+**Why.** The sentence of `v0.10.15` has a session read the load before it starts an agent, and said nothing of the test that fails under a load already there. Such a failure was neither no finding nor a flake to hunt. A test that asserts a time fails under several times the machine's threads by scheduling alone, which says nothing of the program. No target can make another session's load again, so a hunt under what the failure was seen under cannot be run. In Ernest a timing test failed once under a load of 69 on 24 threads that two other repositories' sessions made, and passed in the next full run on a quiet machine.
+
+**Narrow by design.** Any other test that fails under that load shows a race, so it is a flake, and the flake's rules keep it.
