@@ -287,3 +287,15 @@ The rule needs no mark in the page and no path beside the block. It also says mo
 **Why.** `CLAUDE.md` sends work that can run side by side to agents, and nothing said which work that is. In ernest-epx three agents were started side by side, each to write and run race probes: programs of two or three processes in tight loops, each run four times on two builds, one of them under the address sanitizer. Each agent ran its programs overlapping, an Erlang node of 24 schedulers apiece. The load of the 24-core machine, which is also the desktop the work is read on, passed 200 and stayed high for about an hour. One run at a time would have found the same. *The tools are fast* measures one run against its work, and says nothing of three at once.
 
 **What was left out.** The issue also asked that the first message to the user say how many cores the run takes and for how long. One run at a time leaves little to announce, and a session seldom knows the duration before the run. `CLAUDE.md` gets no pointer, since it already has a session read the page before its first agent.
+
+## The load another session makes, 2026-11-17
+
+`docs/agents.md`'s *The brief* has a session read the machine's load before it starts an agent whose work is bound by the processor, which Ernest's session sent back when it agreed to the sentence of `v0.10.14`, and the template is tagged `v0.10.15` (Ernest's log, *What Waits for a Peer*).
+
+**The rule.** A session reads the machine's load before it starts such an agent: a load another session makes is said to the user, who says whether the agent waits.
+
+**Why.** The sentence of `v0.10.14` binds the agents of one session, and the machine is shared by several. A load test or a flake's hunt fills the machine even where it runs alone, and a second session that starts its own agent on top adds to the load and skews its own timings. In Ernest a timing test failed once in a full run while two other repositories' sessions ran a load and a hunt, the five-minute load at 69 on 24 threads. Reading the load costs one command.
+
+**The user says whether it waits.** The wording sent said that such a load is waited out. A session cannot know how long another session's work runs, and a wait with no deadline is one nobody decided. The user knows what the other sessions do, so the choice is the user's.
+
+**What was left for Ernest.** The wording sent also had a session read the load before it reads a timing test's failure as a finding. That is a rule of the tests and not of the agents: a session runs its tests itself, and one that starts no agent never reads this page. It belongs in `CLAUDE.md`'s *Tests*, beside the rule that a flake is tested under what it was seen under. That file is cut from Ernest's, so Ernest words it first and the template takes it whole.
