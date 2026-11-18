@@ -331,3 +331,15 @@ The rule needs no mark in the page and no path beside the block. It also says mo
 Read as a timing test, the rule would have run it again on a quiet machine, seen it pass and closed a real defect with a log line. The rule saves a hunt, and there it would have hidden a defect, which is the costly way to be wrong. Its last sentence meant such a test for the flakes, and nothing forced that reading on a session that looks at a timeout under a load of 200.
 
 **The failing assertion.** A test may both wait and measure, so what decides is the assertion that failed, and the term is defined once before the rule uses it.
+
+## A run of items, 2026-11-18
+
+`CLAUDE.md`'s *Done* gains a rule: a session may take the plan's next items one after another where they stand alone, and stops at the first thing that needs the user. It is written here first, then in Ernest's `CLAUDE.md` and the copies, and the template is tagged `v0.10.19` (Ernest's log, *A Run of Items*).
+
+**The rule.** Where the plan's next items stand alone, the session takes them one after another, an agent for each, and closes and commits each before the next starts. It stops at the first thing that needs the user, however small: a decision, a surprise, a departure from the brief, a check that fails. The session judges that from each diff and its check. Where nothing stops it, it stops after three items, and one report to the user covers the run.
+
+**Why.** The stop after each item is there so that the user sees an item's choices before the next builds on them. Where the items stand alone nothing builds on them, and for a small item the stop was most of its cost. The stop is kept wherever there is something to see: a surprise the session would have decided alone stops the run too.
+
+**Two forms set aside.** Several items in one agent: its brief and its report become several, a failure in the middle leaves the later items on a tree that is not clean, and items that stand alone share nothing an agent's context could carry. Agents side by side in one checkout: they share its build directory, and a check that reads the whole tree fails one agent on another's half-written file.
+
+**What follows it.** `docs/agents.md` says that each item of a run has an agent of its own. *The repository*'s sentence on a session's length reads one item or one run of items, and the checklist's last line places the report at the run's end.
