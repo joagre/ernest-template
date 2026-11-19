@@ -343,3 +343,13 @@ Read as a timing test, the rule would have run it again on a quiet machine, seen
 **Two forms set aside.** Several items in one agent: its brief and its report become several, a failure in the middle leaves the later items on a tree that is not clean, and items that stand alone share nothing an agent's context could carry. Agents side by side in one checkout: they share its build directory, and a check that reads the whole tree fails one agent on another's half-written file.
 
 **What follows it.** `docs/agents.md` says that each item of a run has an agent of its own. *The repository*'s sentence on a session's length reads one item or one run of items, and the checklist's last line places the report at the run's end.
+
+## An item read against the items left, 2026-11-19
+
+`CLAUDE.md`'s *Before code* gains a rule: an item is read against the items left when it is written into the plan. It is written here first, then in Ernest's `CLAUDE.md` and the copies, and the template is tagged `v0.10.20` (Ernest's log, *The Plan Read for Build Order*, its paragraph *The rule*).
+
+**The rule.** Before an item is written into the plan, moved or changed there, the plan is searched for each section, file and name the item names. Each item left that names the same is read beside it: whether one needs what the other shows, builds or decides, whether both write one sentence, and whether a condition one states of the other can still be met. The item's paragraph names each item it follows, with the reason.
+
+**Why.** A plan orders its items left by kind, and nothing read a new item beside them. In Ernest's plan one item was built before the item whose result it needed, and a reading of the whole plan then found eight orders wrong. Each came from an item written in, moved or given a new paragraph. Each pair shared a name, so a search finds the candidates, and the reading is of a few paragraphs.
+
+**A form set aside.** A reader over the whole plan before each milestone finds the same clashes, days after the item was written and at an agent's cost. It stays what the user asks for.
