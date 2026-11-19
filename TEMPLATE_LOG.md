@@ -353,3 +353,11 @@ Read as a timing test, the rule would have run it again on a quiet machine, seen
 **Why.** A plan orders its items left by kind, and nothing read a new item beside them. In Ernest's plan one item was built before the item whose result it needed, and a reading of the whole plan then found eight orders wrong. Each came from an item written in, moved or given a new paragraph. Each pair shared a name, so a search finds the candidates, and the reading is of a few paragraphs.
 
 **A form set aside.** A reader over the whole plan before each milestone finds the same clashes, days after the item was written and at an agent's cost. It stays what the user asks for.
+
+## A brief sorts its runs, 2026-11-19
+
+`docs/agents.md`'s *The brief* gains a sentence: a brief sorts its agent's runs into those bound by the processor and those that only wait. It is written here first, then in Ernest's `docs/agents.md` and the copies, and the template is tagged `v0.10.21` (Ernest's log, *A Brief Sorts Its Runs*).
+
+**The rule.** The brief sorts the agent's runs by that test and names each kind: a race's probe and a run whose time is measured are bound by the processor, and a run that only waits, a test that fails by running out its deadline among them, goes side by side.
+
+**Why.** The rule before it was right, and left the sorting to the brief's writer. In Ernest two briefs for work on timing put every probe and every test one at a time. Twelve tests that failed only by running out a deadline of 30 seconds then ran one after another, twice, and the machine stood idle for about ten minutes of each build's hour. A run that hangs until its deadline hangs the same beside eleven others.
