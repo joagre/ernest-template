@@ -361,3 +361,18 @@ Read as a timing test, the rule would have run it again on a quiet machine, seen
 **The rule.** The brief sorts the agent's runs by that test and names each kind: a race's probe and a run whose time is measured are bound by the processor, and a run that only waits, a test that fails by running out its deadline among them, goes side by side.
 
 **Why.** The rule before it was right, and left the sorting to the brief's writer. In Ernest two briefs for work on timing put every probe and every test one at a time. Twelve tests that failed only by running out a deadline of 30 seconds then ran one after another, twice, and the machine stood idle for about ten minutes of each build's hour. A run that hangs until its deadline hangs the same beside eleven others.
+
+## The short rules, 2026-11-21
+
+`CLAUDE.md` is cut again, from Ernest's short file, and `docs/agents.md` follows Ernest's. The template is tagged `v0.10.22` (Ernest's log, *The Short Rules Stay*).
+
+**What it was.** The file was a cut of Ernest's long one, some 4,900 words. Each rule of the long file was written after a mistake, and most said how to think. A session that weighs that many follows the strictest reading of the ones it remembers: in Ernest one item took most of a day in probes for 62 lines of code.
+
+**What it is.** About 1,500 words: what is the user's, who decides, what the user wants of the program, and how a result is reported. It keeps facts, and gates, a question asked once before work starts. It drops checks, what is done at every act. A mistake adds no rule to it.
+
+**New in it.** Whether a first user meets an item is asked when the item is written and before it starts. A corner that only a built program meets is a line of `known_issues.md` under `docs/`, which a copy begins at its first line, and becomes an item when the user takes it up. What a reading shows to be deterministic is verified once, and only what is intermittent is run again. A question about what Ernest or the code does is the session's own, and no agent's.
+
+**What a copy loses.** The rules on a session's length and effort, a flake's hunt, a timing test under load, a proposal's life and the search of the plan before an item is written. A session that needs one works without it, and the user says where it is missed.
+
+**The pages that cite the file** name its new sections: `docs/agents.md`, `docs/full_review.md`, `docs/release.md`, `docs/README.md` and a comment of `tools/docs.ern`. `docs/agents.md` also says that an agent's report comes back as its answer, and that a question is no diagnosis.
+

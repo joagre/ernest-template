@@ -39,7 +39,7 @@ A file is in the template only where it has content on the first day. `README.md
 
 Under `docs/` stand `README.md`, `plan.md`, `log.md`, `design.md`, `release.md`, `full_review.md` and `agents.md`. The rules an Ernest program is written by are not among them: they are Ernest's `guide/style.md`, installed beside `ern`, which `CLAUDE.md` names and a session reads from the installation.
 
-What appears when needed, named in `CLAUDE.md` so that nothing waits for a decision about where it goes: `language_feedback.md` at its first line and `findings.md` while a review's findings are open, both under `docs/`; `docs/proposals/` with the first proposal; `test/`, a second source root for a program run end to end, built into `test/build/`; `erl/`, one read-only git submodule per Erlang application the program stands on, pinned and never a copy.
+What appears when needed, named in `CLAUDE.md` so that nothing waits for a decision about where it goes: `language_feedback.md` and `known_issues.md` each at its first line and `findings.md` while a review's findings are open, all under `docs/`; `docs/proposals/` with the first proposal; `test/`, a second source root for a program run end to end, built into `test/build/`; `erl/`, one read-only git submodule per Erlang application the program stands on, pinned and never a copy.
 
 Also when needed: `THIRD_PARTY_LICENSES` with the first borrowed file, an Erlang application under `erl/` among them, since the archive carries its compiled code, and `ACKNOWLEDGMENTS.md` with the first name; for a library, `examples/`, a source root built into `examples/build/` whose every program `make examples` runs with one argument, `build/examples/<name>` and the Makefile's `EXAMPLE_SUFFIX`, and `make test` before its check of the documents; a program of `examples/` is an `.ern` file at its top, and what else stands under it is data.
 
@@ -69,13 +69,13 @@ The source travels so that a consumer builds the modules with its own `ern`; the
 
 ## 5. The working rules
 
-`CLAUDE.md` is a cut of Ernest's, in the same order. Most rules are kept as they are.
+`CLAUDE.md` is a cut of Ernest's, in the same order. It holds what judgment cannot supply: what is the user's, who decides, and what the user wants of the work. It says nothing on how to think, and a mistake adds no rule to it.
 
-What changes is what the report shaped: the normative document is `docs/design.md` with the plan item being built, and the design changes first; where the design is silent, a sentence is added to it, one that says what the input means or one that refuses it; every section of the design has a test whose comment names it; a message that reports code work ends with *Design conformance*; a defect or a gap of Ernest's goes to `language_feedback.md` and what needed it waits, never worked around, but for a function Ernest can express, which a private function over the library's types alone is only where Appendix E.0 admits it; the program is Ernest, and `foreign` is only what the host alone can do.
+What changes from Ernest's is what the report shaped. The normative document is `docs/design.md`, and the design changes first. Where the design is silent, a sentence is added to it. Every section of the design has a test whose comment names it. A defect or a gap of Ernest's is a line of `language_feedback.md` and what needed it waits, never worked around, but for a function Ernest can express over what the library has. A corner that only a built program meets is a line of `known_issues.md`.
 
-Dropped: the soundness paragraph and the fixed section numbers, since the design is not cited by number from outside, and Ernest's reviews, replaced by `release.md`'s readers and `full_review.md`'s four.
+Dropped: the soundness paragraph, the cold reading and the fixed section numbers, since the design is not cited by number from outside, and Ernest's reviews, replaced by `release.md`'s readers and `full_review.md`'s four.
 
-Two rules keep the project's history out of what a user and a reader of the code see. User-facing text, the README, the manual pages and what the program prints, names no milestone, plan item or date of the project's history; a library's `since` line is the exception. A comment names no milestone, plan item, review finding or date, and cites the design's section and the log entry by its title instead.
+`tools/docs.ern` keeps the project's history out of what a user and a reader of the code see, and holds a paragraph to 150 words: the tool says so when one is broken, and the file states neither.
 
 A copy takes the file whole but for its title and the sentence under it, which says what the program is, so no row and no rule differs between the copies.
 
