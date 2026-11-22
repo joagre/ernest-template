@@ -376,3 +376,7 @@ Read as a timing test, the rule would have run it again on a quiet machine, seen
 
 **The pages that cite the file** name its new sections: `docs/agents.md`, `docs/full_review.md`, `docs/release.md`, `docs/README.md` and a comment of `tools/docs.ern`. `docs/agents.md` also says that an agent's report comes back as its answer, and that a question is no diagnosis.
 
+
+## A long item's file, 2026-11-22
+
+`tools/docs.ern` reported a list item's paragraph past the measure with an empty file name, `:<line>: N words …`, where a line at or before the item's indentation ended it: `counted` called `ended("", reading)`, and `readsItems` compared the lines alone. `counted` now takes the file, and the test compares the file beside the line. Ernest's hunt for a result that is never empty found it, reading the tool (Ernest's log, *A Result Never Empty, Counted*). The template is tagged `v0.10.24`.
