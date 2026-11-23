@@ -71,11 +71,14 @@
 // out first, and a comment after code or a block comment is not read. A line
 // of the README, of CHANGES.md or of a module under src/, a comment aside,
 // names no milestone, step or item with its number. A line of CHANGES.md
-// from its first `## ` heading on, each such heading aside, holds no date and
-// no `; *Title*`, and names no finding by its name, neither file, and no
-// reader of a review by its kind, a cold, code, documents, independent or
-// security reader. Each kind a line names is a line on standard error naming
-// the file and the line, once, and the program ends with status 1.
+// from its first `## ` heading on, each such heading aside, holds no date;
+// names no log entry, by `; *Title*`, by `the log's *Title*`, any case of
+// the, or by the log's file, log.md at the top or under a directory, a
+// trailing 's aside; and names no finding by its name, neither the plan's
+// file nor the findings', and no reader of a review by its kind, a cold,
+// code, document, documents, independent or security reader. Each kind a
+// line names is a line on standard error naming the file and the line, once,
+// and the program ends with status 1.
 //
 //     make test    runs it, as ern run tools/build/docs.erc
 //
@@ -932,16 +935,29 @@ fn noteAt(words : List(#(String, String))) : Optional(String) =
     match #(recordAt(words), words) {
         #(Some(kind), _) -> Some(kind)
       | #(_, #(_, word) :: _) when isDate(word) -> Some("a date outside its heading")
-      | #(_, #(raw, _) :: #(next, _) :: _) when String.endsWith(raw, ";")
-            && String.startsWith(next, "*") -> Some("a log entry's title")
+      | _ when namesLogEntry(words) -> Some("a log entry")
       | #(_, #(_, word) :: #(_, next) :: _) when isReader(word, next) -> Some("a reader")
       | _ -> None
+    }
+
+// Whether the words name a log entry from their first on: a title after
+// ";", "; *Title*", a title after "the log's", any case of "the", and the
+// log's file, at the top or under a directory.
+fn namesLogEntry(words : List(#(String, String))) : Bool =
+    match words {
+        #(raw, _) :: #(next, _) :: _ when String.endsWith(raw, ";")
+            && String.startsWith(next, "*") -> true
+      | #(_, the) :: #(_, log) :: #(next, _) :: _ when String.toAsciiLower(the) == "the"
+            && log == "log's"
+            && String.startsWith(next, "*") -> true
+      | #(raw, _) :: _ -> namesFile(raw, "log.md")
+      | [] -> false
     }
 
 // Whether the two words name a review's reader by its kind, as "a cold
 // reader" does.
 fn isReader(word : String, next : String) : Bool =
-    List.contains(["cold", "code", "documents", "independent", "security"], word)
+    List.contains(["cold", "code", "document", "documents", "independent", "security"], word)
         && List.contains(["reader", "readers"], next)
 
 // The word without the punctuation around it, a quotation mark among it.
@@ -1230,11 +1246,13 @@ let readsACommentOnce = Test.Case(name = "reads a comment of a module once", run
                 "README.md:1: the line names a milestone"])
 })
 
-// A release's note holds a date in its heading alone, no log entry's title,
-// no finding by its name, neither the plan's file nor the findings', and no
-// reader of a review by its kind, one form a line; the file's own paragraph
-// is not read, nor a heading, a date a time follows, a bare word, the
-// plan, a review, a reader, a newcomer, or a library's readers.
+// A release's note holds a date in its heading alone, no log entry, by a
+// title after ";" or after "the log's", any case of "the", or by the log's
+// file, no finding by its name, neither the plan's file nor the findings',
+// and no reader of a review by its kind, one form a line; the file's own
+// paragraph is not read, nor a heading, a date a time follows, a bare word,
+// the plan, the log, a review, a reader, a newcomer, a library's readers, or
+// a file but the log's, CHANGELOG.md.
 let findsNotes = Test.Case(name = "finds what a release's note leaves out", run = fn() = {
     let text =
         "# Changes\n\nEach note; the plan, a review and its readers, 2026-11-07, finding C7.\n\n"
@@ -1245,14 +1263,25 @@ let findsNotes = Test.Case(name = "finds what a release's note leaves out", run 
             <> "- As finding C7 found: §5.\n"
             <> "- Ordered by `docs/plan.md`: §6.\n"
             <> "- Named in docs/findings.md: §7.\n"
-            <> "- `Time.parse(\"2026-11-07T10:00:00Z\")`, the response readers, preview: §8.\n";
+            <> "- `Time.parse(\"2026-11-07T10:00:00Z\")`, the response readers, preview: §8.\n"
+            <> "- As the log's *Begun from the template* says: §9.\n"
+            <> "- The log's *An Entry* holds it: §10.\n"
+            <> "- As docs/log.md says, *Begun from the template*.\n"
+            <> "- In (log.md's) order: §11.\n"
+            <> "- A document reader found it.\n"
+            <> "- As the log has it, the log's order, a reader, a document, CHANGELOG.md: §12.\n";
     Test.equal(naming(changes, notesIn(List.indexed(String.lines(text))), "the note", noteAt),
-               ["CHANGES.md:9: the note names a log entry's title",
+               ["CHANGES.md:9: the note names a log entry",
                 "CHANGES.md:10: the note names a date outside its heading",
                 "CHANGES.md:11: the note names a reader",
                 "CHANGES.md:12: the note names a finding",
                 "CHANGES.md:13: the note names the plan's file",
-                "CHANGES.md:14: the note names the findings' file"])
+                "CHANGES.md:14: the note names the findings' file",
+                "CHANGES.md:16: the note names a log entry",
+                "CHANGES.md:17: the note names a log entry",
+                "CHANGES.md:18: the note names a log entry",
+                "CHANGES.md:19: the note names a log entry",
+                "CHANGES.md:20: the note names a reader"])
 })
 
 // A command in a fenced block gives its description after "#", and a line
