@@ -5,8 +5,8 @@ build/
 # The packages package.conf names, each archive and what ern unpack made of it
 lib/
 
-# A node's configuration directory holds a private key
-.ernest/
+# A node's private key, in its configuration directory
+private-key.pem
 
 # Editors
 *~

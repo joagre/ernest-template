@@ -2,7 +2,7 @@
 
 The roadmap: what will be built, in what order, and what is built already. Why anything is the way it is belongs to [`log.md`](log.md), and how the program is arranged to [`design.md`](design.md).
 
-Read *Where we are* first, then the milestones to come, in order; the table of milestones done closes the page. A gap stands in the milestone whose item closes it, and a decision the user must make stands in its milestone as a named decision, never as "open".
+Read *Where we are* first, then the milestones to come, in order; the table of milestones done closes the page. A gap stands in the milestone whose item closes it, and a decision the user must make stands as `CLAUDE.md`'s *The work* says.
 
 ## Where we are
 
