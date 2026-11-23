@@ -1,134 +1,166 @@
 # Findings
 
-The full review of commit `d8b7ab4`, read with `ern 0.11.0+93a13b13`, Ernest's candidate archive: K, the cold reader, and D, the documents reader, on Fable 5.2 at high, and C, the code reader, on Opus 5.5 at xhigh. S has no part, since the template takes no input from another party. A line per finding, each by its reader's letter and number. A finding of Ernest's is marked *Ernest's*, and K's and D's are numbered KE and DE, apart from their lists. Each reader's whole list stands below the lines. The sort, each line's verdict and each fix's shape come next.
+The full review of commit `d8b7ab4`, read with `ern 0.11.0+93a13b13`, Ernest's candidate archive: K, the cold reader, and D, the documents reader, on Fable 5.2 at high, and C, the code reader, on Opus 5.5 at xhigh. S has no part, since the template takes no input from another party. A line per finding, each by its reader's letter and number. A finding of Ernest's is marked *Ernest's*, and K's and D's are numbered KE and DE, apart from their lists. Each reader's whole list stands below the lines.
 
-K read the Makefile, the launcher, `src/name.ern`, `package.conf` and the issue forms, which its brief leaves out; its findings stand, and the sort weighs that.
+K read the Makefile, the launcher, `src/name.ern`, `package.conf` and the issue forms, which its brief leaves out; its findings stand.
 
-## K, the cold reader
+## Where each fix goes
 
-- K1: README step 2's `make test` cannot pass before steps 3 and 6.
-- K2: a clone with `.git` removed fails `make test`; after `git init` with nothing staged the documents' check reads nothing and passes.
-- K3: in an unpacked archive with an Erlang application, `make`, `make run` and `make doc` stop at `erl/<app> is empty`.
-- K4: `make -j` fails from a clean tree that names a package; nothing orders `build` after `lib`.
-- K5: an installed launcher reached through a symbolic link does not find the program.
-- K6: `make release` ships the compiled form and the page of an untracked module.
-- K7: a library module named `index` loses its page, and `docs/man/README.md` links to it.
-- K8: `bin/<name> --config-dir` with no directory answers in the shell's words.
-- K9: `make clean` leaves what `make lib` built under `erl/`.
-- K10: `make release` refuses a build of `ern` that is no release only after tests and pages; the README does not say it refuses one.
-- K11: the checker reports one comment under `src/` twice.
-- K12: `make test` in an unpacked archive fails with `ern format: tools: no such file`.
-- K13: `<name>` stays in a finished README; a library keeps *Running* and the `make run` and `make install` lines.
-- K14: nothing in a copy's tree says which tag of the template it was begun from.
-- K15: the README does not say what an example is given.
-- K16: the README does not say what a module under `test/` holds or where it runs.
-- K17: the README does not give the form of a design citation.
-- K18: the README does not say what "names the project's history" refuses.
-- K19: the build's needs beyond `ern` are not listed: git, `cpio`, `sha256sum`.
-- K20: *Running* does not say the launcher needs `ern` on `PATH` or `ERN`.
-- K21: `make run` passes the program no argument.
-- K22: no step says `src/name.ern` goes.
-- K23: another application's `priv/` is refused only at install and release, and the remedy is unexplained.
-- K24: an unpacked release runs only under the build of `ern` that compiled it (not run).
-- K25: `docs/man/` holds CommonMark, which `man` does not read.
-- K26: `LICENSE` keeps the template author's copyright line.
-- K27: small matters: the epigraph and "the line under the title", `make examples` with no example, `ACKNOWLEDGMENTS.md` not shipped, the pictures in every archive, stray spaces in two echoed commands.
-- KE1, *Ernest's*: `ern doc src` overwrites the page of a root module named `index` with its listing, in silence.
-- KE2, *Ernest's*: `ern doc` has no place for the pages apart from the `.erc`.
-- KE3, *Ernest's*: the library has no `List.findIndex`.
-- KE4, *Ernest's*: `ern format --check` answers with a bare path.
-- KE5, *Ernest's*: `ern format` hangs a long call's arguments under its bracket.
-- KE6, *Ernest's*: the installation's version text is `0.11.0+93a13b13`, no release.
-- KE7, *Ernest's*: the guide points outside the installation for a module's documentation.
-- KE8, *Ernest's*: forms repeated in the Ernest K wrote, with counts.
-- KE9, *Ernest's*: messages that needed no guessing (no ask).
+A fix is carried as the file it touches is.
 
-## C, the code reader
+- **To the copies whole**, from the next tag: `tools/docs.ern` (K2, K11, C8, C9, C14 to C16, C18, C20 to C24, C26, C27, C29 to C31, C33 to C35, C37, C39 to C46, D12, and Q2 and Q3), `docs/full_review.md` (D3, D4, D5, D25's reading), `CLAUDE.md` (D7, D11, D16, D25's row, and Q5), and, by Q4, the Makefile but its variables, the launcher, `docs/release.md` and the new `docs/build.md`.
+- **To Ernest's session first**, for its agreement, since its file is upstream: each change to `CLAUDE.md` and `docs/agents.md`. Ernest's session is also told of Q4, which its own file does not take.
+- **The parts the same everywhere**, taken whole by Q4: the Makefile below its variables (K3, K4, K6, K7, K9, K10, K12, K27, C1, C2, C12, C17, C19, C28, C38, Q1, Q6), the launcher (K5, K8), and `docs/release.md` (D5, D14). `.gitignore` (D2) stays a copy's own, and each copy is told of the line.
+- **The template's own**, its README's steps and *Building*, `TEMPLATE.md`, `src/name.ern`, and the starters `docs/README.md`, `docs/design.md`, `docs/plan.md` and `CHANGES.md`: no copy takes them. Each copy is told where it has a sentence that a fix changed here, and decides for itself.
+- **Ernest's lines** go to `docs/language_feedback.md`, which Ernest's session reads.
 
-- C1: `install` and `uninstall` take any directory at `PREFIX/lib/NAME` for the program's and remove it, and `share/doc/NAME` unchecked.
-- C2: a package under `lib/` that is a link is copied whole into the archive and the installation, `.git/` and `.env` among it.
-- C3: `make release` packs an uncommitted working tree.
-- C4: the `lib` loop stops `make` and `make run` in an unpacked archive with no `erl/`.
-- C5: `all: lib build` lets `make -j` build before anything is unpacked.
-- C6: the launcher's `--config-dir` with an empty or missing value runs silently not as a node, or fails in the shell's words.
-- C7: the history check refuses plain English words, so a program whose domain has milestones, plans or dates cannot write its own code.
-- C8: the path check reads the log and the proposals, which name paths that are gone or not yet written.
-- C9: an Ernest block of the README that quotes a comment line is refused.
-- C10: `install` builds nothing, so an installed archive runs only under the `ern` build that made it, and a checkout's stale `build/` installs.
-- C11: the launcher's root is wrong through a link of its own name, or with `CDPATH` set.
-- C12: `|| true` in `release` hides a failed copy of the launcher.
-- C13: the checker's own Markdown reading fails on a lone backtick, a longer fence and an indented table row.
-- C14: the path check holds a path to the working tree, not to what git tracks.
-- C15: the checker cannot read a tracked name past ASCII.
-- C16: "docs: not UTF-8" names no file.
-- C17: `make clean` leaves `erl/`'s build and removes any directory under `lib/`.
-- C18: an `export let` test is no test to the checker.
-- C19: `release` refuses a development `ern` only after `test` and `doc`.
-- C20: `findsPaths` passes with the wildcard, metavariable and space rules removed.
-- C21: `findsCitations` passes with `listed`'s comma and next-line rules broken.
-- C22: `findsTested` passes with the blank-line rule broken.
-- C23: `findsHistory` and `findsNotes` pass with any one refused form removed.
-- C24: `readsItems` passes with the item's indentation rule removed.
-- C25: `src/name.ern`'s test passes whatever the module does.
-- C26: `tools/docs.ern` cites CLAUDE.md's *Writing* for two rules it does not state.
-- C27: the checker's comment on two spaces before `#` does not say what the code does.
-- C28: three Makefile comments no longer hold.
-- C29: the checker's header leaves out code it runs.
-- C30: 22 sites of `… == false` where Ernest has `!`.
-- C31: each check reads the documents again, and the reading is spread over ten functions named as nouns.
-- C32: four fence trackers and three state records where one pass would do.
-- C33: `notice` repeats 150, and 5000 stands bare at four sites.
-- C34: `isChecked` and `numbered` stand under another banner than their users'.
-- C35: slices by `String.size` where `stripSuffix` and `stripPrefix` would do, and two one-clause matches.
-- C36: sentinels where `Optional` would say "nothing begun".
-- C37: "names nothing" is the one finding with no line number.
-- C38: three Makefile forms: a `foreach` over one value, two ways to copy the `.erc`, an eight-line sentence.
-- C39: the checker's tests carry `///`, the form its own rule says carries no citation.
-- C40: `quoted` and `commands` answer the opposite of their names.
-- C41: `read` names three things.
-- C42: `sectionsIn` answers a note's lines; rename it.
-- C43: `isNumber` asks only whether a word begins with a digit.
-- C44: `isMeasured` also chooses the commands' files, and `isChecked` does not say what is checked.
-- C45: `line` is both a line's text and its number, and a number has three names.
-- C46: five names that do not say what they are.
-- C47, *Ernest's*: `Markdown.parse` gives no block a position, so a tool that names a line writes its own reader.
-- C48, *Ernest's*: `ern test` runs a `.erc` under a directory that `ern build` would refuse.
-- C49, *Ernest's*: the installation prints `ern 0.11.0+93a13b13`, no release.
-- C50, *Ernest's*: forms repeated: a time on every local `Fs` call, and `index + 1` at five sites (no ask).
+## The sort
 
-## D, the documents reader
+Each line ends in its verdict. **Fix** gives the fix's shape. **Drop** gives the reason. **Ernest** makes a line of `docs/language_feedback.md`. **Fix, by Qn** follows the user's decision n below. A line that repeats another names it.
 
-- D1: TEMPLATE.md §4 says the compiled modules run "under any release of its floor"; report §11.2 refuses another build's.
-- D2: `.ernest/` is not a configuration directory, so `.gitignore` does not keep a node's key out.
-- D3: `full_review.md` says a reader writes its list to a file; `agents.md` says an agent cannot.
-- D4: `full_review.md` says "the `ern` the Makefile names"; `package.conf` names it.
-- D5: a fresh clone of a program that names a package stops at `make lib`; `full_review.md` and `release.md` do not say the archives come first.
-- D6: no document says a package's modules stand under its name, which §11.9 holds.
-- D7: three lifetimes for a line of `language_feedback.md`.
-- D8: TEMPLATE.md §1 says an application has no Erlang of its own and no section numbers to cite.
-- D9: TEMPLATE.md §2 cites §8.4 and §11.2 for `priv/`, which they do not state.
-- D10: README and Makefile say `make clean` removes what `make lib` wrote; `erl/`'s build stays.
-- D11: CLAUDE.md and the README promise later releases; TEMPLATE.md gives the reason they cannot.
-- D12: `tools/docs.ern` cites CLAUDE.md's *Writing* for two rules it does not state.
-- D13: the release's steps are listed in TEMPLATE.md §6 and `release.md`, and differ.
-- D14: the note's contents are stated three times.
-- D15: `ern 0.11.0` is written in the README and the issue form beside `package.conf`.
-- D16: the template's four files are listed four times, and nothing says how a copy takes a change to the rest that is "the same everywhere".
-- D17: the catalogue of documents lives in three places, and `docs/README.md` omits four.
-- D18: the targets are listed three times and differ; "eleven targets".
-- D19: TEMPLATE.md's *The floor* uses the report's word for another thing.
-- D20: `deploy/` is named four times and defined nowhere.
-- D21: the launcher, the archive and the installation are stated only in TEMPLATE.md §4, which a copy removes.
-- D22: the placeholder says to rename `src/name.ern`, which no step says; the epigraph is unexplained.
-- D23: "manual pages" for what `make doc` writes, which are CommonMark.
-- D24: TEMPLATE.md §5 says the design is not cited by number from outside, yet the note and the issue form cite it.
-- D25: smaller: CLAUDE.md's *Building* row covers *Running*, "the stronger model", pictures no document shows, "its types", "all the code", the plan's restated rule.
-- D26: CLAUDE.md's release archive beside TEMPLATE.md's "unreleased builds".
-- DE1, *Ernest's*: the installation is no release, and its `CHANGES.md` stops at 0.10.0.
-- DE2, *Ernest's*: the report is silent on `priv` outside a named package.
-- DE3, *Ernest's*: no way to carry a runnable program to another build of `ern`.
-- DE4, *Ernest's*: the configuration directory has no customary name or place.
-- DE5, *Ernest's*: a development build passes `ern build` as its release, so the Makefile matches the version text.
+The questions, each decided by the user:
+
+- **Q1, decided: `install` depends on `all`.** K24, C10, D1, DE3: a compiled module runs only under the build of `ern` that wrote it. `install` depends on `all`, as Ernest's own does, so that another `ern` rebuilds the stale modules from the archive's source, and a checkout's stale `build/` is built again. TEMPLATE.md §4 says that the compiled modules serve an operator of the same release, and *Running* that an installed program is installed again from its archive after its `ern` changes.
+- **Q2, decided: the project's own forms alone.** C7, K18: a bare word passes. The check refuses a milestone, step or item with its number, `Milestone 2` or `item 4`; a finding by its letter and number after the word "finding"; the name of the plan's or the findings' file; `the log's *…*`; and a date in a comment. The README names those kinds.
+- **Q3, decided: the indented table row now, the rest for Ernest.** C13: the checker tests a table row on its trimmed line. The lone backtick and the longer fence wait for `Markdown.parse` with lines, C47, whose line in `language_feedback.md` names them; the checker then reads by it, and its own reading goes.
+- **Q4, decided: a copy takes them whole, and they gain a document.** D16, D21: `CLAUDE.md`'s *What is the user's* names every file a copy takes whole from the tag: the four it names, with their exceptions; the Makefile but its variables; the launcher, under the program's name; and `docs/release.md`. TEMPLATE.md §4 moves to `docs/build.md`, which a copy keeps and takes whole. TEMPLATE.md §8, `docs/full_review.md` and `docs/log.md`'s first entry point at the list. `.gitignore` and the issue forms stay a copy's own, and each copy is told what changed in them.
+- **Q5, decided: a release or a named candidate.** D26: `CLAUDE.md`'s sentence reads that the `ern` is installed from an archive of Ernest's, a release or a candidate Ernest's session names, as a user installs it, and never from a checkout; a commit that needs an unreleased `ern` is pushed only after that release. TEMPLATE.md §4 keeps a development build passing. Agreed with Ernest's session first.
+- **Q6, decided: both forms in a library's archive.** K25, D23: `make doc` runs `ern doc src` and `ern doc --man src`. A library's archive carries the roff pages under `docs/man/man3/`, where `man -M` finds them, and the CommonMark under `docs/modules/`, its index as the README. The documents call the CommonMark "the module pages" and the roff "the manual pages". An application's `install` puts no manual page, as before.
+- **Q7, decided: the family's line.** D22: every application begun from the template keeps the epigraph, and TEMPLATE.md §3 says so in a sentence.
+- **Q8, decided: the texts as they stand.**
+  - K2: `docs: git tracks no file here; git add the repository's files first`
+  - K6, C3: `a release is made from committed files alone, and these are not:`, and the files, a line each
+  - K8, C6: `<name>: --config-dir takes a directory: <name> --config-dir dir [argument]...`
+  - K10, C19: `a release is not made with a development build of ern, and this is ern <version>`
+  - K12: `make test runs in a checkout of <name>, and this directory has no tools/`
+  - C1: `<PREFIX>/lib/<name> is there already and holds no installation of <name>`, and for `uninstall` `<PREFIX>/lib/<name> holds no installation of <name>`
+
+### K, the cold reader
+
+- K1: README step 2's `make test` cannot pass before steps 3 and 6. **Fix**. Step 2 says that the template's own lines fail until steps 3 and 6, and `make test` closes step 6.
+- K2: a clone with `.git` removed fails `make test`; after `git init` with nothing staged the documents' check reads nothing and passes. **Fix**. A copy that is a clone without `.git` begins with `git init` and `git add -A`. The checker refuses where git tracks no file (Q8).
+- K3: in an unpacked archive with an Erlang application, `make`, `make run` and `make doc` stop at `erl/<app> is empty`. **Fix**, with C4. `lib`'s loop over `ERL_DEPS` runs only where `erl/` stands.
+- K4: `make -j` fails from a clean tree that names a package; nothing orders `build` after `lib`. **Fix**, with C5. `build: lib`.
+- K5: an installed launcher reached through a symbolic link does not find the program. **Fix**, with C11. The launcher resolves its own path through links, and runs `cd` with `CDPATH` empty.
+- K6: `make release` ships the compiled form and the page of an untracked module. **Fix**, with C3 and C38's two copies. In a checkout, `release` refuses a changed tracked file and an untracked file under `src/` (Q8), and copies the `.erc` one way.
+- K7: a library module named `index` loses its page, and `docs/man/README.md` links to it. **Fix**. The listing is left out by its path, `./index.md`.
+- K8: `bin/<name> --config-dir` with no directory answers in the shell's words. **Fix**, with C6. The launcher refuses `--config-dir` without a value (Q8). An empty value goes to `ern`, which refuses it.
+- K9: `make clean` leaves what `make lib` built under `erl/`. **Fix**, with C17 and D10. The README and the Makefile say that `make clean` leaves what each Erlang application built. `clean` removes `lib/<name>` only where `lib/<name>-*.tar.gz` stands beside it.
+- K10: `make release` refuses a build of `ern` that is no release only after tests and pages; the README does not say it refuses one. **Fix**, with C19. The release check runs before `test` and names the version it found (Q8). The README's `make release` line says "with a release of `ern`".
+- K11: the checker reports one comment under `src/` twice. **Fix**. A module's comment line is read once.
+- K12: `make test` in an unpacked archive fails with `ern format: tools: no such file`. **Fix**. `make test` refuses where there is no `tools/` (Q8).
+- K13: `<name>` stays in a finished README; a library keeps *Running* and the `make run` and `make install` lines. **Fix**. Step 1 replaces `NAME` and `<name>`, and says what a library removes: *Running*, and the `make run` and `make install` lines.
+- K14: nothing in a copy's tree says which tag of the template it was begun from. **Fix**. Step 3 says where the tag is read: the template's newest tag on its GitHub page.
+- K15: the README does not say what an example is given. **Fix**. A sentence on what an example is given and must write.
+- K16: the README does not say what a module under `test/` holds or where it runs. **Fix**. A sentence on `test/`: modules of tests that run the program, the checkout their working directory.
+- K17: the README does not give the form of a design citation. **Fix**. Step 2 gives the form `// design §n: …` above a test, and the rule that every section is cited.
+- K18: the README does not say what "names the project's history" refuses. **Fix**, by Q2.
+- K19: the build's needs beyond `ern` are not listed: git, `cpio`, `sha256sum`. **Fix**. The README names git, `cpio` and `sha256sum`. **Drop** macOS: Ernest is tested on Linux.
+- K20: *Running* does not say the launcher needs `ern` on `PATH` or `ERN`. **Fix**. *Running* says that the launcher runs the `ern` on `PATH`, or `ERN`.
+- K21: `make run` passes the program no argument. **Fix**. The `make run` line says that arguments go through `bin/<name>`.
+- K22: no step says `src/name.ern` goes. **Fix**, with D22. Step 1 renames `src/name.ern` beside `bin/name`.
+- K23: another application's `priv/` is refused only at install and release, and the remedy is unexplained. **Fix**. Step 4 says that only the application of the program's name may carry `priv/`, and another is a package of its own.
+- K24: an unpacked release runs only under the build of `ern` that compiled it (not run). **Fix**, by Q1.
+- K25: `docs/man/` holds CommonMark, which `man` does not read. **Fix**, by Q6.
+- K26: `LICENSE` keeps the template author's copyright line. **Fix**. Step 4 says "with its year and holder".
+- K27: small matters: the epigraph and "the line under the title", `make examples` with no example, `ACKNOWLEDGMENTS.md` not shipped, the pictures in every archive, stray spaces in two echoed commands. **Fix** the step 6 wording, which means line 5, and the epigraph by Q7. **Fix** `ACKNOWLEDGMENTS.md`, which `DOCS` takes beside `THIRD_PARTY_LICENSES`. **Fix** the stray spaces by `$(strip …)`. **Drop** `make examples` with no example, since its message says why. **Drop** the pictures in the archive, since a copy's README may show its own.
+- KE1, *Ernest's*: `ern doc src` overwrites the page of a root module named `index` with its listing, in silence. **Ernest**. `ern doc` overwrites a root module `index`'s page with the listing, in silence.
+- KE2, *Ernest's*: `ern doc` has no place for the pages apart from the `.erc`. **Ernest**. `ern doc` has no root for the pages apart from the `.erc`; K7 fixes the template's own sifting meanwhile.
+- KE3, *Ernest's*: the library has no `List.findIndex`. **Ernest**. No `List.findIndex`.
+- KE4, *Ernest's*: `ern format --check` answers with a bare path. **Ernest**. `ern format --check` says a bare path, not what is wrong.
+- KE5, *Ernest's*: `ern format` hangs a long call's arguments under its bracket. **Ernest**. `ern format` hangs a long call's arguments under its bracket, which a test of one expression cannot avoid.
+- KE6, *Ernest's*: the installation's version text is `0.11.0+93a13b13`, no release. **Ernest**, with C49 and DE1, as one line. The candidate's `CHANGES.md` stops at 0.10.0, though its README is headed 0.11.0. The version text itself is a candidate's, and no finding.
+- KE7, *Ernest's*: the guide points outside the installation for a module's documentation. **Ernest**. Guide §7.1 sends the reader outside the installation, to a page of the repository.
+- KE8, *Ernest's*: forms repeated in the Ernest K wrote, with counts. **Drop**. The reader makes no ask, and the counts are mild.
+- KE9, *Ernest's*: messages that needed no guessing (no ask). **Drop**. No ask.
+
+### C, the code reader
+
+- C1: `install` and `uninstall` take any directory at `PREFIX/lib/NAME` for the program's and remove it, and `share/doc/NAME` unchecked. **Fix**. `install` and `uninstall` refuse a `PREFIX/lib/NAME` that holds no `package.conf` and `build/NAME.erc`, before anything is removed (Q8), and remove `share/doc/NAME` only then.
+- C2: a package under `lib/` that is a link is copied whole into the archive and the installation, `.git/` and `.env` among it. **Fix**. A package under `lib/` is copied as §11.9 has one: `package.conf`, `VERSION`, `src/`, `build/`, `ebin/` and `priv/`.
+- C3: `make release` packs an uncommitted working tree. **Fix**, with K6.
+- C4: the `lib` loop stops `make` and `make run` in an unpacked archive with no `erl/`. **Fix**, with K3.
+- C5: `all: lib build` lets `make -j` build before anything is unpacked. **Fix**, with K4.
+- C6: the launcher's `--config-dir` with an empty or missing value runs silently not as a node, or fails in the shell's words. **Fix**, with K8.
+- C7: the history check refuses plain English words, so a program whose domain has milestones, plans or dates cannot write its own code. **Fix**, by Q2.
+- C8: the path check reads the log and the proposals, which name paths that are gone or not yet written. **Fix**. The path check leaves out the log and the proposals, as the measure does.
+- C9: an Ernest block of the README that quotes a comment line is refused. **Fix**. A part is held against the module as written as well as without its comments.
+- C10: `install` builds nothing, so an installed archive runs only under the `ern` build that made it, and a checkout's stale `build/` installs. **Fix**, by Q1.
+- C11: the launcher's root is wrong through a link of its own name, or with `CDPATH` set. **Fix**, with K5.
+- C12: `|| true` in `release` hides a failed copy of the launcher. **Fix**. `if … then … fi` for the launcher's copy.
+- C13: the checker's own Markdown reading fails on a lone backtick, a longer fence and an indented table row. **Fix**, by Q3, the indented table row; the rest with C47.
+- C14: the path check holds a path to the working tree, not to what git tracks. **Fix**. A path under a tracked top is held to `git ls-files`.
+- C15: the checker cannot read a tracked name past ASCII. **Fix**. `git -c core.quotePath=false ls-files -z`, split at NUL.
+- C16: "docs: not UTF-8" names no file. **Fix**. The message names the file, `docs: <file>: not UTF-8`.
+- C17: `make clean` leaves `erl/`'s build and removes any directory under `lib/`. **Fix**, with K9.
+- C18: an `export let` test is no test to the checker. **Fix**. A leading `export ` is taken off before `let`.
+- C19: `release` refuses a development `ern` only after `test` and `doc`. **Fix**, with K10.
+- C20: `findsPaths` passes with the wildcard, metavariable and space rules removed. **Fix**. Each test gains the case that its finding shows passing broken.
+- C21: `findsCitations` passes with `listed`'s comma and next-line rules broken. **Fix**. Each test gains the case that its finding shows passing broken.
+- C22: `findsTested` passes with the blank-line rule broken. **Fix**. Each test gains the case that its finding shows passing broken.
+- C23: `findsHistory` and `findsNotes` pass with any one refused form removed. **Fix**. Each test gains the case that its finding shows passing broken.
+- C24: `readsItems` passes with the item's indentation rule removed. **Fix**. Each test gains the case that its finding shows passing broken.
+- C25: `src/name.ern`'s test passes whatever the module does. **Fix**. The placeholder's test captures `main`'s output, so that it fails once `main` is written.
+- C26: `tools/docs.ern` cites CLAUDE.md's *Writing* for two rules it does not state. **Fix**, with D12. The two citations of *Writing* go.
+- C27: the checker's comment on two spaces before `#` does not say what the code does. **Fix**. The comment says what the code holds.
+- C28: three Makefile comments no longer hold. **Fix**. The three comments say what the code does.
+- C29: the checker's header leaves out code it runs. **Fix**. The header states the code it runs.
+- C30: 22 sites of `… == false` where Ernest has `!`. **Fix**. `!` for `== false`.
+- C31: each check reads the documents again, and the reading is spread over ten functions named as nouns. **Fix** the names, each function that does something named as a verb. **Drop** the single reading: it changes nothing a user sees, and it would be a rewrite.
+- C32: four fence trackers and three state records where one pass would do. **Drop**. One pass would be a rewrite, and Q3 may replace the reading.
+- C33: `notice` repeats 150, and 5000 stands bare at four sites. **Fix**. `notice` takes `measure`, and one named bound replaces the four 5000s.
+- C34: `isChecked` and `numbered` stand under another banner than their users'. **Fix**. Each function moves to its user.
+- C35: slices by `String.size` where `stripSuffix` and `stripPrefix` would do, and two one-clause matches. **Fix**. `stripSuffix`, `stripPrefix`, the `"make" :: _` pattern and the two one-clause matches.
+- C36: sentinels where `Optional` would say "nothing begun". **Drop**. `Optional` in place of the sentinels would change three state records for no gain a user sees.
+- C37: "names nothing" is the one finding with no line number. **Fix**. "names nothing" gives the line, since a user looks for it.
+- C38: three Makefile forms: a `foreach` over one value, two ways to copy the `.erc`, an eight-line sentence. **Fix**. The `foreach` over one value goes, the two copies of the `.erc` are one (K6), and the eight-line sentence is split.
+- C39: the checker's tests carry `///`, the form its own rule says carries no citation. **Fix**. The tests' comments use `//`.
+- C40: `quoted` and `commands` answer the opposite of their names. **Fix**. Each name says what its value or its work is.
+- C41: `read` names three things. **Fix**. Each name says what its value or its work is.
+- C42: `sectionsIn` answers a note's lines; rename it. **Fix**. Each name says what its value or its work is.
+- C43: `isNumber` asks only whether a word begins with a digit. **Fix**. Each name says what its value or its work is.
+- C44: `isMeasured` also chooses the commands' files, and `isChecked` does not say what is checked. **Fix**. Each name says what its value or its work is.
+- C45: `line` is both a line's text and its number, and a number has three names. **Fix**. Each name says what its value or its work is.
+- C46: five names that do not say what they are. **Fix**. Each name says what its value or its work is.
+- C47, *Ernest's*: `Markdown.parse` gives no block a position, so a tool that names a line writes its own reader. **Ernest**. `Markdown.parse` gives no block a line, and meanwhile the checker misses a lone backtick and a longer fence (C13).
+- C48, *Ernest's*: `ern test` runs a `.erc` under a directory that `ern build` would refuse. **Ernest**. `ern test` runs a `.erc` under a path that `ern build` refuses.
+- C49, *Ernest's*: the installation prints `ern 0.11.0+93a13b13`, no release. **Ernest**, with KE6.
+- C50, *Ernest's*: forms repeated: a time on every local `Fs` call, and `index + 1` at five sites (no ask). **Drop**. The reader makes no ask.
+
+### D, the documents reader
+
+- D1: TEMPLATE.md §4 says the compiled modules run "under any release of its floor"; report §11.2 refuses another build's. **Fix**, by Q1.
+- D2: `.ernest/` is not a configuration directory, so `.gitignore` does not keep a node's key out. **Fix**. `.gitignore` ignores `private-key.pem` where `.ernest/` stood, and TEMPLATE.md drops "whose `.ernest/`". DE4 goes to Ernest.
+- D3: `full_review.md` says a reader writes its list to a file; `agents.md` says an agent cannot. **Fix**. `full_review.md` says that a reader hands its list back as its answer, and the session keeps it.
+- D4: `full_review.md` says "the `ern` the Makefile names"; `package.conf` names it. **Fix**. "an `ern` of the release `package.conf` names".
+- D5: a fresh clone of a program that names a package stops at `make lib`; `full_review.md` and `release.md` do not say the archives come first. **Fix**. `full_review.md` and `release.md` put each archive `ern unpack` names under `lib/` between the clone and `make test`.
+- D6: no document says a package's modules stand under its name, which §11.9 holds. **Fix**. Step 2 and TEMPLATE.md §3 say that the modules stand at `src/<name>.ern` and under `src/<name>/`.
+- D7: three lifetimes for a line of `language_feedback.md`. **Fix**. *The work* in `CLAUDE.md` owns the life of a line, and *Where a fact lives* and TEMPLATE.md §1 point at it. Its `CLAUDE.md` part is agreed with Ernest's session first.
+- D8: TEMPLATE.md §1 says an application has no Erlang of its own and no section numbers to cite. **Fix**. Both phrases go.
+- D9: TEMPLATE.md §2 cites §8.4 and §11.2 for `priv/`, which they do not state. **Fix**. TEMPLATE.md §2 cites §11.9 for a named package's `priv/`, and calls the rest the host's rule. DE2 goes to Ernest.
+- D10: README and Makefile say `make clean` removes what `make lib` wrote; `erl/`'s build stays. **Fix**, with K9.
+- D11: CLAUDE.md and the README promise later releases; TEMPLATE.md gives the reason they cannot. **Fix**. One sentence: `package.conf` names the least release, and a later release may refuse the program until it rises. Its `CLAUDE.md` part is agreed with Ernest's session first.
+- D12: `tools/docs.ern` cites CLAUDE.md's *Writing* for two rules it does not state. **Fix**, with C26.
+- D13: the release's steps are listed in TEMPLATE.md §6 and `release.md`, and differ. **Fix**. TEMPLATE.md §6 points at `release.md`.
+- D14: the note's contents are stated three times. **Fix**. `release.md` owns the note's contents and says that the note is written from the design's diff. `CHANGES.md` and TEMPLATE.md point at it.
+- D15: `ern 0.11.0` is written in the README and the issue form beside `package.conf`. **Fix**. The README says "the release `package.conf` names" without its number. **Drop** the issue form, whose placeholder is an example.
+- D16: the template's four files are listed four times, and nothing says how a copy takes a change to the rest that is "the same everywhere". **Fix**, by Q4.
+- D17: the catalogue of documents lives in three places, and `docs/README.md` omits four. **Fix**. `docs/README.md` names `SECURITY.md` and `assets/README.md`. **Drop** the rest, since *Where a fact lives* names owners and not the catalogue.
+- D18: the targets are listed three times and differ; "eleven targets". **Fix**. TEMPLATE.md names no count, and the README's lines and the Makefile's comment agree on what `make test` holds.
+- D19: TEMPLATE.md's *The floor* uses the report's word for another thing. **Fix**. The paragraph is headed *The least release*.
+- D20: `deploy/` is named four times and defined nowhere. **Fix**. TEMPLATE.md §3's *What appears when needed* names `deploy/`, what an operator reads.
+- D21: the launcher, the archive and the installation are stated only in TEMPLATE.md §4, which a copy removes. **Fix**, by Q4.
+- D22: the placeholder says to rename `src/name.ern`, which no step says; the epigraph is unexplained. **Fix**, with K22. **Fix** the epigraph by Q7.
+- D23: "manual pages" for what `make doc` writes, which are CommonMark. **Fix**, by Q6.
+- D24: TEMPLATE.md §5 says the design is not cited by number from outside, yet the note and the issue form cite it. **Fix**. TEMPLATE.md §5's reason goes, which the note and the issue form contradict.
+- D25: smaller: CLAUDE.md's *Building* row covers *Running*, "the stronger model", pictures no document shows, "its types", "all the code", the plan's restated rule. **Fix** *Read when the job starts*'s row, to *Building* and *Running*, which is the template's own row. **Fix** the pictures' wording, "which the documents may show". **Fix** C's reading in `full_review.md`, which gains `package.conf`, `.gitignore` and `.github/`. **Fix** `plan.md`'s restated rule, which points at `CLAUDE.md`. **Drop** "the stronger model", since the names are the memory's by design. **Drop** "its types", what a copy's design adds.
+- D26: CLAUDE.md's release archive beside TEMPLATE.md's "unreleased builds". **Fix**, by Q5.
+- DE1, *Ernest's*: the installation is no release, and its `CHANGES.md` stops at 0.10.0. **Ernest**, with KE6.
+- DE2, *Ernest's*: the report is silent on `priv` outside a named package. **Ernest**. The report says nothing of `priv` under `--libs-dir` or an `ebin` that `--load-path` names.
+- DE3, *Ernest's*: no way to carry a runnable program to another build of `ern`. **Ernest**. A compiled program cannot be carried to another build of `ern`; with Q1.
+- DE4, *Ernest's*: the configuration directory has no customary name or place. **Ernest**. A configuration directory has no customary name, so a repository cannot keep it out by name.
+- SE1, *Ernest's*, the session's, from Q6's trial: `ern doc --man` titles a library's module `Ernest.Name` in "Ernest Manual", as though it were Ernest's own. **Ernest**.
+- DE5, *Ernest's*: a development build passes `ern build` as its release, so the Makefile matches the version text. **Drop**. The template passes a development build on purpose.
 
 ## K's list
 
