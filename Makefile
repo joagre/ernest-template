@@ -11,7 +11,8 @@
 #                 user reads
 #   make examples each program of examples/ built and run, what it writes
 #                 under build/examples/
-#   make run      runs the program through its launcher
+#   make run      runs the program through its launcher with no argument;
+#                 bin/NAME takes the arguments
 #   make lib      fills lib/: each package package.conf names unpacked there
 #                 from its archive by ern unpack, and then, where erl/ stands,
 #                 each Erlang application under it built by its own make
@@ -69,10 +70,10 @@ GIT           = git -c safe.directory=$(CURDIR)
 # The documents make release and make install take, the user's alone:
 # README.md, LICENSE, THIRD_PARTY_LICENSES, ACKNOWLEDGMENTS.md, CHANGES.md and
 # docs/design.md, each where it exists, and the files under examples/,
-# deploy/ and assets/, whose pictures the documents show. Of those three, a
-# checkout gives the files git tracks, so that no untracked file goes in. An
-# unpacked archive gives every file there but what make examples wrote under
-# EXAMPLES_MADE.
+# deploy/ and assets/, whose pictures the documents may show. Of those three,
+# a checkout gives the files git tracks, so that no untracked file goes in.
+# An unpacked archive gives every file there but what make examples wrote
+# under EXAMPLES_MADE.
 DOCS          = $(strip \
                 $(wildcard README.md LICENSE THIRD_PARTY_LICENSES ACKNOWLEDGMENTS.md \
                     CHANGES.md docs/design.md) \
@@ -219,10 +220,10 @@ erlang = if test -n "$(ERL_DEPS)" && test -d erl; then \
 # that ern unpack takes it: package.conf and VERSION, the launcher where
 # there is one, the sources of SOURCES and the compiled modules, the program's
 # own Erlang at its top, the packages under lib/, the documents of DOCS, and
-# the Makefile, so that make install and make run run in it; every member a
-# directory or a regular file. One shape for an application and a library,
-# so that any archive can be a dependency. Its checksum stands beside it, for
-# `sha256sum -c`.
+# the Makefile, so that make, make run and make install run in it; every
+# member a directory or a regular file. One shape for an application and a
+# library, so that any archive can be a dependency. Its checksum stands
+# beside it, for `sha256sum -c`.
 #
 # Its refusals come first, before make test and make doc run, under make -j
 # too: a development build of ern, whose version text has -dev or +commit

@@ -19,7 +19,7 @@ make test       # in a checkout: the layout, every module's tests, test/ and the
                 # any command whose description stands without its #,
                 # and any Ernest block of the README that no module holds
 make examples   # each program of examples/ built and run, what it writes under build/examples/
-make run        # runs the program through its launcher, bin/<name>, with no argument
+make run        # runs the program through its launcher with no argument; bin/<name> takes them
 make doc        # the module pages under build/, and the manual pages beside them
 make release    # with a release of ern and every file committed: the archive,
                 # build/<name>-<version>.tar.gz, and its checksum beside it
