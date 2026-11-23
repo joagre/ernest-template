@@ -2,7 +2,7 @@
 build/
 *.erc
 
-# What make lib fills: each dependency unpacked, each Erlang application linked
+# The packages package.conf names, each archive and what ern unpack made of it
 lib/
 
 # A node's configuration directory holds a private key

@@ -380,3 +380,15 @@ Read as a timing test, the rule would have run it again on a quiet machine, seen
 ## A long item's file, 2026-11-22
 
 `tools/docs.ern` reported a list item's paragraph past the measure with an empty file name, `:<line>: N words …`, where a line at or before the item's indentation ended it: `counted` called `ended("", reading)`, and `readsItems` compared the lines alone. `counted` now takes the file, and the test compares the file beside the line. Ernest's hunt for a result that is never empty found it, reading the tool (Ernest's log, *A Result Never Empty, Counted*). The template is tagged `v0.10.24`.
+
+## Packages, 2026-11-23
+
+`package.conf` takes the place of the Makefile's floor and dependencies, as Ernest's report §11.9 has them, and the template is tagged `v0.11.0` (Ernest's log, *An Installed Program's Packages*; its plan's MVP 4.4, item 4).
+
+**What went.** `ERN_VERSION`, `DEPS`, `LOAD_PATH`, `RUN_LOAD_PATH`, `DEP_DIRS`, the `version` target, and the loops that fetched and built each dependency. `package.conf`'s `ernest` is the least release, which `ern build` holds the running `ern` to in its own words; `make lib` runs `ern unpack` and then each Erlang application's own make; `ern build src` builds each package before the program. With the target went its line for no `ern` on `PATH`, which the shell now says.
+
+**`lib` is the manifest's alone.** A program's own Erlang stands under `erl/`, each application's `ebin` and `priv` where its make built them, and `--libs-dir erl` names it; nothing is linked under `lib`. The launcher gives its root by `--package-dir` and loses its loop over `lib/*/build`.
+
+**The archive is a package.** It carries `package.conf`, the program's Erlang at its top, every application's beams in one `ebin/` and the `priv/` of the application of the program's name beside it, and no link, so that `ern unpack` takes it. An installation is laid out the same way, and the launcher names its `ebin/` by `--load-path`. Another application's `priv/` is refused, by `release` and `install` alike before either removes or writes anything, since the host would not find it there. `make clean` keeps the archives and the links under `lib/`.
+
+**The checker** reads a paragraph as Ernest's words tool does: a heading, a table row or a tag after a list item that its indentation ended is no prose, `1a.` begins an item, and a paragraph is shown by its first 60 bytes, its last character whole (Ernest's log, *The Three Tools in Ernest*).
