@@ -43,7 +43,7 @@ Everything the program loads beyond the standard library and Ernest's own librar
 
 The tests live in the modules they test, which `make test` runs; `test/`, where it exists, holds tests run end to end, modules of tests that run the program with the checkout as their working directory, and `tools/` the checker of the documents; `make test` runs them too.
 
-`make test` reads the project's history by its own forms, and lets a bare word through. A comment names no milestone, step or item of the plan with its number, no finding by its name after the word "finding", neither the plan's file nor the findings', and no date; it may cite a log entry by its title, `the log's *Title*`. A line of this README, of `CHANGES.md` or of a module names no milestone, step or item with its number. A release's note keeps its dates to its headings, and names no finding, neither file, no log entry and no reader of a review by its kind.
+`make test` reads the project's history by its own forms, and lets a bare word through. A comment names no milestone, step or item followed by a number, whatever it counts; no finding by its name after the word "finding"; neither the plan's file nor the findings'; and no date written year, month and day. It may cite a log entry by its title, `the log's *Title*`. A line of this README, of `CHANGES.md` or of a module under `src/` names no milestone, step or item followed by a number. In the repository, `docs/release.md` gives a release's note its rules, the lines of `CHANGES.md` under a heading such as `## 1.2.0, 2026-11-23`; `make test` refuses there a date outside the heading, a finding, either file, a log entry, and a cold, code, document, independent or security reader.
 
 ## License
 
