@@ -394,3 +394,19 @@ Read as a timing test, the rule would have run it again on a quiet machine, seen
 **An earlier `ern`.** From 0.11.0 on, `ern build` refuses a release earlier than `package.conf`'s and names both. An `ern` before 0.11.0 has no `unpack` and stops `make` at `make lib`, with `ern: no job unpack`, before anything reads `package.conf`. The README says so, and the Makefile checks no release itself: the check is `ern build`'s, and parsing `package.conf` in shell would be a second one, against the report's *one way, one job*.
 
 **The checker** reads a paragraph as Ernest's words tool does: a heading, a table row or a tag after a list item that its indentation ended is no prose, `1a.` begins an item, and a paragraph is shown by its first 60 bytes, its last character whole (Ernest's log, *The Three Tools in Ernest*).
+
+## The full review, 2026-11-23
+
+The template's first full review read `d8b7ab4` with Ernest's 0.11.0 candidate: K, the cold reader, and D, the documents reader, on Fable 5.2 at high, and C, the code reader, on Opus 5.5 at xhigh. S had no part, since the template takes no input from another party. Of 118 findings, 97 were fixed, 6 of those with a part dropped; 15 were Ernest's and became 13 lines of `docs/language_feedback.md`; 6 were dropped. The sort and the readers' lists stand in `docs/findings.md` at `c9bc7c1`, and each commit names the findings it fixed.
+
+**An installation builds.** A compiled module runs only under the build of `ern` that wrote it (§11.2), so an archive installed as it was compiled ran under no other. `make install` now depends on `all`, as Ernest's own does: under the same `ern` it compiles nothing, and under another it builds again from the sources the archive carries. It and `uninstall` refuse a `lib/<name>` under `PREFIX` that holds no installation, before anything is removed.
+
+**The release refuses first.** A development build of `ern`, a tracked file not committed, a file under `src/` that git does not track, and another application's `priv/` are refused before `make test` and `make doc` run, so that a refusal costs nothing and an archive holds only what is committed. A package under `lib/` travels as §11.9 has one, and nothing else of it.
+
+**Both forms of the pages.** `make doc` writes the module pages, CommonMark, and the manual pages, roff, with `ern doc --man`. A library's archive carries the first under `docs/modules/` and the second under `docs/man/man3/`, where `man -M` finds them; `docs/man/` had held CommonMark, which `man` does not read.
+
+**The history check reads the project's forms.** It refused plain words, so that a program whose domain has milestones, plans or readers could not write its own code. A comment now names no milestone, step or item with its number, no finding by its name after the word "finding", neither the plan's file nor the findings', and no date; a log entry's title stays allowed. Paths are held to what git tracks, past ASCII too, each finding with its line, and the logs and the proposals are left out. Where git tracks nothing, the checker refuses rather than passing.
+
+**`docs/build.md`.** The Makefile, the launcher, the archive and the installation were stated only in `TEMPLATE.md` §4, which a copy removes, so a copy kept the code and lost its design. They move to `docs/build.md`, which a copy takes whole beside the Makefile below its variables, the launcher and `docs/release.md`. The README's steps now work in their order, from `git init` to the last `make test`, and each fact of the documents stands once, with its owner. The epigraph is the family's line, which every application begun from the template keeps.
+
+**What waits.** Four changes to `CLAUDE.md`, the release of `ern` among them, wait for Ernest's session's reading and the user's word, as `docs/findings.md` gives them, and so do the messages to Ernest's session and to the copies. Nothing is pushed until Ernest's 0.11.0 is released.
