@@ -8,7 +8,7 @@ What the program is, in a sentence a stranger can read, and what it does. Then o
 
 ## Building
 
-It needs [Ernest](https://ernest-lang.org) on your `PATH`, the release `package.conf` names or a later one, `ern 0.11.0`; `make` says so where an earlier is found. `ERN=path/to/ern make` names another `ern`: its directory stands first on `PATH` for everything the build starts, so whatever names `ern` by its name, a test or an example's shell, runs that one too. A file not called `ern` is not reached this way.
+It needs [Ernest](https://ernest-lang.org) on your `PATH`, the release `package.conf` names or a later one, `ern 0.11.0`. Where an earlier release is found, `ern build` names both; an `ern` before 0.11.0 stops `make` sooner, at `ern unpack`, with `ern: no job unpack`. `ERN=path/to/ern make` names another `ern`: its directory stands first on `PATH` for everything the build starts, so whatever names `ern` by its name, a test or an example's shell, runs that one too. A file not called `ern` is not reached this way.
 
 ```
 make            # builds: lib/ filled, each package and then the program compiled

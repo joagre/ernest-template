@@ -391,4 +391,6 @@ Read as a timing test, the rule would have run it again on a quiet machine, seen
 
 **The archive is a package.** It carries `package.conf`, the program's Erlang at its top, every application's beams in one `ebin/` and the `priv/` of the application of the program's name beside it, and no link, so that `ern unpack` takes it. An installation is laid out the same way, and the launcher names its `ebin/` by `--load-path`. Another application's `priv/` is refused, by `release` and `install` alike before either removes or writes anything, since the host would not find it there. `make clean` keeps the archives and the links under `lib/`.
 
+**An earlier `ern`.** From 0.11.0 on, `ern build` refuses a release earlier than `package.conf`'s and names both. An `ern` before 0.11.0 has no `unpack` and stops `make` at `make lib`, with `ern: no job unpack`, before anything reads `package.conf`. The README says so, and the Makefile checks no release itself: the check is `ern build`'s, and parsing `package.conf` in shell would be a second one, against the report's *one way, one job*.
+
 **The checker** reads a paragraph as Ernest's words tool does: a heading, a table row or a tag after a list item that its indentation ended is no prose, `1a.` begins an item, and a paragraph is shown by its first 60 bytes, its last character whole (Ernest's log, *The Three Tools in Ernest*).
