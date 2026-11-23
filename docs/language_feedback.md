@@ -2,7 +2,7 @@
 
 What writing Ernest felt against the principles, a line each, carried to Ernest as `CLAUDE.md`'s *The work* says. These come from the template's full review at `d8b7ab4` with `ern 0.11.0+93a13b13`, by their findings in `findings.md`.
 
-- **`ern doc` overwrites a root module named `index` in silence** (KE1). A module src/index.ern beside another, then `ern doc src`: status 0, and `build/index.md` is the listing, which links to itself. Principle 3. Ask: refuse the module, or name the listing so that no module can take its name.
+- **`ern doc` overwrites a root module named `index` in silence** (KE1). A module src/index.ern beside another, then `ern doc src`: status 0, and the page of the module `Index` is the listing, which links to itself. Principle 3. Ask: refuse the module, or name the listing so that no module can take its name.
 - **`ern doc` writes its pages where the `.erc` stand** (KE2). The template sifts the `.md` out of the build root by `find`, which lost a module's page named `index` (K7). Principle 2. Ask: `--doc-root dir`.
 - **No `List.findIndex`** (KE3). `List.find` and `List.indexed` stand beside it, and the program writes `Optional.map(List.find(List.indexed(list), …), fn(#(index, _)) = index)`. Principle 1. Ask: `List.findIndex : (List(a), (a) -> Bool) -> Optional(Int)`.
 - **`ern format --check` says a bare path** (KE4). Only the Makefile's echo told the reader that the path meant "not laid out". Principle 3. Ask: each line says what is wrong, `src/name.ern: not laid out`.
