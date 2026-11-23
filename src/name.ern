@@ -10,6 +10,9 @@
 export fn main() : Unit =
     Io.println("name: nothing yet")
 
-// design §1, §2, §3: the program is not written yet; this test goes as real
-// tests cite each section.
-let nothingYet = Test.Case(name = "nothing yet", run = fn() = Test.equal(1 + 1, 2))
+// design §1, §2, §3: the program is not written yet, and main says so; this
+// test fails once main is written, and goes as real tests cite each section.
+let nothingYet = Test.Case(name = "nothing yet", run = fn() = {
+    let #(_, captured) = Test.capture(main);
+    Test.equal(String.fromUtf8(captured.stdout), Some("name: nothing yet\n"))
+})

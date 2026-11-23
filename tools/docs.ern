@@ -1,15 +1,20 @@
 //
 // Docs: the documents held to what they name
 //
+// The documents and the modules are the files git tracks, each name read as
+// written; where git tracks none, the program says so on standard error and
+// ends with status 1.
+//
 // Every backticked path in a tracked document that begins with a directory
-// of the repository names something that is there, or the program says
-// which does not, on standard error, and ends with status 1; the plan and
-// the findings are left out, and so is a path under docs/man/, which a
-// library's archive alone holds. Every prose paragraph past 150 words, which
-// no reader takes in whole, is listed on standard error for its writer to
-// split at its turn, and the program ends with status 1 (CLAUDE.md,
-// *Writing*); the log and the proposals are left out. Fenced code is read as
-// neither.
+// holding a tracked file names a tracked file or a directory that holds one,
+// or a line on standard error names the file, the line and the path, and the
+// program ends with status 1; the plan, the findings, the logs and the
+// proposals are left out, and so is a path under docs/man/ or docs/modules/,
+// which a library's archive alone holds. Every prose paragraph past 150
+// words, which no reader takes in whole, is listed on standard error for its
+// writer to split at its turn, and the program ends with status 1
+// (CLAUDE.md, *Writing*); the log and the proposals are left out. Fenced code
+// is read as neither.
 //
 // A command in a fenced block, an Ernest block aside, gives its description
 // after `#`, so that the block pastes as shell: a line that begins with make,
@@ -23,12 +28,12 @@
 // An Ernest block of the README is quoted from the program and never written
 // for the page. Each part of a block of README.md fenced as `ernest`, the
 // block's lines between two blank lines, stands as consecutive lines in one
-// tracked module under src/, test/ or examples/, once the module's comment
-// lines, each that begins with `//`, its indentation aside, are taken out;
-// lines are compared whole, indentation and all. Each part that does not is
-// a line on standard error naming the file and the line the part begins on,
-// and the program ends with status 1. Where the README is not tracked,
-// nothing is held.
+// tracked module under src/, test/ or examples/, as the module is written or
+// once its comment lines, each that begins with `//`, its indentation aside,
+// are taken out; lines are compared whole, indentation and all. Each part
+// that does not is a line on standard error naming the file and the line the
+// part begins on, and the program ends with status 1. Where the README is not
+// tracked, nothing is held.
 //
 // The design's sections are held both ways, as CLAUDE.md's *The work* asks. A
 // section is a heading of docs/design.md, `## n. Title`; a citation is a
@@ -37,23 +42,27 @@
 // `design §11, §12`, and `§n.m` cites section n. A comment is read as a line
 // that begins with `//`, its indentation aside. Every citation names a
 // section, and every section is cited by a test's comment, the `//` lines
-// directly above a top-level `let` of a `Test.Case`, a doc block not among
-// them; a line on standard error names each that does not, and the program
-// ends with status 1. Where no design is tracked, nothing is held.
+// directly above a top-level `let` of a `Test.Case`, exported or not, a doc
+// block not among them; a line on standard error names each that does not,
+// and the program ends with status 1. Where no design is tracked, nothing is
+// held.
 //
 // The project's history stays out of the code and of what a user reads
-// (CLAUDE.md, *Writing*), read by words. A comment, a line of a tracked
-// module under src/, test/, examples/ or tools/ that begins with `//`, names
-// no step of the plan or item of it, no review's finding or the findings'
-// file, no feedback line by its number and no date of this century; a log
-// entry's title, `the log's *Title*`, is cut out first, and a comment after
-// code or a block comment is not read. A line of the README, of CHANGES.md or
-// of a module under src/ names no step by its short name and a number, or by
-// the plan's word for one. A line of CHANGES.md from its first `## ` heading
-// on, a heading aside, holds no date, no `; *Title*`, and names neither the
-// plan nor a review, its reader or a newcomer. Each finding is a line on
-// standard error naming the file and the line, and the program ends with
-// status 1.
+// (CLAUDE.md, *Writing*), read by the project's own forms, a bare word let
+// through. A comment, a line of a tracked module under src/, test/,
+// examples/ or tools/ that begins with `//`, names no milestone, step or item
+// of the plan by the word and a number after it, MVP among the words and its
+// number written with the space or without; no finding by its name after the
+// word finding; neither the plan's file nor the findings'; and no date of
+// this century. A log entry's title, `the log's *Title*`, is cut out first,
+// and a comment after code or a block comment is not read. A line of the
+// README, of CHANGES.md or of a module under src/, a comment aside, names no
+// milestone, step or item with its number. A line of CHANGES.md from its
+// first `## ` heading on, a heading aside, holds no date and no `; *Title*`,
+// and names no finding by its name, neither file, and no reader of a review
+// by its kind, a cold, code, documents, independent or security reader. Each
+// finding is a line on standard error naming the file and the line, and the
+// program ends with status 1.
 //
 //     make test    runs it, as ern run tools/build/docs.erc
 //
@@ -75,6 +84,11 @@ type Reading =
             item : Bool,
             indent : Int,
             found : List(Paragraph))
+
+// What git tracks, as a backticked path is held to it: the directories at
+// the top that hold a tracked file, each with its "/", and the tracked files
+// with the directories that hold them.
+type Held = Held(tops : List(String), paths : Set(String))
 
 // A word of a comment and the line it stands on.
 type Word = Word(line : Int, text : String)
@@ -111,11 +125,15 @@ let shownBytes : Int = 60
 let notice : String =
     "paragraphs past 150 words, which no reader takes in whole; split each at its turn:"
 
+let untracked : String = "docs: git tracks no file here; git add the repository's files first"
+
 export fn main() : Unit = {
-    let files = tracked("*.md");
+    let names = tracked();
+    let files = List.filter(names, fn(name) = String.endsWith(name, ".md"));
     let modules =
-        List.map(tracked("*.ern"), fn(module) = #(module, String.lines(contents(module))));
-    let tops = directories();
+        List.map(List.filter(names, fn(name) = String.endsWith(name, ".ern")),
+                 fn(module) = #(module, String.lines(contents(module))));
+    let held = heldOf(names);
     let long = List.flatMap(List.filter(files, isMeasured), paragraphsIn);
     if List.isEmpty(long) then
         Unit
@@ -124,7 +142,8 @@ export fn main() : Unit = {
         List.forEach(long, fn(paragraph) = Io.printlnError(shown(paragraph)))
     };
     let missing =
-        List.unique(List.flatMap(List.filter(files, isChecked), fn(file) = missingIn(file, tops)));
+        List.unique(List.flatMap(List.filter(files, isChecked),
+                                 fn(file) = missingIn(file, contents(file), held)));
     let failures =
         missing
             <> commands(files)
@@ -139,79 +158,99 @@ export fn main() : Unit = {
 // The repository
 //
 
-// The files git tracks whose names match the pattern.
-fn tracked(pattern : String) : List(String) =
-    match Os.run(Os.command("git", ["ls-files", pattern]), 5000) {
-        Right(finished) when finished.status == 0 ->
-            textLines(finished.stdout)
-      | _ -> {
-            Io.printlnError("docs: git ls-files failed");
+// The files git tracks, each name as written, past ASCII too; the program
+// ends where git tracks none.
+fn tracked() : List(String) = {
+    let command = Os.command("git", ["-c", "core.quotePath=false", "ls-files", "-z"]);
+    let names = match Os.run(command, 5000) {
+        Right(finished) when finished.status == 0 -> trackedOf(finished.stdout)
+      | _ -> Left("docs: git ls-files failed")
+    };
+    match names {
+        Right(names) ->
+            names
+      | Left(cause) -> {
+            Io.printlnError(cause);
             Os.exit(1)
         }
     }
+}
 
-// The directories at the top of the repository, each with its "/", under
-// which a backticked path is checked.
-fn directories() : List(String) =
-    match Fs.list(Path("."), 5000) {
-        Right(entries) ->
-            List.filterMap(entries, fn(entry) = match #(entry.kind, Path.name(entry.path)) {
-                #(Fs.Directory, Some(name)) when String.startsWith(name, ".") == false ->
-                    Some(name <> "/")
-              | _ ->
-                    None
-            })
-      | Left(error) -> {
-            Io.printlnError("docs: cannot list the repository: " <> Io.show(error));
-            Os.exit(1)
-        }
-    }
+// The names git's output holds, each ended by a NUL, or the line for
+// standard error where it holds none or is not UTF-8.
+fn trackedOf(output : Bytes) : Either(String, List(String)) =
+    Either.andThen(decoded("git ls-files", output), fn(text) = {
+        let names =
+            List.filter(String.split(text, "\u{0}"), fn(name) = String.isEmpty(name) == false);
+        if List.isEmpty(names) then Left(untracked) else Right(names)
+    })
 
-fn contents(file : String) : String =
-    match Fs.read(Path(file), 5000) {
-        Right(bytes) ->
-            text(bytes)
-      | Left(error) -> {
-            Io.printlnError("docs: cannot read " <> file <> ": " <> Io.show(error));
-            Os.exit(1)
-        }
-    }
+// The directories at the top of the repository that hold a tracked file,
+// each with its "/", and every tracked file with each directory that holds
+// it, "a" and "a/b" for "a/b/c.md".
+fn heldOf(names : List(String)) : Held = {
+    let tops =
+        List.filterMap(names,
+                       fn(name) =
+                           Optional.map(String.splitOnce(name, "/"), fn(#(top, _)) = top <> "/"));
+    Held(tops = List.unique(tops), paths = Set.fromList(names <> List.flatMap(names, holdersOf)))
+}
 
-fn text(bytes : Bytes) : String =
-    match String.fromUtf8(bytes) {
-        Some(text) ->
+fn holdersOf(name : String) : List(String) = {
+    let parts = String.split(name, "/");
+    List.map(List.range(1, List.size(parts) - 1),
+             fn(count) = String.join(List.take(parts, count), "/"))
+}
+
+fn contents(file : String) : String = {
+    let read = match Fs.read(Path(file), 5000) {
+        Right(bytes) -> decoded(file, bytes)
+      | Left(error) -> Left("docs: cannot read " <> file <> ": " <> Io.show(error))
+    };
+    match read {
+        Right(text) ->
             text
-      | None -> {
-            Io.printlnError("docs: not UTF-8");
+      | Left(cause) -> {
+            Io.printlnError(cause);
             Os.exit(1)
         }
     }
+}
 
-fn textLines(bytes : Bytes) : List(String) =
-    String.lines(text(bytes))
+// The bytes as text, or the line for standard error, which names what they
+// were read from, where they are not UTF-8.
+fn decoded(source : String, bytes : Bytes) : Either(String, String) =
+    Either.fromOptional(String.fromUtf8(bytes), "docs: " <> source <> ": not UTF-8")
 
 //
 // The paths
 //
 
-// Each backticked path of the file that names nothing, as a line for
-// standard error.
-fn missingIn(file : String, tops : List(String)) : List(String) =
-    List.filterMap(pathsIn(contents(file), tops), fn(path) = match Fs.stat(Path(path), 5000) {
-        Right(_) -> None
-      | Left(_) -> Some(file <> ": `" <> path <> "` names nothing")
-    })
+// Each backticked path of the file's text that git does not hold, as a line
+// for standard error.
+fn missingIn(file : String, text : String, held : Held) : List(String) =
+    List.filterMap(pathsIn(text, held.tops),
+                   fn(#(line, path)) =
+                       if Set.contains(held.paths, path) then
+                           None
+                       else
+                           Some(placeOf(file, line) <> "`" <> path <> "` names nothing"))
 
 // The backticked pieces of the text outside fenced code that begin with one
-// of the tops; a wildcard or a metavariable, `<name>`, names no one file, a
-// piece that ends with "/" names a directory the writer did not mean to pin,
-// one that holds a space is a command line, whose first word is the program
-// the line runs and not a path the document pins, and a manual page is
-// there only in a library's archive.
-fn pathsIn(text : String, tops : List(String)) : List(String) = {
+// of the tops, each with its line; a wildcard or a metavariable, `<name>`,
+// names no one file, a piece that ends with "/" names a directory the writer
+// did not mean to pin, one that holds a space is a command line, whose first
+// word is the program the line runs and not a path the document pins, and a
+// manual page or a module page is there only in a library's archive.
+fn pathsIn(text : String, tops : List(String)) : List(#(Int, String)) = {
     let pieces = String.split(unfenced(text), "`");
-    List.filterMap(List.indexed(pieces), fn(indexed) = match indexed {
-        #(index, piece) when index % 2 == 1 && isPath(piece, tops) -> Some(piece)
+    let #(_, placed) =
+        List.mapFold(pieces,
+                     1,
+                     fn(line, piece) =
+                         #(line + List.size(String.split(piece, "\n")) - 1, #(line, piece)));
+    List.filterMap(List.indexed(placed), fn(indexed) = match indexed {
+        #(index, #(line, piece)) when index % 2 == 1 && isPath(piece, tops) -> Some(#(line, piece))
       | _ -> None
     })
 }
@@ -219,19 +258,21 @@ fn pathsIn(text : String, tops : List(String)) : List(String) = {
 fn isPath(piece : String, tops : List(String)) : Bool =
     List.any(tops, fn(top) = String.startsWith(piece, top))
         && String.startsWith(piece, "docs/man/") == false
+        && String.startsWith(piece, "docs/modules/") == false
         && String.contains(piece, "*") == false
         && String.contains(piece, "<") == false
         && String.contains(piece, " ") == false
         && String.endsWith(piece, "/") == false
 
-// The text without its fenced blocks and their fences.
+// The text with its fenced blocks and their fences as empty lines, so that
+// each line keeps its number.
 fn unfenced(text : String) : String = {
     let kept = List.foldLeft(String.lines(text), #(false, []), fn(acc, line) = match acc {
         #(fence, lines) ->
             if isFence(line) then
-                #(fence == false, lines)
+                #(fence == false, "" :: lines)
             else if fence then
-                acc
+                #(fence, "" :: lines)
             else
                 #(fence, line :: lines)
     });
@@ -249,10 +290,13 @@ fn isFence(line : String) : Bool = {
 // The paragraphs
 //
 
-// Whether a file's paths are checked: the plan names paths not yet written,
-// and the findings the paths of the tree their readers read.
+// Whether a file's paths are checked: the plan and a proposal name paths not
+// yet written, the findings the paths of the tree their readers read, and a
+// log the paths there when its entry was written.
 fn isChecked(file : String) : Bool =
-    file != "docs/plan.md" && file != "docs/findings.md"
+    List.contains(["docs/plan.md", "docs/findings.md", "docs/log.md", "TEMPLATE_LOG.md"], file)
+        == false
+        && String.startsWith(file, "docs/proposals/") == false
 
 // Whether a file's paragraphs are measured: the log is history and a
 // proposal is thinking.
@@ -264,8 +308,8 @@ fn paragraphsIn(file : String) : List(Paragraph) =
 
 // The paragraphs of the text past the measure. A paragraph ends at a blank
 // line, at a fence, at a list item, and where a list item's lines stop being
-// indented past the item; a heading, a table row and a tag begin no
-// paragraph that is measured.
+// indented past the item; a heading, a table row and a tag, each read on its
+// trimmed line, begin no paragraph that is measured.
 fn paragraphsOf(file : String, text : String) : List(Paragraph) = {
     let begun =
         Reading(line = 0,
@@ -327,9 +371,14 @@ fn ended(file : String, reading : Reading) : Reading = {
     Reading(..reading, words = 0, item = false, =found)
 }
 
-// A heading, a table row and an HTML line, which are no prose.
-fn isUnmeasured(line : String) : Bool =
-    String.startsWith(line, "#") || String.startsWith(line, "|") || String.startsWith(line, "<")
+// A heading, a table row and an HTML line, which are no prose, indented or
+// not.
+fn isUnmeasured(line : String) : Bool = {
+    let trimmed = String.trimStart(line);
+    String.startsWith(trimmed, "#")
+        || String.startsWith(trimmed, "|")
+        || String.startsWith(trimmed, "<")
+}
 
 // A list item: "- ", "* ", or a number, a small letter or none, a dot and a
 // space, "1. " or "1a. ".
@@ -490,10 +539,10 @@ fn quoted(files : List(String), modules : List(#(String, List(String)))) : List(
         []
 
 // Each part of the file's Ernest blocks that stands as consecutive lines in
-// none of the modules, once each module's comment lines are taken out, as a
-// line for standard error.
+// none of the modules, as each is written or once its comment lines are
+// taken out, as a line for standard error.
 fn unquoted(file : String, lines : List(String), modules : List(List(String))) : List(String) = {
-    let sources = List.map(modules, fn(module) = framed(uncommented(module)));
+    let sources = List.flatMap(modules, fn(module) = [framed(module), framed(uncommented(module))]);
     List.filterMap(partsOf(lines), fn(part) = unquotedPart(file, part, sources))
 }
 
@@ -627,10 +676,10 @@ fn isTestComment(line : String) : Bool = {
         && (String.startsWith(trimmed, "///") == false || String.startsWith(trimmed, "////"))
 }
 
-// A top-level let of a Test.Case, the Test.Case on its line or, where the
-// formatter split the let after its "=", on the next.
+// A top-level let of a Test.Case, exported or not, the Test.Case on its line
+// or, where the formatter split the let after its "=", on the next.
 fn isTest(line : String, next : String) : Bool =
-    String.startsWith(line, "let ")
+    String.startsWith(Optional.withDefault(String.stripPrefix(line, "export "), line), "let ")
         && (String.contains(line, "Test.Case(")
                 || (String.endsWith(line, "=")
                         && String.startsWith(String.trimStart(next), "Test.Case(")))
@@ -697,16 +746,31 @@ fn cited(text : String) : Optional(Int) =
 // What the history's checks find, as lines for standard error.
 fn timeline(files : List(String), modules : List(#(String, List(String)))) : List(String) = {
     let read = List.filter([readme, changes], fn(file) = List.contains(files, file));
-    let documents = List.map(read, fn(file) = #(file, String.lines(contents(file))));
+    historyIn(List.map(read, fn(file) = #(file, String.lines(contents(file)))), modules)
+}
+
+// What the history's checks find in the documents and the modules, each with
+// its lines: a module's comments under src/, test/, examples/ and tools/,
+// the documents' lines and a module's code under src/, and the notes of the
+// changes.
+fn historyIn(documents : List(#(String, List(String))),
+             modules : List(#(String, List(String)))) : List(String) = {
+    let numbered = List.map(documents, fn(#(file, lines)) = #(file, List.indexed(lines)));
     let sources =
         List.filter(modules,
                     fn(#(module, _)) = isProgram(module) || String.startsWith(module, "tools/"));
-    let printed = List.filter(modules, fn(#(module, _)) = String.startsWith(module, "src/"));
+    let printed =
+        List.filterMap(modules,
+                       fn(#(module, lines)) =
+                           if String.startsWith(module, "src/") then
+                               Some(#(module, codeOf(lines)))
+                           else
+                               None);
     List.flatMap(sources,
                  fn(#(module, lines)) = naming(module, commentsOf(lines), "a comment", historyAt))
-        <> List.flatMap(printed <> documents,
-                        fn(#(file, lines)) = naming(file, List.indexed(lines), "the line", stepAt))
-        <> List.flatMap(List.filter(documents, fn(#(file, _)) = file == changes),
+        <> List.flatMap(printed <> numbered,
+                        fn(#(file, lines)) = naming(file, lines, "the line", stepAt))
+        <> List.flatMap(List.filter(numbered, fn(#(file, _)) = file == changes),
                         fn(#(_, lines)) = naming(changes, sectionsIn(lines), "the note", noteAt))
 }
 
@@ -734,6 +798,11 @@ fn commentsOf(lines : List(String)) : List(#(Int, String)) =
     List.map(List.filter(List.indexed(lines), fn(#(_, line)) = isComment(line)),
              fn(#(index, line)) = #(index, untitled(line)))
 
+// The module's lines by index but its comment lines, which the comments'
+// check reads.
+fn codeOf(lines : List(String)) : List(#(Int, String)) =
+    List.filter(List.indexed(lines), fn(#(_, line)) = isComment(line) == false)
+
 // A comment line: one that begins with "//", its indentation aside.
 fn isComment(line : String) : Bool =
     String.startsWith(String.trimStart(line), "//")
@@ -750,88 +819,102 @@ fn untitled(line : String) : String =
             line
     }
 
-// The lines of the changes from the first heading "## " on, the headings
-// left out.
-fn sectionsIn(lines : List(String)) : List(#(Int, String)) = {
+// The lines by index from the first heading "## " on, the headings left
+// out.
+fn sectionsIn(lines : List(#(Int, String))) : List(#(Int, String)) = {
     let isProse = fn(#(_, line) : #(Int, String)) = String.startsWith(line, "## ") == false;
-    let #(_, sections) = List.span(List.indexed(lines), isProse);
+    let #(_, sections) = List.span(lines, isProse);
     List.filter(sections, isProse)
 }
 
-// What a comment names from its word on: a step of the plan or an item of
-// it, a review's finding or the findings' file, a feedback line or a date.
+// What a comment names from its word on: a milestone, a step or an item with
+// its number, a finding by its name, the plan's file or the findings', or a
+// date.
 fn historyAt(words : List(#(String, String))) : Optional(String) =
+    match #(stepAt(words), recordAt(words), words) {
+        #(Some(kind), _, _) -> Some(kind)
+      | #(_, Some(kind), _) -> Some(kind)
+      | #(_, _, #(_, word) :: _) when isDate(word) -> Some("a date")
+      | _ -> None
+    }
+
+// What a user reads names of the plan from a word on: a milestone, a step or
+// an item by the word and a number after it, "MVP" among the words and its
+// number written with the space or without.
+fn stepAt(words : List(#(String, String))) : Optional(String) =
     match words {
-        #(_, word) :: _ when word == "MVP" || isMilestone(word) ->
+        #(_, word) :: #(_, number) :: _ when isNumber(number) ->
+            numberedKind(word)
+      | #(_, word) :: _ when String.startsWith(word, "MVP") && isNumber(String.drop(word, 3)) ->
             Some("a milestone")
-      | #(_, word) :: #(_, next) :: _ when List.contains(["plan", "plan's"], word)
-            && List.contains(["item", "items"], next) ->
-            Some("a plan item")
-      | #(raw, word) :: _ when raw == "plan,"
-            || (String.startsWith(raw, "(plan") && word == "plan")
-            || String.contains(raw, "docs/plan.md") ->
-            Some("a plan item")
-      | #(_, word) :: #(_, name) :: _ when List.contains(["finding", "findings", "review's"], word)
-            && isFindingName(name) ->
-            Some("a review's finding")
-      | #(raw, word) :: _ when (String.startsWith(raw, "(")
-                                    && (String.endsWith(raw, ",") || String.endsWith(raw, ")"))
-                                    && isFindingName(word))
-            || String.contains(raw, "findings.md") ->
-            Some("a review's finding")
-      | #(_, "feedback") :: #(_, "line") :: #(number, _) :: _ when isNumber(number) ->
-            Some("a feedback line")
-      | #(_, "feedback") :: #(number, _) :: _ when isNumber(number) ->
-            Some("a feedback line")
-      | #(_, word) :: _ when isDate(word) ->
-            Some("a date")
       | _ ->
             None
     }
 
-// What a user reads names of the plan from a word on: "MVP" and a number, a
-// space between or not, or the plan's word for a step.
-fn stepAt(words : List(#(String, String))) : Optional(String) =
+// The kind of a step the word names where a number follows it.
+fn numberedKind(word : String) : Optional(String) =
+    if word == "MVP"
+        || List.contains(["milestone", "milestones", "Milestone", "Milestones"], word) then
+        Some("a milestone")
+    else if List.contains(["step", "steps", "Step", "Steps"], word) then
+        Some("a step")
+    else if List.contains(["item", "items", "Item", "Items"], word) then
+        Some("an item")
+    else
+        None
+
+// What the review's and the plan's records are named by from a word on: a
+// finding's name after the word finding, and the plan's file or the
+// findings'.
+fn recordAt(words : List(#(String, String))) : Optional(String) =
     match words {
-        #(_, "MVP") :: #(number, _) :: _ when isNumber(number) -> Some("a milestone")
-      | #(_, word) :: _ when isMilestone(word)
-            || (String.startsWith(word, "MVP")
-                    && isNumber(String.slice(word, 3, String.size(word)))) -> Some("a milestone")
-      | _ -> None
+        #(_, word) :: #(_, name) :: _ when isFindingWord(word) && isFindingName(name) ->
+            Some("a finding")
+      | #(raw, _) :: _ when namesFile(raw, "plan.md") ->
+            Some("the plan's file")
+      | #(raw, _) :: _ when namesFile(raw, "findings.md") ->
+            Some("the findings' file")
+      | _ ->
+            None
     }
+
+fn isFindingWord(word : String) : Bool =
+    List.contains(["finding", "findings", "Finding", "Findings"], word)
+
+// Whether the word as written names the file at the top or under a
+// directory, the punctuation around it and a trailing "'s" aside.
+fn namesFile(raw : String, file : String) : Bool = {
+    let word = bare(raw);
+    let name = bare(Optional.withDefault(String.stripSuffix(word, "'s"), word));
+    name == file || String.endsWith(name, "/" <> file)
+}
 
 // What a release's note names from a word on that it leaves out, since its
 // reader is a user.
 fn noteAt(words : List(#(String, String))) : Optional(String) =
-    match words {
-        #(_, word) :: _ when isDate(word) -> Some("a date outside its heading")
-      | #(raw, _) :: #(next, _) :: _ when String.endsWith(raw, ";")
+    match #(recordAt(words), words) {
+        #(Some(kind), _) -> Some(kind)
+      | #(_, #(_, word) :: _) when isDate(word) -> Some("a date outside its heading")
+      | #(_, #(raw, _) :: #(next, _) :: _) when String.endsWith(raw, ";")
             && String.startsWith(next, "*") -> Some("a log entry's title")
-      | #(raw, _) :: #(_, "plan") :: _ when raw == "the" || raw == "The" -> Some("the plan")
-      | #(_, word) :: #(_, next) :: _ when isReader(word, next) -> Some("a reader")
-      | #(_, word) :: _ when String.startsWith(word, "review")
-            || String.startsWith(word, "Review") -> Some("a review")
-      | #(_, word) :: _ when String.startsWith(word, "newcomer")
-            || String.startsWith(word, "Newcomer") -> Some("a newcomer")
+      | #(_, #(_, word) :: #(_, next) :: _) when isReader(word, next) -> Some("a reader")
       | _ -> None
     }
 
-// Whether the two words name a review's reader, after an article or the
-// reader's kind, as "the reader" and "a cold reader" do.
+// Whether the two words name a review's reader by its kind, as "a cold
+// reader" does.
 fn isReader(word : String, next : String) : Bool =
-    List.contains(["a", "the", "cold", "code", "independent"], word)
+    List.contains(["cold", "code", "documents", "independent", "security"], word)
         && List.contains(["reader", "readers"], next)
 
-// The word without the punctuation around it.
+// The word without the punctuation around it, a quotation mark among it.
 fn bare(word : String) : String = {
-    let isMark = fn(char : Char) = List.contains(['(', ')', ',', ';', ':', '.', '*', '`'], char);
+    let isMark =
+        fn(char : Char) = List.contains(['(', ')', ',', ';', ':', '.', '*', '`', '"'], char);
     let #(_, rest) = List.span(String.toList(word), isMark);
     let #(_, kept) = List.span(List.reverse(rest), isMark);
     String.fromList(List.reverse(kept))
 }
-
-fn isMilestone(word : String) : Bool =
-    List.contains(["milestone", "milestones", "Milestone", "Milestones"], word)
 
 // A finding's name: one capital or two, a dash or none, and a number, as E4
 // and S-2 are.
@@ -883,7 +966,7 @@ let listsThePastMeasure = Test.Case(name = "lists a paragraph past the measure",
 
 /// A heading, a table row, a tag and fenced code are not measured, and nor
 /// is a heading, a table row or a tag that ends a list item by its
-/// indentation.
+/// indentation, nor one indented under a list item after a blank line.
 let leavesUnmeasured =
     Test.Case(name = "leaves a heading, a table, a tag and a fence unmeasured", run = fn() = {
         let text =
@@ -901,25 +984,33 @@ let leavesUnmeasured =
                 <> pastMeasure
                 <> "\n\n- item\n<"
                 <> pastMeasure
+                <> "\n\n- item\n\n  # "
+                <> pastMeasure
+                <> "\n\n  | "
+                <> pastMeasure
+                <> "\n\n  <"
+                <> pastMeasure
                 <> "\n";
         Test.equal(paragraphsOf("f.md", text), [])
     })
 
 /// A list item is a paragraph of its own, which ends at the next item and
-/// where its lines stop being indented past it; a numbered item may carry a
-/// letter.
+/// where its lines stop being indented past it, a long line after it among
+/// them; a numbered item may carry a letter.
 let readsItems = Test.Case(name = "reads a list item as a paragraph", run = fn() = {
     let text =
         "- "
             <> pastMeasure
             <> "\n- short\n  "
             <> pastMeasure
-            <> "\nplain after\n1a. "
+            <> "\n"
+            <> pastMeasure
+            <> "\n1a. "
             <> pastMeasure
             <> "\n";
     Test.equal(List.map(paragraphsOf("f.md", text),
                         fn(paragraph) = #(paragraph.file, paragraph.line)),
-               [#("f.md", 1), #("f.md", 2), #("f.md", 5)])
+               [#("f.md", 1), #("f.md", 2), #("f.md", 4), #("f.md", 5)])
 })
 
 /// A paragraph is shown by its first 60 bytes, a character they cut short
@@ -930,33 +1021,79 @@ let showsTheBeginning = Test.Case(name = "shows a paragraph's first bytes", run 
                ["f.md:1: 152 words  " <> String.repeat("a", 59)])
 })
 
-/// A backticked path under a top is found outside fenced code; one with a
-/// wildcard, a metavariable, a space, which makes it a command line, or a
-/// trailing "/" is not, nor a manual page, nor one under no top.
+/// A backticked path under a top is found outside fenced code, with its
+/// line; one with a wildcard, a metavariable, a space, which makes it a
+/// command line, or a trailing "/" is not, nor a manual page or a module
+/// page, nor one under no top.
 let findsPaths = Test.Case(name = "finds the backticked paths", run = fn() = {
     let text =
         "see `src/a.ern` and `lib/*/build`, `bin/<name>`, `src/`, `other/x`\n"
             <> "`bin/a --config-dir dir b.json`\n"
-            <> "```\n`src/fenced.ern`\n```\n`docs/b.md`, `docs/man/m.md`";
-    Test.equal(pathsIn(text, ["src/", "docs/"]), ["src/a.ern", "docs/b.md"])
+            <> "```\n`src/fenced.ern`\n```\n`docs/b.md`, `docs/man/m.md`, `docs/modules/m.md`";
+    Test.equal(pathsIn(text, ["src/", "docs/", "lib/", "bin/"]),
+               [#(1, "src/a.ern"), #(6, "docs/b.md")])
+})
+
+/// A path is held to what git tracks: a tracked file and a directory that
+/// holds one name something, and a file git does not track names nothing,
+/// a line naming the file and the line; the tops are the directories at the
+/// top that hold a tracked file.
+let holdsPathsToGit = Test.Case(name = "holds a path to what git tracks", run = fn() = {
+    let held = heldOf(["README.md", "src/a.ern", "docs/sub/b.md"]);
+    let text = "`src/a.ern` and `docs/sub`, `docs/sub/b.md`\n\n`docs/notes.txt`, `README.md`\n";
+    Test.equal(#(held.tops, missingIn("f.md", text, held)),
+               #(["src/", "docs/"], ["f.md:3: `docs/notes.txt` names nothing"]))
+})
+
+/// The plan, the findings, the logs and the proposals have no path checked.
+let leavesPathsUnchecked =
+    Test.Case(name = "leaves the plan, the logs and the proposals", run = fn() = {
+        let files =
+            ["README.md",
+             "docs/plan.md",
+             "docs/findings.md",
+             "docs/log.md",
+             "TEMPLATE_LOG.md",
+             "docs/proposals/cache/proposal.md",
+             "docs/design.md"];
+        Test.equal(List.filter(files, isChecked), ["README.md", "docs/design.md"])
+    })
+
+/// git's output is read at each NUL, a name past ASCII as written; where it
+/// holds no name, the line for standard error says to add the files.
+let readsTracked = Test.Case(name = "reads the names git tracks", run = fn() = {
+    let names = String.toUtf8("README.md\u{0}docs/caf\u{e9}.md\u{0}");
+    Test.equal(#(trackedOf(names), trackedOf(String.toUtf8(""))),
+               #(Right(["README.md", "docs/caf\u{e9}.md"]),
+                 Left("docs: git tracks no file here; git add the repository's files first")))
+})
+
+/// A file that is not UTF-8 is named in the line for standard error.
+let namesTheUndecoded = Test.Case(name = "names a file that is not UTF-8", run = fn() = {
+    let cut = Bytes.slice(String.toUtf8("caf\u{e9}"), 0, 4);
+    Test.equal(decoded("docs/latin1.md", cut), Left("docs: docs/latin1.md: not UTF-8"))
 })
 
 /// A citation is a "§n" after the word design in a comment, on its line or
 /// the next, or after a citation and its comma, "§n.m" citing section n;
-/// one after another word, and a comment after code on its line, cite
-/// nothing. A citation of no section is a line naming the module and the
-/// line.
+/// one after another word, one after a citation with no comma, one two lines
+/// after the word, and a comment after code on its line, cite nothing. A
+/// citation of no section is a line naming the module and the line.
 let findsCitations = Test.Case(name = "finds the design's citations", run = fn() = {
     let text =
         "// a rule (design §2) and the\n"
             <> "    // design §3.1, §4: what the formatter writes\n"
             <> "let value = 1 // design §9\n"
             <> "/// as the design\n"
-            <> "/// §5, report §6, says\n";
+            <> "/// §5, report §6, says\n"
+            <> "// design §2 §3\n"
+            <> "// as the design\n"
+            <> "//\n"
+            <> "// §4 two lines on\n";
     Test.equal(#(List.map(citationsIn(commentWords(String.lines(text))),
                           fn(citation) = #(citation.line, citation.section)),
                  unknownIn("src/a.ern", String.lines(text), [2, 3, 4])),
-               #([#(1, 2), #(2, 3), #(2, 4), #(5, 5)],
+               #([#(1, 2), #(2, 3), #(2, 4), #(5, 5), #(6, 2)],
                  ["src/a.ern:5: design §5 is no section of docs/design.md"]))
 })
 
@@ -970,8 +1107,10 @@ let readsSections = Test.Case(name = "reads the design's sections", run = fn() =
 })
 
 /// A test cites what its comment cites, the lines of "//" directly above its
-/// let, whether the formatter split the let or not; a doc block cites
-/// nothing a test names, nor does the comment of a let that is no test.
+/// let, whether the formatter split the let or not and whether the let is
+/// exported or not; a doc block cites nothing a test names, nor does the
+/// comment of a let that is no test, nor a comment a blank line parts from
+/// its test.
 let findsTested = Test.Case(name = "finds the sections the tests cite", run = fn() = {
     let text =
         "// design §1, §2: one test.\n"
@@ -980,68 +1119,103 @@ let findsTested = Test.Case(name = "finds the sections the tests cite", run = fn
             <> "let second =\n    Test.Case(name = \"b\", =run)\n\n"
             <> "/// design §4: a doc block.\n"
             <> "let third = Test.Case(name = \"c\", =run)\n\n"
-            <> "// design §5: no test.\nlet value = 5\n";
-    Test.equal(testedIn(String.lines(text)), [1, 2, 3])
+            <> "// design §5: no test.\nlet value = 5\n\n"
+            <> "// design §6: exported.\n"
+            <> "export let fourth = Test.Case(name = \"d\", =run)\n\n"
+            <> "// design §7: a blank line below.\n\n"
+            <> "let fifth = Test.Case(name = \"e\", =run)\n";
+    Test.equal(testedIn(String.lines(text)), [1, 2, 3, 6])
 })
 
-/// A comment line names no step of the plan or item of it, no review's
-/// finding, no feedback line and no date; a string, a comment after code,
-/// a date a time follows, the epoch, a log entry's title and a word that
-/// holds a refused one are let through. A regression test, written after the
-/// check; it does not cover each form in each position.
+/// A comment line names no milestone, step or item of the plan with its
+/// number, no finding by its name after the word, neither the plan's file
+/// nor the findings', and no date, one form a line; a string, a comment
+/// after code, a bare word, a name with no word before it, a date a time
+/// follows, the epoch and a log entry's title are let through.
 let findsHistory = Test.Case(name = "finds the history a comment names", run = fn() = {
     let refused =
-        "// as the MVP had it, the Milestones ahead\n"
-            <> "    /// the plan item, (plan, step 2) and the plan, the log\n"
-            <> "// review's E4 and (T3, T13), feedback 209, findings.md\n"
-            <> "// finding S-2, feedback line 4, written 2026-11-07.\n";
+        "// as Milestone 2 had it\n"
+            <> "// the MVP 4 of it\n"
+            <> "    /// built in MVP4.\n"
+            <> "// (step 3) of it\n"
+            <> "// items 4 and more\n"
+            <> "// as finding C7 says\n"
+            <> "// the findings S-2 and more\n"
+            <> "// in `docs/plan.md`'s order\n"
+            <> "// the findings.md file\n"
+            <> "// written 2026-11-07.\n";
     let allowed =
-        "let y = \"MVP 4, 2026-11-07\" // milestone\n"
-            <> "// at 2026-11-07T10:00:00Z, the MVPs, planned (planning) and (E)\n"
-            <> "/// since the epoch, 1970-01-01, the log's *A Day, 2026-11-07*, as said\n"
-            <> "// feedback lines, findings (ABC1), a review's Ernest, the plans\n";
+        "let y = \"Milestone 2, 2026-11-07\" // step 3\n"
+            <> "// type Milestone = the plan, the stops and the legs\n"
+            <> "// at 2026-11-07T10:00:00Z, the MVPs 4, (A4), the reader now\n"
+            <> "/// since the epoch, 1970-01-01, the log's *Milestone 2, 2026-11-07*, as said\n"
+            <> "// feedback line 4, a review's E4, the plan item, steps ahead, myplan.md\n";
     Test.equal(#(naming("m.ern", commentsOf(String.lines(refused)), "a comment", historyAt),
                  naming("m.ern", commentsOf(String.lines(allowed)), "a comment", historyAt)),
                #(["m.ern:1: a comment names a milestone",
-                  "m.ern:2: a comment names a plan item",
-                  "m.ern:3: a comment names a review's finding",
-                  "m.ern:3: a comment names a feedback line",
-                  "m.ern:4: a comment names a review's finding",
-                  "m.ern:4: a comment names a feedback line",
-                  "m.ern:4: a comment names a date"],
+                  "m.ern:2: a comment names a milestone",
+                  "m.ern:3: a comment names a milestone",
+                  "m.ern:4: a comment names a step",
+                  "m.ern:5: a comment names an item",
+                  "m.ern:6: a comment names a finding",
+                  "m.ern:7: a comment names a finding",
+                  "m.ern:8: a comment names the plan's file",
+                  "m.ern:9: a comment names the findings' file",
+                  "m.ern:10: a comment names a date"],
                  []))
 })
 
-/// A line a user reads names no step of the plan by its short name and a
-/// number, or by the plan's word for one; the short name alone is let
-/// through. A regression test, written after the check.
+/// A line a user reads names no milestone, step or item of the plan with its
+/// number, a space between or not; the bare word is let through.
 let findsSteps = Test.Case(name = "finds a step of the plan a user reads", run = fn() = {
-    let text = "as MVP 4 has it\nbuilt in MVP4.\nthe milestones\nan MVP, the MVPs 4\n";
+    let text =
+        "as Milestone 2 has it\nbuilt in MVP4.\nthe steps 3 and more\nItem 2 of it\n"
+            <> "the milestones, an MVP, the MVPs 4, type Milestone = x\nas MVP 4 has it\n";
     Test.equal(naming("README.md", List.indexed(String.lines(text)), "the line", stepAt),
                ["README.md:1: the line names a milestone",
                 "README.md:2: the line names a milestone",
-                "README.md:3: the line names a milestone"])
+                "README.md:3: the line names a step",
+                "README.md:4: the line names an item",
+                "README.md:6: the line names a milestone"])
+})
+
+/// A module's comment line under src/ is read once, by the comments' check,
+/// and its code by the check of what a user reads; a module under tools/ has
+/// its comments read alone, and a document its every line.
+let readsACommentOnce = Test.Case(name = "reads a comment of a module once", run = fn() = {
+    let modules =
+        [#("src/a.ern", ["// Milestone 2 added this.", "let x = \"Milestone 3\""]),
+         #("tools/t.ern", ["// Milestone 2", "let x = \"Milestone 3\""])];
+    Test.equal(historyIn([#("README.md", ["as Milestone 4 has it"])], modules),
+               ["src/a.ern:1: a comment names a milestone",
+                "tools/t.ern:1: a comment names a milestone",
+                "src/a.ern:2: the line names a milestone",
+                "README.md:1: the line names a milestone"])
 })
 
 /// A release's note holds a date in its heading alone, no log entry's title,
-/// and names neither the plan nor a review, its reader or a newcomer; the
-/// file's own paragraph is not read, nor a heading, a date a time follows,
-/// or a library's readers. A regression test, written after the check.
+/// no finding by its name, neither the plan's file nor the findings', and no
+/// reader of a review by its kind, one form a line; the file's own paragraph
+/// is not read, nor a heading, a date a time follows, a bare word, the
+/// plan, a review, a reader, a newcomer, or a library's readers.
 let findsNotes = Test.Case(name = "finds what a release's note leaves out", run = fn() = {
     let text =
-        "# Changes\n\nEach note; the plan, a review and its readers, 2026-11-07.\n\n"
-            <> "## 0.2.0, 2026-11-07\n\nThe release a newcomer reads.\n\n"
+        "# Changes\n\nEach note; the plan, a review and its readers, 2026-11-07, finding C7.\n\n"
+            <> "## 0.2.0, 2026-11-07\n\nThe release a newcomer reads, the reader now.\n\n"
             <> "- A change: §3; *A Log Entry*\n"
             <> "- Done 2026-11-06, as the plan says.\n"
-            <> "- Read by the reader of the Review: §4.\n"
-            <> "- `Time.parse(\"2026-11-07T10:00:00Z\")`, the response readers, preview: §5.\n";
-    Test.equal(naming(changes, sectionsIn(String.lines(text)), "the note", noteAt),
-               ["CHANGES.md:7: the note names a newcomer",
-                "CHANGES.md:9: the note names a log entry's title",
+            <> "- Read by the code reader of the Review: §4.\n"
+            <> "- As finding C7 found: §5.\n"
+            <> "- Ordered by `docs/plan.md`: §6.\n"
+            <> "- Named in docs/findings.md: §7.\n"
+            <> "- `Time.parse(\"2026-11-07T10:00:00Z\")`, the response readers, preview: §8.\n";
+    Test.equal(naming(changes, sectionsIn(List.indexed(String.lines(text))), "the note", noteAt),
+               ["CHANGES.md:9: the note names a log entry's title",
                 "CHANGES.md:10: the note names a date outside its heading",
-                "CHANGES.md:10: the note names the plan",
                 "CHANGES.md:11: the note names a reader",
-                "CHANGES.md:11: the note names a review"])
+                "CHANGES.md:12: the note names a finding",
+                "CHANGES.md:13: the note names the plan's file",
+                "CHANGES.md:14: the note names the findings' file"])
 })
 
 /// A command in a fenced block gives its description after "#", and a line
@@ -1098,6 +1272,16 @@ let holdsAQuotedPart = Test.Case(name = "holds a part quoted from a module", run
 let readsPastComments =
     Test.Case(name = "holds a part the module's comments stand within", run = fn() = {
         let text = "```ernest\nfn count(total : Int) : Int =\n    total + 1\n```\n";
+        Test.equal(unquoted("README.md", String.lines(text), [quotedSource]), [])
+    })
+
+/// A part holds where it stands in the module as written, comment lines and
+/// all.
+let holdsQuotedComments =
+    Test.Case(name = "holds a part that quotes the module's comments", run = fn() = {
+        let text =
+            "```ernest\n// The counter.\nfn count(total : Int) : Int =\n    // one more\n"
+                <> "    total + 1\n```\n";
         Test.equal(unquoted("README.md", String.lines(text), [quotedSource]), [])
     })
 
