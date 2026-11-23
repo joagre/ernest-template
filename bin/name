@@ -1,24 +1,41 @@
 #!/bin/sh
-# The launcher: ern run on the program named as this file is. Its root is
-# ../lib/NAME/ where NAME's compiled form stands there, beside an installed
-# launcher, and .. otherwise, a checkout or an unpacked release. The root is
-# the run's root package, so the packages its package.conf names are on the
-# load path (report §11.9), and so is the program's own Erlang: its ebin/ in
-# an installation and an unpacked release, and each application under erl/
-# in a checkout, through --libs-dir. A leading --config-dir dir, the one
-# option an operator gives, goes to ern run (report §11.2, §8.3); everything
-# after it goes to the program. The working directory stays the caller's.
-here=$(cd "$(dirname "$0")/.." && pwd) || exit 1
-name=$(basename "$0")
+# The launcher: ern run on the program named as this file is. The path it is
+# run by is followed through its links first, so that a link to it runs it
+# as the file itself does, under the file's name. Its root is ../lib/NAME/
+# where NAME's compiled form stands there, beside an installed launcher, and
+# .. otherwise, a checkout or an unpacked release. The root is the run's
+# root package, so the packages its package.conf names are on the load path
+# (report §11.9), and so is the program's own Erlang: its ebin/ in an
+# installation and an unpacked release, and each application under erl/ in
+# a checkout, through --libs-dir. A leading --config-dir and the directory
+# after it, the one option an operator gives, go to ern run (report §11.2,
+# §8.3), which refuses an empty one; a --config-dir with nothing after it is
+# refused here, with status 2. Everything after them goes to the program.
+# The working directory stays the caller's.
+self=$0
+while [ -L "$self" ]; do
+    link=$(readlink -- "$self") || exit 1
+    case $link in
+        /*) self=$link ;;
+        *) self=$(dirname -- "$self")/$link ;;
+    esac
+done
+name=$(basename -- "$self")
+here=$(CDPATH= cd -P -- "$(dirname -- "$self")/.." && pwd) || exit 1
 root=$here
 [ -f "$here/lib/$name/build/$name.erc" ] && root=$here/lib/$name
-config=
+program=$root/build/$name.erc
 if [ "$1" = "--config-dir" ]; then
-    config=$2
+    if [ $# -lt 2 ]; then
+        echo "$name: --config-dir takes a directory: $name --config-dir dir [argument]..." >&2
+        exit 2
+    fi
+    dir=$2
     shift 2
+    set -- --config-dir "$dir" --package-dir "$root" "$program" "$@"
+else
+    set -- --package-dir "$root" "$program" "$@"
 fi
-set -- --package-dir "$root" "$root/build/$name.erc" "$@"
 [ -d "$root/erl" ] && set -- --libs-dir "$root/erl" "$@"
 [ -d "$root/ebin" ] && set -- --load-path "$root/ebin" "$@"
-[ -n "$config" ] && set -- --config-dir "$config" "$@"
 exec "${ERN:-ern}" run "$@"

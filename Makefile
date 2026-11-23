@@ -4,30 +4,36 @@
 #
 #   make          builds: lib/ filled, and the program compiled after each
 #                 package package.conf names
-#   make test     the layout, the tests of every module, test/ where it exists,
-#                 make examples where there is a program to build, and then
-#                 the documents, the design's citations, and the project's
-#                 history kept out of the comments and what a user reads
+#   make test     in a checkout: the layout, the tests of every module, test/
+#                 where it exists, make examples where there is a program to
+#                 build, and then the documents, the design's citations, and
+#                 the project's history kept out of the comments and what a
+#                 user reads
 #   make examples each program of examples/ built and run, what it writes
 #                 under build/examples/
 #   make run      runs the program through its launcher
 #   make lib      fills lib/: each package package.conf names unpacked there
-#                 from its archive by ern unpack, and then each Erlang
-#                 application under erl/ built by its own make
-#   make doc      the documentation of every module, as CommonMark under build/
+#                 from its archive by ern unpack, and then, where erl/ stands,
+#                 each Erlang application under it built by its own make
+#   make doc      the module pages, CommonMark under build/, and the manual
+#                 pages, roff beside each module's compiled form
 #   make format   lays every module out
 #   make release  the archive, build/NAME-VERSION.tar.gz, and its checksum
-#                 beside it, tests first; a library's carries the pages of
-#                 make doc under docs/man/
-#   make install  installs what stands built under PREFIX, /usr/local by
-#                 default, from a checkout or an unpacked archive alike:
-#                 the launcher in bin/, build/'s, package.conf, lib/'s and
-#                 the program's own Erlang in lib/NAME/, and the documents
-#                 in share/doc/NAME/
-#   make uninstall  removes from PREFIX what make install put there, and the
-#                 directories it made where they are empty
-#   make clean    removes what the build and make lib wrote, and leaves the
-#                 archives and the links put under lib/
+#                 beside it: its refusals first, then make test and make doc;
+#                 a library's carries the module pages under docs/modules/ and
+#                 the manual pages under docs/man/man3/
+#   make install  builds, then installs under PREFIX, /usr/local by default,
+#                 from a checkout or an unpacked archive alike: the launcher
+#                 in bin/, build/'s modules, package.conf, lib/'s packages and
+#                 the program's own Erlang in lib/NAME/, and the documents in
+#                 share/doc/NAME/
+#   make uninstall  removes from PREFIX what make install put there, and then
+#                 share/doc, share, lib and bin under it, each where it is
+#                 empty
+#   make clean    removes what the build wrote, and each package ern unpack
+#                 wrote under lib/ beside its archive; it leaves the archives,
+#                 the links under lib/, and what each Erlang application under
+#                 erl/ built
 
 NAME        = name
 # The program's own Erlang applications, each a submodule under erl/ of its
@@ -57,26 +63,29 @@ VERSION       = $(shell cat VERSION)
 # What the build writes under examples/, which git ignores, make clean
 # removes and the documents leave out.
 EXAMPLES_MADE = examples/build
-# The documents make install and make release take, the user's alone:
-# README.md, LICENSE, THIRD_PARTY_LICENSES, CHANGES.md and docs/design.md,
-# each where it exists, and under examples/, deploy/ and assets/,
-# whose pictures the documents show, the files git tracks in a checkout, so
-# that no untracked file goes in, read as whoever installs, whose checkout
-# it need not be, which git refuses unless told it is safe; or in an
-# unpacked archive every file there but EXAMPLES_MADE's, which make release
-# wrote with those.
-DOCS          = $(wildcard README.md LICENSE THIRD_PARTY_LICENSES CHANGES.md docs/design.md) \
+# Git on the checkout, read as whoever runs make, whose checkout it need not
+# be, which git refuses unless told it is safe.
+GIT           = git -c safe.directory=$(CURDIR)
+# The documents make release and make install take, the user's alone:
+# README.md, LICENSE, THIRD_PARTY_LICENSES, ACKNOWLEDGMENTS.md, CHANGES.md and
+# docs/design.md, each where it exists, and the files under examples/,
+# deploy/ and assets/, whose pictures the documents show. Of those three, a
+# checkout gives the files git tracks, so that no untracked file goes in. An
+# unpacked archive gives every file there but what make examples wrote under
+# EXAMPLES_MADE.
+DOCS          = $(strip \
+                $(wildcard README.md LICENSE THIRD_PARTY_LICENSES ACKNOWLEDGMENTS.md \
+                    CHANGES.md docs/design.md) \
                 $(if $(wildcard .git),\
-                    $(shell git -c safe.directory=$(CURDIR) ls-files \
-                        examples deploy assets),\
+                    $(shell $(GIT) ls-files examples deploy assets),\
                     $(shell find examples deploy assets -type f \
-                        $(foreach dir,$(EXAMPLES_MADE),! -path '$(dir)/*') 2>/dev/null))
+                        ! -path '$(EXAMPLES_MADE)/*' 2>/dev/null)))
 # The sources make release takes: the files git tracks under src/ in a
-# checkout, so that no untracked file goes in, read as DOCS is; or in an
-# unpacked archive every file there.
-SOURCES       = $(if $(wildcard .git),\
-                    $(shell git -c safe.directory=$(CURDIR) ls-files src),\
-                    $(shell find src -type f))
+# checkout, where make release refuses an untracked one; or in an unpacked
+# archive every file there.
+SOURCES       = $(strip $(if $(wildcard .git),\
+                    $(shell $(GIT) ls-files src),\
+                    $(shell find src -type f)))
 # An installation's own directories under PREFIX, beside its launcher.
 TREE          = $(PREFIX)/lib/$(NAME)
 DOC_DIR       = $(PREFIX)/share/doc/$(NAME)
@@ -86,11 +95,13 @@ DOC_DIR       = $(PREFIX)/share/doc/$(NAME)
 all: lib build
 
 # ern unpack names each archive that is not under lib/, and the URL to
-# download it from where package.conf gives one (report §11.9).
+# download it from where package.conf gives one (report §11.9). The Erlang
+# applications are built where erl/ stands, in a checkout; an unpacked
+# archive has no erl/, and holds their modules in its own ebin/.
 lib:
 	@mkdir -p lib
 	$(ERN) unpack
-	@for app in $(ERL_DEPS); do \
+	@test ! -d erl || for app in $(ERL_DEPS); do \
 	    test -f erl/$$app/Makefile || \
 	        { echo "erl/$$app is empty: git submodule update --init"; exit 1; }; \
 	    $(MAKE) -C erl/$$app || exit 1; \
@@ -98,14 +109,19 @@ lib:
 
 # ern build refuses an ern earlier than the release package.conf names, and
 # builds each package it names, in their order, before the program (report
-# §11.9).
-build:
+# §11.9). It comes after lib, under make -j too, so that the packages stand
+# under lib/ when it starts.
+build: lib
 	$(ERN) build src
 
-# The documents come last, since one may name what the examples wrote.
+# It runs in a checkout alone, since the checker of the documents stands
+# under tools/, which an archive does not carry. The documents come last,
+# since one may name what the examples wrote.
 test: all
-	$(ERN) format --check src tools $(wildcard test) $(if $(EXAMPLES),examples)
-	$(ERN) test $(RUN_LIBS) build
+	@test -d tools || \
+	    { echo "make test runs in a checkout of $(NAME), and this directory has no tools/"; exit 1; }
+	$(strip $(ERN) format --check src tools $(wildcard test) $(if $(EXAMPLES),examples))
+	$(strip $(ERN) test $(RUN_LIBS) build)
 	$(ERN) build --source-root tools --build-root tools/build tools
 	$(ERN) test tools/build
 	@if test -d test; then \
@@ -133,17 +149,45 @@ run: all
 	@test -x bin/$(NAME) || { echo "$(NAME) is a library: nothing to run"; exit 1; }
 	bin/$(NAME)
 
+# The module pages, a CommonMark document for each module under build/ and
+# their index, build/index.md, and then the manual pages, each in roff beside
+# its module's compiled form, build/Ernest.Name.3ern for the module Name
+# (report §11.4).
 doc: all
 	$(ERN) doc src
+	$(ERN) doc --man src
 
 format:
-	$(ERN) format src tools $(wildcard test) $(if $(EXAMPLES),examples)
+	$(strip $(ERN) format src tools $(wildcard test) $(if $(EXAMPLES),examples))
 
-# The packages under lib/ copied into $(1)/lib, each directory with its links
-# copied through, and neither an archive nor a name that begins with a dot.
+# The files under $(1) that the find test $(2) selects, copied into $(3) at
+# their paths under $(1), links copied through. A path that holds a -, which
+# no module's path does, is passed over: the staging directory and the
+# archive of make release.
+copied = (cd $(1) && find . -path '*-*' -prune -o $(2) -print | tar chf - -T -) | \
+	    tar xf - -C $(3)
+
+# The compiled modules of the package $(1), its build/, copied into $(2)/build
+# at their paths. Every copy of the compiled modules is made so, the program's
+# and each package's, into the archive and into the installation.
+ercs = if test -d $(1)/build; then \
+	    mkdir -p $(2)/build && \
+	    $(call copied,$(1)/build,-name '*.erc',$(2)/build) || exit 1; \
+	fi
+
+# The packages under lib/ copied into $(1)/lib, each as report §11.9 has a
+# package: its package.conf, VERSION, src/, ebin/ and priv/, each where it
+# stands, and the compiled modules of its build/, links copied through.
+# Nothing else of it is copied: no name that begins with a dot, .git/ among
+# them, no archive and no lib/ of its own.
 packages = for dir in lib/*/; do \
 	    test -d "$$dir" || continue; \
-	    mkdir -p $(1)/lib && cp -RL "$${dir%/}" $(1)/lib/ || exit 1; \
+	    dir=$${dir%/}; \
+	    mkdir -p $(1)/$$dir || exit 1; \
+	    for part in package.conf VERSION src ebin priv; do \
+	        test ! -e $$dir/$$part || cp -RL $$dir/$$part $(1)/$$dir/ || exit 1; \
+	    done; \
+	    $(call ercs,$$dir,$(1)/$$dir); \
 	done
 
 # Another application's priv/ under erl/ refused, before anything is written,
@@ -176,70 +220,122 @@ erlang = if test -n "$(ERL_DEPS)" && test -d erl; then \
 # there is one, the sources of SOURCES and the compiled modules, the program's
 # own Erlang at its top, the packages under lib/, the documents of DOCS, and
 # the Makefile, so that make install and make run run in it; every member a
-# directory or a regular file. A library's carries its pages as well: those
-# ern doc wrote under build/, the one copy a checkout holds, mirrored into docs/man/
-# with the index as its README, and neither the staging directory nor what
-# the examples wrote among them. One shape for an application and a library,
+# directory or a regular file. One shape for an application and a library,
 # so that any archive can be a dependency. Its checksum stands beside it, for
 # `sha256sum -c`.
-release: test doc
-	@case "$$($(ERN) --version)" in \
-	    *-dev|*+*) echo "a release is not made with a development build of ern"; exit 1 ;; esac
+#
+# Its refusals come first, before make test and make doc run, under make -j
+# too: a development build of ern, whose version text has -dev or +commit
+# after the version (report §11.7); in a checkout, a tracked file changed and
+# not committed, or a file under src/ that git does not track; and another
+# application's priv/ under erl/.
+#
+# A library's archive carries its pages too, from build/, the one copy a
+# checkout holds: the module pages under docs/modules/ at their paths, with
+# the index as its README, and the manual pages under docs/man/man3/, where
+# man -M docs/man finds them. Neither the staging directory nor what the
+# examples wrote is among them. An application's archive carries neither.
+release:
+	@version=$$($(ERN) --version) || exit 1; \
+	case $$version in *-dev|*+*) \
+	    echo "a release is not made with a development build of ern," \
+	        "and this is ern $${version#ern }"; \
+	    exit 1 ;; \
+	esac
+	@if test -e .git; then \
+	    changed=$$($(GIT) status --porcelain --untracked-files=no) && \
+	    untracked=$$($(GIT) ls-files --others --exclude-standard src) || exit 1; \
+	    if test -n "$$changed$$untracked"; then \
+	        echo "a release is made from committed files alone, and these are not:"; \
+	        test -z "$$changed" || printf '%s\n' "$$changed" | cut -c4-; \
+	        test -z "$$untracked" || printf '%s\n' "$$untracked"; \
+	        exit 1; \
+	    fi; \
+	fi
 	@$(privs)
+	@$(MAKE) --no-print-directory test doc
 	rm -rf build/$(NAME)-$(VERSION) && mkdir -p build/$(NAME)-$(VERSION)
-	mkdir -p build/$(NAME)-$(VERSION)/build && \
-	    find build -path build/$(NAME)-$(VERSION) -prune -o -name '*.erc' -print | \
-	    cpio -pdm --quiet build/$(NAME)-$(VERSION)/
+	@$(call ercs,.,build/$(NAME)-$(VERSION))
 	@$(call packages,build/$(NAME)-$(VERSION))
 	@$(call erlang,build/$(NAME)-$(VERSION))
-	test -x bin/$(NAME) && mkdir -p build/$(NAME)-$(VERSION)/bin && \
-	    cp bin/$(NAME) build/$(NAME)-$(VERSION)/bin/ || true
+	if test -x bin/$(NAME); then mkdir -p build/$(NAME)-$(VERSION)/bin && \
+	    cp bin/$(NAME) build/$(NAME)-$(VERSION)/bin/; fi
 	tar chf - $(SOURCES) $(DOCS) Makefile VERSION package.conf | \
 	    tar xf - -C build/$(NAME)-$(VERSION)
-	test -x bin/$(NAME) || { mkdir -p build/$(NAME)-$(VERSION)/docs/man && cd build && \
-	    find . -name '*.md' ! -name index.md ! -path './$(NAME)-*/*' ! -path './examples/*' | \
-	    tar cf - -T - | tar xf - -C $(NAME)-$(VERSION)/docs/man && \
-	    cp index.md $(NAME)-$(VERSION)/docs/man/README.md; }
+	@if test ! -x bin/$(NAME); then \
+	    pages=build/$(NAME)-$(VERSION)/docs; \
+	    mkdir -p $$pages/modules $$pages/man/man3 && \
+	    $(call copied,build,-path ./examples -prune -o -name '*.md' ! -path ./index.md,$$pages/modules) && \
+	    cp build/index.md $$pages/modules/README.md || exit 1; \
+	    for page in $$(cd build && find . -path '*-*' -prune -o -path ./examples -prune -o \
+	            -name '*.3ern' -print); do \
+	        cp build/$$page $$pages/man/man3/ || exit 1; \
+	    done; \
+	fi
 	tar -czf build/$(NAME)-$(VERSION).tar.gz -C build $(NAME)-$(VERSION)
 	cd build && sha256sum $(NAME)-$(VERSION).tar.gz > $(NAME)-$(VERSION).tar.gz.sha256
 	rm -rf build/$(NAME)-$(VERSION)
 
-# What stands built, installed: an installation already there replaced
-# whole, so that no module of an older one is left, and a launcher there of
-# another program's refused, each refusal before anything is removed. The
-# installation is a package, as the archive is, which the launcher names its
-# root package. Nothing is built here, so that an archive installs as it was
-# compiled.
-install:
+# What make builds, installed: an installation already there replaced
+# whole, so that no module of an older one is left. Before anything under
+# PREFIX is removed or written, it refuses a lib/NAME there that does not
+# hold both package.conf and build/NAME.erc, and, where there is no
+# lib/NAME, a launcher of another program's. The installation is a package,
+# as the archive is, which the launcher names its root package. It depends
+# on all: under the ern that built the modules, ern build compiles nothing
+# again, so that an archive installs as it was compiled, and under another
+# ern it builds them again from the sources the archive carries.
+install: all
 	@test -x bin/$(NAME) || { echo "$(NAME) is a library: nothing to install"; exit 1; }
-	@test -f build/$(NAME).erc || { echo "build/$(NAME).erc is not there: make builds it"; exit 1; }
-	@test -d $(TREE) || test ! -e $(PREFIX)/bin/$(NAME) || \
-	    { echo "$(PREFIX)/bin/$(NAME) is there already and is not this program's"; exit 1; }
+	@test -f build/$(NAME).erc || \
+	    { echo "build/$(NAME).erc is not there: make builds it from src/$(NAME).ern"; exit 1; }
+	@if test -e $(TREE) || test -L $(TREE); then \
+	    test -f $(TREE)/package.conf && test -f $(TREE)/build/$(NAME).erc || \
+	        { echo "$(TREE) is there already and holds no installation of $(NAME)"; exit 1; }; \
+	else \
+	    test ! -e $(PREFIX)/bin/$(NAME) || \
+	        { echo "$(PREFIX)/bin/$(NAME) is there already and is not this program's"; exit 1; }; \
+	fi
 	@$(privs)
 	rm -rf $(TREE) $(DOC_DIR)
 	mkdir -p $(PREFIX)/bin $(TREE) $(DOC_DIR)
 	cp bin/$(NAME) $(PREFIX)/bin/$(NAME)
-	find build -name '*.erc' ! -path 'build/$(NAME)-*/*' | tar cf - -T - | tar xf - -C $(TREE)
 	cp package.conf $(TREE)/package.conf
+	@$(call ercs,.,$(TREE))
 	@$(call packages,$(TREE))
 	@$(call erlang,$(TREE))
 	tar cf - $(DOCS) | tar xf - -C $(DOC_DIR)
 
-# What make install put under PREFIX, and nothing else: the launcher, the
-# installation's two directories, and then share/doc, share, lib and bin
-# under PREFIX, deepest first, each where it is empty, whoever made it; one
-# that is not stays, and so does PREFIX itself.
+# What make install put under PREFIX removed: the launcher, lib/NAME and
+# share/doc/NAME, once lib/NAME is found to hold both package.conf and
+# build/NAME.erc, and nothing of a lib/NAME that does not. Then share/doc,
+# share, lib and bin under PREFIX go, deepest first, each where it is empty,
+# whoever made it; PREFIX itself stays.
 uninstall:
-	@test -d $(TREE) || { echo "no installation of $(NAME) under $(PREFIX)"; exit 1; }
+	@test -e $(TREE) || test -L $(TREE) || \
+	    { echo "no installation of $(NAME) under $(PREFIX)"; exit 1; }
+	@test -f $(TREE)/package.conf && test -f $(TREE)/build/$(NAME).erc || \
+	    { echo "$(TREE) holds no installation of $(NAME)"; exit 1; }
 	rm -f $(PREFIX)/bin/$(NAME)
 	rm -rf $(TREE) $(DOC_DIR)
 	@for dir in $(PREFIX)/share/doc $(PREFIX)/share $(PREFIX)/lib $(PREFIX)/bin; do \
 	    rmdir $$dir 2>/dev/null || true; \
 	done
 
-# The packages ern unpack wrote under lib/ go, each a directory, and so does
-# its lock; an archive and a link put there stay.
+# What the build, make doc and make examples wrote goes, and so does each
+# package ern unpack wrote under lib/, a directory beside its archive, as
+# lib/leaf beside lib/leaf-1.2.0.tar.gz, and the lock lib/.unpack. The
+# archives stay, and so do a link under lib/ and a directory there with no
+# archive beside it, as an unpacked archive's packages are. What each Erlang
+# application under erl/ built stays too, for its own make clean to remove.
 clean:
 	rm -rf build tools/build test/build $(EXAMPLES_MADE)
-	test ! -d lib || find lib -mindepth 1 -maxdepth 1 -type d -exec rm -rf {} +
+	@for dir in lib/*/; do \
+	    dir=$${dir%/}; \
+	    test -d "$$dir" && test ! -L "$$dir" || continue; \
+	    for archive in "$$dir"-*.tar.gz; do \
+	        test -f "$$archive" || continue; \
+	        echo "rm -rf $$dir"; rm -rf "$$dir"; break; \
+	    done; \
+	done
 	rm -f lib/.unpack
