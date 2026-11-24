@@ -24,6 +24,8 @@ Messages to Ernest's session wait until the user says so. What would go stands h
 - **D25, a row of *Read when the job starts*.** "Building, testing, running | `README.md`'s *Building* and *Running*, and `docs/build.md`"; the round's D named `docs/build.md`, which `CLAUDE.md` names nowhere.
 - **The round's D15, what `test/` holds.** *The work*: "A test lives in the module it tests, and `test/` holds only tests run end to end, modules of tests that run the program." The README and `TEMPLATE.md` say so; `CLAUDE.md` says a program.
 
+**Where else each change stands**, from the round's documents reader. D11 with Q5: "a later release may refuse it" stands in `TEMPLATE.md` §2's last line, `docs/build.md`'s *The least release* and the README's *Building*, which agree with the change and follow a decision against it. Q4 with D16: the list of files a copy takes whole stands in `TEMPLATE.md` §8 and in `docs/full_review.md`'s *The findings*, and the README's step 3 points at it; of the files Q4 adds, only `docs/build.md` says it is taken whole, and nothing says so of `docs/release.md` until `CLAUDE.md` does. D25: `CLAUDE.md` names `docs/build.md` nowhere else.
+
 **What the copies are told.** Nothing, until the user says so: messages to `ernest-epx` and `ernest-httpd` wait too. What each takes is *Where each fix goes*. The tag `v0.11.0` has moved from `0155cf2` to the review's close, before anything was pushed, so each copy takes it again, the review's fixes with it.
 
 **What Ernest's session is told.** The 13 lines of `docs/language_feedback.md` are noted there, at `2cbb6d3`, and are sorted after Ernest's own third leg. Not yet told, each waiting for the user's word:
