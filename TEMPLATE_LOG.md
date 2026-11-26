@@ -418,3 +418,13 @@ The template's first full review read `d8b7ab4` with Ernest's 0.11.0 candidate: 
 ## The library's renames, 2026-11-25
 
 Ernest's 0.11.0 renames names and answers of its library in its MVP 4.4's full review (Ernest's log, *The Renames of the Library's Names*). The template meets one: `List.span` is `List.splitWhile`, which `tools/docs.ern` calls at eight places, and an `ern` built from `0a0a14ea` refuses the old name. The calls take the new name, so an earlier candidate of 0.11.0 no longer builds the template. The others, the swap of `Peer.compute` and `Peer.computeAt` and the seed first in `Random`'s answers among them, touch nothing here.
+
+## The log split by day, 2026-11-26
+
+A copy's log that nears 256 KB is split by day under `docs/log/`, in Ernest's form, and `tools/docs.ern` holds both forms; `TEMPLATE.md` §3 states the form. It is the template's issue 1, designed on 2026-11-13 and left unbuilt, since a check for a form no repository held met no need (principle 5). It is built now that ernest-httpd's log has passed 200 KB, the size the issue waited for: 205,415 bytes, 136 entries over 23 days.
+
+**What changed from the issue.** `CLAUDE.md`'s *Writing* no longer holds the 250 KB rule, cut with the short rules on 2026-11-21, and it is not brought back: the checker refuses a log past the ceiling and says to split it, and a copy keeps the checker. `CLAUDE.md` changes only its owner row, which loses its link, since the link would name nothing in a split copy; the row waits with the other changes to `CLAUDE.md` in `docs/findings.md`. The checker now leaves a log's files out in two places, the paths and the paragraphs, and a release's note that names a log entry by a file under `log/` is refused, as one naming `log.md` is.
+
+**The date** is the one an entry's first paragraph opens with, `*2026-10-30.*` or `*2026-10-13, decided 2026-10-26.*`, not its heading's as in Ernest's log. Every entry of both copies opens so, and three of httpd's stand out of their date's order and go to their day's file.
+
+**No tool splits.** A copy splits once, by hand, and its `make test` holds the result. ernest-epx and ernest-httpd take the checker with the rest of `tools/docs.ern` from the final tag.

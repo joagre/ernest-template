@@ -42,6 +42,8 @@ Under `docs/` stand the documents `docs/README.md` names. The rules an Ernest pr
 
 What appears when needed, named in `CLAUDE.md` so that nothing waits for a decision about where it goes: `language_feedback.md` and `known_issues.md` each at its first line and `findings.md` while a review's findings are open, all under `docs/`; `docs/proposals/` with the first proposal; `test/`, a second source root for tests run end to end, modules of tests that run the program with the checkout as their working directory, built into `test/build/`; `erl/`, one read-only git submodule per Erlang application the program stands on, named as the application, pinned and never a copy. The template's own `language_feedback.md` and `findings.md` stand while they hold lines, and a copy removes them; its `known_issues.md` holds the checker's, which a copy keeps with the checker.
 
+The log is `docs/log.md` until it nears 256 KB, and then `docs/log/`, which the copy's session splits by day once; a repository tracks one form, never both. `docs/log/README.md` holds what stood above the entries, then `## Index`, a line a day, newest first: `**2026-11-13.** [Title](2026-11-13.md#anchor); [Title](…)`. Each `docs/log/<date>.md` holds the entries whose first paragraph opens with its date, as they stood and in their order, under the heading `# <the log's title>, <date>`. `tools/docs.ern` holds both forms.
+
 Also when needed: `THIRD_PARTY_LICENSES` with the first borrowed file, an Erlang application under `erl/` among them, since the archive carries its compiled code, and `ACKNOWLEDGMENTS.md` with the first name; `deploy/`, what an operator of the program reads, which an archive carries; and for a library, `examples/`, programs that use it, which `docs/build.md`'s *The examples* runs.
 
 Not committed: `build/`, each root's `build/`, `lib/`, the packages' archives among it, and a node's key, `private-key.pem`.
@@ -58,7 +60,7 @@ What changes from Ernest's is what the report shaped. The normative document is 
 
 Dropped: the soundness paragraph, the cold reading and the fixed section numbers, and Ernest's reviews, replaced by `release.md`'s readers and `full_review.md`'s four.
 
-`tools/docs.ern` keeps the project's history out of what a user and a reader of the code see, and holds a paragraph to 150 words: the tool says so when one is broken, and the file states neither.
+`tools/docs.ern` keeps the project's history out of what a user and a reader of the code see, holds a paragraph to 150 words, and holds the log to its form: the tool says so when one is broken, and the file states neither.
 
 A copy takes the file whole but for its title and the sentence under it, which says what the program is, so no row and no rule differs between the copies.
 

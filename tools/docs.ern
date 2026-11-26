@@ -7,6 +7,25 @@
 // file the program reads cannot be read or is not UTF-8, the program says so
 // on standard error and ends with status 1.
 //
+// The log is docs/log.md, or, once split by day, the files under docs/log/,
+// and git tracks one form, not both. No file of the log holds more than
+// 262,144 bytes. Under docs/log/, every file but README.md is named for a
+// day, YYYY-MM-DD.md, and each entry in it, a `## ` heading outside fenced
+// code, opens the first line after it that is not blank with `*` and the
+// file's day, then a period or a comma. README.md holds `## Index`, and
+// under it nothing but a line a day, `**YYYY-MM-DD.**` and its links, each
+// `[Title](YYYY-MM-DD.md#anchor)` and the next after `; `, the days newest
+// first and each once: every entry of a day's file is linked on its day's
+// line once, by its heading's text and its anchor, and every link names an
+// entry of its line's day. An anchor is GitHub's: the heading in lower case,
+// every character dropped but a letter, a combining mark, a digit, `_`, `-`
+// and a space, and each space a hyphen; a heading whose anchor an earlier
+// heading of the file took gets it with the first of `-1`, `-2` and on that
+// no heading took. A backticked docs/log.md or docs/log/README.md names the
+// log in either form. Each that does not hold is a line on standard error
+// naming the file and, where there is one, the line, and the program ends
+// with status 1.
+//
 // Every backticked path in a tracked document that begins with a directory
 // holding a tracked file names a tracked file or a directory that holds one,
 // or a line on standard error names the file, the line and the path, once,
@@ -73,12 +92,12 @@
 // names no milestone, step or item with its number. A line of CHANGES.md
 // from its first `## ` heading on, each such heading aside, holds no date;
 // names no log entry, by `; *Title*`, by `the log's *Title*`, any case of
-// the, or by the log's file, log.md at the top or under a directory, a
-// trailing 's aside; and names no finding by its name, neither the plan's
-// file nor the findings', and no reader of a review by its kind, a cold,
-// code, document, documents, independent or security reader. Each kind a
-// line names is a line on standard error naming the file and the line, once,
-// and the program ends with status 1.
+// the, or by a file of the log, log.md or a file under a directory log/, at
+// the top or under a directory, a trailing 's aside; and names no finding by
+// its name, neither the plan's file nor the findings', and no reader of a
+// review by its kind, a cold, code, document, documents, independent or
+// security reader. Each kind a line names is a line on standard error naming
+// the file and the line, once, and the program ends with status 1.
 //
 //     make test    runs it, as ern run tools/build/docs.erc
 //
@@ -131,11 +150,39 @@ type Part = Part(lineNumber : Int, lines : List(String))
 // begun, none while its lines are empty, and the parts found.
 type BlockReading = BlockReading(fence : Bool, ernest : Bool, part : Part, parts : List(Part))
 
+// A heading of a document outside fenced code: the number of its line, its
+// level, the count of its "#", and its text.
+type Heading = Heading(lineNumber : Int, level : Int, text : String)
+
+// An entry of a day's file of the log: the number of its heading's line, its
+// heading's text, its anchor, and the first line after the heading that is
+// not blank, empty where there is none.
+type Entry = Entry(lineNumber : Int, title : String, anchor : String, opening : String)
+
+// A day's file of the log: its name, its day and its entries.
+type DayFile = DayFile(file : String, day : String, entries : List(Entry))
+
+// A link of the log's index: the title it shows, and the file and the anchor
+// it names.
+type Link = Link(title : String, file : String, anchor : String)
+
+// A line of the log's index: the number of its line, its day and its links.
+type IndexLine = IndexLine(lineNumber : Int, day : String, links : List(Link))
+
 let readme : String = "README.md"
 
 let design : String = "docs/design.md"
 
 let changes : String = "CHANGES.md"
+
+let logFile : String = "docs/log.md"
+
+let logDirectory : String = "docs/log/"
+
+let logIndex : String = "docs/log/README.md"
+
+// The most bytes a file of the log holds.
+let logCeiling : Int = 262144
 
 let measure : Int = 150
 
@@ -171,7 +218,8 @@ export fn main() : Unit = {
             <> findBareDescriptions(files)
             <> findUnquoted(files, modules)
             <> findUncited(files, modules)
-            <> findHistory(files, modules);
+            <> findHistory(files, modules)
+            <> findLog(names);
     List.forEach(failures, Io.printlnError);
     if List.isEmpty(failures) && List.isEmpty(long) then Unit else Os.exit(1)
 }
@@ -208,13 +256,16 @@ fn trackedOf(output : Bytes) : Either(String, List(String)) =
 
 // The directories at the top of the repository that hold a tracked file,
 // each with its "/", and every tracked file with each directory that holds
-// it, "a" and "a/b" for "a/b/c.md".
+// it, "a" and "a/b" for "a/b/c.md"; where git tracks the log in either form,
+// docs/log.md and docs/log/README.md both name it.
 fn heldOf(names : List(String)) : Held = {
     let tops =
         List.filterMap(names,
                        fn(name) =
                            Optional.map(String.splitOnce(name, "/"), fn(#(top, _)) = top <> "/"));
-    Held(tops = List.unique(tops), paths = Set.fromList(names <> List.flatMap(names, holdersOf)))
+    let logs = if List.any(names, isLog) then [logFile, logIndex] else [];
+    Held(tops = List.unique(tops),
+         paths = Set.fromList(names <> List.flatMap(names, holdersOf) <> logs))
 }
 
 fn holdersOf(name : String) : List(String) = {
@@ -225,12 +276,24 @@ fn holdersOf(name : String) : List(String) = {
 
 // The file's text; the program ends where it cannot be read or is not
 // UTF-8.
-fn readText(file : String) : String = {
-    let text = match Fs.read(Path(file), ms) {
-        Right(bytes) -> decoded(file, bytes)
-      | Left(error) -> Left("docs: cannot read " <> file <> ": " <> Io.show(error))
-    };
-    match text {
+fn readText(file : String) : String =
+    textOf(file, readBytes(file))
+
+// The file's bytes; the program ends where it cannot be read.
+fn readBytes(file : String) : Bytes =
+    match Fs.read(Path(file), ms) {
+        Right(bytes) ->
+            bytes
+      | Left(error) -> {
+            Io.printlnError("docs: cannot read " <> file <> ": " <> Io.show(error));
+            Os.exit(1)
+        }
+    }
+
+// The bytes read from the file as text; the program ends where they are not
+// UTF-8.
+fn textOf(file : String, bytes : Bytes) : String =
+    match decoded(file, bytes) {
         Right(text) ->
             text
       | Left(cause) -> {
@@ -238,7 +301,6 @@ fn readText(file : String) : String = {
             Os.exit(1)
         }
     }
-}
 
 // The bytes as text, or the line for standard error, which names what they
 // were read from, where they are not UTF-8.
@@ -260,7 +322,8 @@ fn findMissing(files : List(String), held : Held) : List(String) =
 // the tree their readers read, and a log the paths there when its entry was
 // written.
 fn namesTheTree(file : String) : Bool =
-    !List.contains(["docs/plan.md", "docs/findings.md", "docs/log.md", "TEMPLATE_LOG.md"], file)
+    !List.contains(["docs/plan.md", "docs/findings.md", "TEMPLATE_LOG.md"], file)
+        && !isLog(file)
         && !String.startsWith(file, "docs/proposals/")
 
 // Each backticked path of the file's text that git does not hold, as a line
@@ -342,7 +405,7 @@ fn findLongParagraphs(files : List(String)) : List(Paragraph) =
 // Whether a file states what holds now, and so has its paragraphs measured
 // and its commands read: the log is history and a proposal is thinking.
 fn isCurrent(file : String) : Bool =
-    file != "docs/log.md" && !String.startsWith(file, "docs/proposals/")
+    !isLog(file) && !String.startsWith(file, "docs/proposals/")
 
 // The paragraphs of the text past the measure. A paragraph ends at a blank
 // line, at a fence, at a list item, and where a list item's lines stop being
@@ -924,10 +987,25 @@ fn isFindingWord(word : String) : Bool =
 // Whether the word as written names the file at the top or under a
 // directory, the punctuation around it and a trailing "'s" aside.
 fn namesFile(raw : String, file : String) : Bool = {
-    let word = bare(raw);
-    let name = bare(Optional.withDefault(String.stripSuffix(word, "'s"), word));
+    let name = nameOf(raw);
     name == file || String.endsWith(name, "/" <> file)
 }
+
+// The name a word as written gives, the punctuation around it and a trailing
+// "'s" aside.
+fn nameOf(raw : String) : String = {
+    let word = bare(raw);
+    bare(Optional.withDefault(String.stripSuffix(word, "'s"), word))
+}
+
+// Whether the word as written names a file under a directory log/, at the
+// top or under a directory, the punctuation around it and a trailing "'s"
+// aside.
+fn namesUnderLog(raw : String) : Bool =
+    match String.splitOnce("/" <> nameOf(raw), "/log/") {
+        Some(#(_, file)) -> !String.isEmpty(file)
+      | None -> false
+    }
 
 // What a release's note names from a word on that it leaves out, since its
 // reader is a user.
@@ -941,8 +1019,9 @@ fn noteAt(words : List(#(String, String))) : Optional(String) =
     }
 
 // Whether the words name a log entry from their first on: a title after
-// ";", "; *Title*", a title after "the log's", any case of "the", and the
-// log's file, at the top or under a directory.
+// ";", "; *Title*", a title after "the log's", any case of "the", and a file
+// of the log, log.md or a file under a directory log/, at the top or under a
+// directory.
 fn namesLogEntry(words : List(#(String, String))) : Bool =
     match words {
         #(raw, _) :: #(next, _) :: _ when String.endsWith(raw, ";")
@@ -950,7 +1029,7 @@ fn namesLogEntry(words : List(#(String, String))) : Bool =
       | #(_, the) :: #(_, log) :: #(next, _) :: _ when String.toAsciiLower(the) == "the"
             && log == "log's"
             && String.startsWith(next, "*") -> true
-      | #(raw, _) :: _ -> namesFile(raw, "log.md")
+      | #(raw, _) :: _ -> namesFile(raw, "log.md") || namesUnderLog(raw)
       | [] -> false
     }
 
@@ -987,10 +1066,14 @@ fn isFindingName(word : String) : Bool = {
 // A date of this century: four digits beginning 20, two and two, joined by
 // dashes.
 fn isDate(word : String) : Bool =
+    String.startsWith(word, "20") && isDay(word)
+
+// A day as the log writes it, YYYY-MM-DD: four digits, two and two, joined
+// by dashes.
+fn isDay(word : String) : Bool =
     match String.split(word, "-") {
         [year, month, day] ->
-            String.startsWith(year, "20")
-                && List.map([year, month, day], String.size) == [4, 2, 2]
+            List.map([year, month, day], String.size) == [4, 2, 2]
                 && List.all(String.toList(year <> month <> day), Char.isAsciiDigit)
       | _ ->
             false
@@ -1001,6 +1084,309 @@ fn beginsWithDigit(word : String) : Bool =
         char :: _ -> Char.isAsciiDigit(char)
       | [] -> false
     }
+
+//
+// The log
+//
+
+// What the log's checks find, as lines for standard error: a file of the
+// log past the ceiling, both forms tracked, and what the files under
+// docs/log/ break of the split.
+fn findLog(names : List(String)) : List(String) = {
+    let logs = List.map(List.filter(names, isLog), fn(file) = #(file, readBytes(file)));
+    let texts =
+        List.filterMap(logs,
+                       fn(#(file, bytes)) =
+                           if file == logIndex || Optional.isSome(dayOf(file)) then
+                               Some(#(file, textOf(file, bytes)))
+                           else
+                               None);
+    List.filterMap(logs, fn(#(file, bytes)) = oversized(file, Bytes.size(bytes)))
+        <> bothForms(names)
+        <> splitIn(List.filter(names, fn(name) = String.startsWith(name, logDirectory)), texts)
+}
+
+// Whether a file is of the log, in either form: docs/log.md, or a file under
+// docs/log/ once the log is split by day.
+fn isLog(file : String) : Bool =
+    file == logFile || String.startsWith(file, logDirectory)
+
+// The line for standard error where a file of the log holds more bytes than
+// the ceiling, which for docs/log.md says to split it.
+fn oversized(file : String, count : Int) : Optional(String) =
+    if count <= logCeiling then
+        None
+    else {
+        let past =
+            file <> ": " <> Int.toString(count) <> " bytes, past " <> Int.toString(logCeiling);
+        Some(if file == logFile then past <> ": split the log by day under docs/log/" else past)
+    }
+
+// The line for standard error where git tracks the log in both forms.
+fn bothForms(names : List(String)) : List(String) =
+    if List.contains(names, logFile)
+        && List.any(names, fn(name) = String.startsWith(name, logDirectory)) then
+        ["docs: git tracks docs/log.md and docs/log/; the log is one or the other"]
+    else
+        []
+
+// The day a file under docs/log/ is named for, or `None` where it is no
+// day's file.
+fn dayOf(file : String) : Optional(String) = {
+    let name <- String.stripPrefix(file, logDirectory);
+    let day <- String.stripSuffix(name, ".md");
+    if isDay(day) then Some(day) else None
+}
+
+// What the files under docs/log/ break of the split, as lines for standard
+// error: a file misnamed, an entry that opens with no date of its day, and
+// what the index lacks or holds wrongly; none where no file is there. The
+// texts are the index's, where it is tracked, and each day's file's.
+fn splitIn(under : List(String), texts : List(#(String, String))) : List(String) =
+    if List.isEmpty(under) then
+        []
+    else {
+        let days =
+            List.filterMap(texts,
+                           fn(#(file, text)) =
+                               Optional.map(dayOf(file),
+                                            fn(day) =
+                                                DayFile(=file, =day, entries = entriesOf(text))));
+        let index =
+            Optional.andThen(List.find(texts, fn(#(file, _)) = file == logIndex),
+                             fn(#(_, text)) = indexOf(text));
+        List.filterMap(under, misnamed)
+            <> List.flatMap(days, undated)
+            <> match index {
+                Some(lines) -> indexFaults(lines, days)
+              | None -> [logIndex <> ": no ## Index"]
+            }
+    }
+
+fn misnamed(file : String) : Optional(String) =
+    if file == logIndex || Optional.isSome(dayOf(file)) then
+        None
+    else
+        Some(file <> ": a day's file is named YYYY-MM-DD.md")
+
+// Each entry of the day's file whose first line that is not blank opens with
+// no "*" and its day, then "." or ",", as a line for standard error.
+fn undated(day : DayFile) : List(String) =
+    List.filterMap(day.entries,
+                   fn(entry) =
+                       if String.startsWith(entry.opening, "*" <> day.day <> ".")
+                           || String.startsWith(entry.opening, "*" <> day.day <> ",") then
+                           None
+                       else
+                           Some(placeOf(day.file, entry.lineNumber)
+                                    <> "the entry opens with no *"
+                                    <> day.day
+                                    <> ".*"))
+
+// The entries of a day's file: each heading "## " outside fenced code, with
+// its anchor among the file's headings and the first line after it that is
+// not blank.
+fn entriesOf(text : String) : List(Entry) = {
+    let lines = String.lines(text);
+    let headings =
+        List.filterMap(List.indexed(String.lines(unfenced(text))),
+                       fn(#(index, line)) = headingOf(index + 1, line));
+    let anchored = List.zip(headings, anchorsOf(List.map(headings, fn(heading) = heading.text)));
+    List.filterMap(anchored,
+                   fn(#(heading, anchor)) =
+                       if heading.level == 2 then
+                           Some(Entry(lineNumber = heading.lineNumber,
+                                      title = heading.text,
+                                      =anchor,
+                                      opening = openingAfter(lines, heading.lineNumber)))
+                       else
+                           None)
+}
+
+// The heading a line is, one to six "#" and a space before its text, or
+// `None` where it is none.
+fn headingOf(lineNumber : Int, line : String) : Optional(Heading) = {
+    let #(marks, rest) = List.splitWhile(String.toList(line), fn(char) = char == '#');
+    let level = List.size(marks);
+    match rest {
+        ' ' :: text when level >= 1 && level <= 6 ->
+            Some(Heading(=lineNumber, =level, text = String.trim(String.fromList(text))))
+      | _ ->
+            None
+    }
+}
+
+// The first line after the line of the number given that is not blank, or
+// "" where there is none.
+fn openingAfter(lines : List(String), lineNumber : Int) : String =
+    Optional.withDefault(List.find(List.drop(lines, lineNumber),
+                                   fn(line) = !String.isEmpty(String.trim(line))),
+                         "")
+
+// The anchors GitHub gives the headings of a file, in order: each slug as it
+// first comes, and a repeat's slug with the first of "-1", "-2" and on that
+// no heading before took.
+fn anchorsOf(titles : List(String)) : List(String) = {
+    let #(_, anchors) =
+        List.mapFold(titles, Map.empty, fn(taken, title) = anchorAmong(taken, slugOf(title)));
+    anchors
+}
+
+// The anchors taken with the slug's, and the slug's anchor: the slug where
+// no heading took it, and else the slug numbered. Each anchor taken holds the
+// count of the repeats numbered after it.
+fn anchorAmong(taken : Map(String, Int), slug : String) : #(Map(String, Int), String) =
+    if Map.contains(taken, slug) then numbered(taken, slug) else #(Map.put(taken, slug, 0), slug)
+
+fn numbered(taken : Map(String, Int), slug : String) : #(Map(String, Int), String) = {
+    let count = Optional.withDefault(Map.get(taken, slug), 0) + 1;
+    let counted = Map.put(taken, slug, count);
+    let anchor = slug <> "-" <> Int.toString(count);
+    if Map.contains(counted, anchor) then
+        numbered(counted, slug)
+    else
+        #(Map.put(counted, anchor, 0), anchor)
+}
+
+// A heading's slug as GitHub writes it: its text in lower case, every
+// character dropped but a letter, a combining mark, a digit, "_", "-" and a
+// space, and each space a hyphen.
+fn slugOf(title : String) : String =
+    String.fromList(List.filterMap(String.toList(String.toLower(title)),
+                                   fn(char) =
+                                       if char == ' ' then
+                                           Some('-')
+                                       else if Char.isAlpha(char)
+                                           || Char.isMark(char)
+                                           || Char.isDigit(char)
+                                           || char == '_'
+                                           || char == '-' then
+                                           Some(char)
+                                       else
+                                           None))
+
+// The lines under the index's heading, "## Index" outside fenced code, each
+// with its index, or `None` where the text holds no such heading.
+fn indexOf(text : String) : Optional(List(#(Int, String))) = {
+    let #(index, _) <-
+        List.find(List.indexed(String.lines(unfenced(text))),
+                  fn(#(_, line)) = String.trimEnd(line) == "## Index");
+    Some(List.drop(List.indexed(String.lines(text)), index + 1))
+}
+
+// What the index breaks, as lines for standard error: an entry of a day's
+// file its day's line does not link, a link that names no entry of its
+// line's day or one its line named before, a day that stands after a day as
+// old or older, and a line that is not blank and is no index line.
+fn indexFaults(lines : List(#(Int, String)), days : List(DayFile)) : List(String) = {
+    let read =
+        List.map(List.filter(lines, fn(#(_, line)) = !String.isEmpty(String.trim(line))),
+                 fn(#(index, line)) = #(index + 1, indexLineOf(index + 1, String.trimEnd(line))));
+    let indexLines = List.filterMap(read, fn(#(_, indexLine)) = indexLine);
+    let unread = List.filterMap(read, fn(#(lineNumber, indexLine)) = match indexLine {
+        Some(_) ->
+            None
+      | None ->
+            Some(placeOf(logIndex, lineNumber)
+                     <> "the line is no index line, "
+                     <> "**YYYY-MM-DD.** [Title](YYYY-MM-DD.md#anchor); …")
+    });
+    List.flatMap(days, fn(day) = unindexed(day, indexLines))
+        <> List.flatMap(indexLines, fn(indexLine) = linkFaults(indexLine, days))
+        <> disordered(indexLines)
+        <> unread
+}
+
+// The index line a line is, "**YYYY-MM-DD.** " and its links, or `None`
+// where it is none.
+fn indexLineOf(lineNumber : Int, line : String) : Optional(IndexLine) = {
+    let rest <- String.stripPrefix(line, "**");
+    let #(day, text) <- String.splitOnce(rest, ".** ");
+    let links <- if isDay(day) then linksOf(text) else None;
+    Some(IndexLine(=lineNumber, =day, =links))
+}
+
+// The links of an index line, "[Title](YYYY-MM-DD.md#anchor)" and the next
+// after "; ", or `None` where the text is not one such link or more.
+fn linksOf(text : String) : Optional(List(Link)) = {
+    let shown <- String.stripPrefix(text, "[");
+    let #(title, named) <- String.splitOnce(shown, "](");
+    let #(target, rest) <- String.splitOnce(named, ")");
+    let #(file, anchor) <- String.splitOnce(target, "#");
+    let link = Link(=title, =file, =anchor);
+    if String.isEmpty(rest) then
+        Some([link])
+    else {
+        let next <- String.stripPrefix(rest, "; ");
+        let links <- linksOf(next);
+        Some(link :: links)
+    }
+}
+
+// Whether the link names the entry of the day's file: its title the entry's
+// heading's text, its file the day's and its anchor the entry's.
+fn linksTo(link : Link, day : DayFile, entry : Entry) : Bool =
+    link.file == day.day <> ".md" && link.title == entry.title && link.anchor == entry.anchor
+
+// Each entry of the day's file that no link on its day's line names, as a
+// line for standard error.
+fn unindexed(day : DayFile, indexLines : List(IndexLine)) : List(String) = {
+    let links =
+        List.flatMap(List.filter(indexLines, fn(indexLine) = indexLine.day == day.day),
+                     fn(indexLine) = indexLine.links);
+    List.filterMap(day.entries,
+                   fn(entry) =
+                       if List.any(links, fn(link) = linksTo(link, day, entry)) then
+                           None
+                       else
+                           Some(placeOf(day.file, entry.lineNumber)
+                                    <> "*"
+                                    <> entry.title
+                                    <> "* is not in the index on "
+                                    <> day.day
+                                    <> "'s line"))
+}
+
+// Each link of the index line that names no entry of its day's file, and
+// each that names an entry an earlier link of the line named, as a line for
+// standard error.
+fn linkFaults(indexLine : IndexLine, days : List(DayFile)) : List(String) = {
+    let named =
+        fn(link : Link) =
+            List.any(days,
+                     fn(day) =
+                         day.day == indexLine.day
+                             && List.any(day.entries, fn(entry) = linksTo(link, day, entry)));
+    let shown =
+        fn(link : Link) =
+            placeOf(logIndex, indexLine.lineNumber)
+                <> "["
+                <> link.title
+                <> "]("
+                <> link.file
+                <> "#"
+                <> link.anchor
+                <> ")";
+    List.filterMap(List.indexed(indexLine.links),
+                   fn(#(index, link)) =
+                       if !named(link) then
+                           Some(shown(link) <> " names no entry of " <> indexLine.day <> ".md")
+                       else if List.contains(List.take(indexLine.links, index), link) then
+                           Some(shown(link) <> " stands twice on " <> indexLine.day <> "'s line")
+                       else
+                           None)
+}
+
+// Each index line whose day is not older than the day of the line before
+// it, as a line for standard error.
+fn disordered(indexLines : List(IndexLine)) : List(String) =
+    List.filterMap(List.zip(List.drop(indexLines, 1), indexLines),
+                   fn(#(indexLine, before)) =
+                       if indexLine.day < before.day then
+                           None
+                       else
+                           Some(placeOf(logIndex, indexLine.lineNumber)
+                                    <> "the index's days stand newest first, each once"))
 
 //
 // Tests
@@ -1090,15 +1476,31 @@ let findsPaths = Test.Case(name = "finds the backticked paths", run = fn() = {
 // A path is held to what git tracks: a tracked file and a directory that
 // holds one name something, and a file git does not track names nothing,
 // a line naming the file and the line; the tops are the directories at the
-// top that hold a tracked file.
+// top that hold a tracked file. Where git tracks the log in either form,
+// docs/log.md and docs/log/README.md both name it, and where in neither,
+// neither does.
 let holdsPathsToGit = Test.Case(name = "holds a path to what git tracks", run = fn() = {
     let held = heldOf(["README.md", "src/a.ern", "docs/sub/b.md"]);
     let text = "`src/a.ern` and `docs/sub`, `docs/sub/b.md`\n\n`docs/notes.txt`, `README.md`\n";
-    Test.equal(#(held.tops, missingIn("f.md", text, held)),
-               #(["src/", "docs/"], ["f.md:3: `docs/notes.txt` names nothing"]))
+    let logs = "`docs/log.md` or `docs/log/README.md`\n";
+    let split = heldOf(["docs/log/README.md", "docs/log/2026-11-13.md"]);
+    let whole = heldOf(["docs/log.md"]);
+    Test.equal(#(held.tops,
+                 missingIn("f.md", text, held),
+                 missingIn("f.md", logs, held),
+                 missingIn("f.md", logs, split),
+                 missingIn("f.md", logs, whole)),
+               #(["src/", "docs/"],
+                 ["f.md:3: `docs/notes.txt` names nothing"],
+                 ["f.md:1: `docs/log.md` names nothing",
+                  "f.md:1: `docs/log/README.md` names nothing"],
+                 [],
+                 []))
 })
 
-// The plan, the findings, the logs and the proposals have no path checked.
+// The plan, the findings, the logs and the proposals have no path checked,
+// and the log, in either form, and the proposals no paragraph measured and
+// no command read.
 let leavesPathsUnchecked =
     Test.Case(name = "leaves the plan, the logs and the proposals", run = fn() = {
         let files =
@@ -1106,10 +1508,20 @@ let leavesPathsUnchecked =
              "docs/plan.md",
              "docs/findings.md",
              "docs/log.md",
+             "docs/log/README.md",
+             "docs/log/2026-11-13.md",
              "TEMPLATE_LOG.md",
              "docs/proposals/cache/proposal.md",
+             "docs/logbook.md",
              "docs/design.md"];
-        Test.equal(List.filter(files, namesTheTree), ["README.md", "docs/design.md"])
+        Test.equal(#(List.filter(files, namesTheTree), List.filter(files, isCurrent)),
+                   #(["README.md", "docs/logbook.md", "docs/design.md"],
+                     ["README.md",
+                      "docs/plan.md",
+                      "docs/findings.md",
+                      "TEMPLATE_LOG.md",
+                      "docs/logbook.md",
+                      "docs/design.md"]))
     })
 
 // git's output is read at each NUL, a name past ASCII as written; where it
@@ -1247,12 +1659,13 @@ let readsACommentOnce = Test.Case(name = "reads a comment of a module once", run
 })
 
 // A release's note holds a date in its heading alone, no log entry, by a
-// title after ";" or after "the log's", any case of "the", or by the log's
-// file, no finding by its name, neither the plan's file nor the findings',
-// and no reader of a review by its kind, one form a line; the file's own
-// paragraph is not read, nor a heading, a date a time follows, a bare word,
-// the plan, the log, a review, a reader, a newcomer, a library's readers, or
-// a file but the log's, CHANGELOG.md.
+// title after ";" or after "the log's", any case of "the", or by a file of
+// the log, log.md or a file under a directory log/, no finding by its name,
+// neither the plan's file nor the findings', and no reader of a review by
+// its kind, one form a line; the file's own paragraph is not read, nor a
+// heading, a date a time follows, a bare word, the plan, the log, a review,
+// a reader, a newcomer, a library's readers, the directory log/ itself, or a
+// file but the log's, CHANGELOG.md or one under catalog/.
 let findsNotes = Test.Case(name = "finds what a release's note leaves out", run = fn() = {
     let text =
         "# Changes\n\nEach note; the plan, a review and its readers, 2026-11-07, finding C7.\n\n"
@@ -1269,7 +1682,10 @@ let findsNotes = Test.Case(name = "finds what a release's note leaves out", run 
             <> "- As docs/log.md says, *Begun from the template*.\n"
             <> "- In (log.md's) order: §11.\n"
             <> "- A document reader found it.\n"
-            <> "- As the log has it, the log's order, a reader, a document, CHANGELOG.md: §12.\n";
+            <> "- As the log has it, the log's order, a reader, a document, CHANGELOG.md, "
+            <> "docs/log/, catalog/notes.md: §12.\n"
+            <> "- In docs/log/2026-11-13.md: §13.\n"
+            <> "- As (log/README.md's) index has it: §14.\n";
     Test.equal(naming(changes, notesIn(List.indexed(String.lines(text))), "the note", noteAt),
                ["CHANGES.md:9: the note names a log entry",
                 "CHANGES.md:10: the note names a date outside its heading",
@@ -1281,7 +1697,9 @@ let findsNotes = Test.Case(name = "finds what a release's note leaves out", run 
                 "CHANGES.md:17: the note names a log entry",
                 "CHANGES.md:18: the note names a log entry",
                 "CHANGES.md:19: the note names a log entry",
-                "CHANGES.md:20: the note names a reader"])
+                "CHANGES.md:20: the note names a reader",
+                "CHANGES.md:22: the note names a log entry",
+                "CHANGES.md:23: the note names a log entry"])
 })
 
 // A command in a fenced block gives its description after "#", and a line
@@ -1386,4 +1804,141 @@ let findsLinesApart = Test.Case(name = "finds a part whose lines stand apart", r
     let text = "```ernest\nfn double(total : Int) : Int = {\n    twice\n}\n```\n";
     Test.equal(unquoted("README.md", String.lines(text), [quotedSource]),
                ["README.md:2" <> quotedNowhere])
+})
+
+// A file of the log holds 262,144 bytes at most: docs/log.md past them is
+// told to split by day, and a file under docs/log/ is named with its size.
+let holdsTheCeiling = Test.Case(name = "holds a file of the log to the ceiling", run = fn() = {
+    let split = "docs/log.md: 270000 bytes, past 262144: split the log by day under docs/log/";
+    Test.equal(#(oversized("docs/log.md", 262144),
+                 oversized("docs/log.md", 270000),
+                 oversized("docs/log/2026-11-13.md", 262145)),
+               #(None, Some(split), Some("docs/log/2026-11-13.md: 262145 bytes, past 262144")))
+})
+
+// The log is docs/log.md or the files under docs/log/, and git tracks one
+// form, not both.
+let holdsOneForm = Test.Case(name = "holds the log to one form", run = fn() = {
+    let names = ["docs/log.md", "docs/log/README.md", "docs/logbook.md", "log.md"];
+    Test.equal(#(List.filter(names, isLog),
+                 bothForms(names),
+                 bothForms(["docs/log.md", "docs/logbook.md"]),
+                 bothForms(["docs/log/README.md"])),
+               #(["docs/log.md", "docs/log/README.md"],
+                 ["docs: git tracks docs/log.md and docs/log/; the log is one or the other"],
+                 [],
+                 []))
+})
+
+let indexedDay : String = "# Decisions, 2026-11-12\n\n## First\n\n*2026-11-12.* The first.\n"
+
+// A split log whose files are named for their days, whose entries open with
+// their day, and whose index links each entry on its day's line, the days
+// newest first, holds: a heading in fenced code and a deeper one are no
+// entry, a repeated heading is linked by its numbered anchor, a blank line
+// may stand between the index's lines, and the text above the index is not
+// read.
+let holdsTheSplit = Test.Case(name = "holds a log split by day", run = fn() = {
+    let index =
+        "# Decisions\n\nWhat stood above, `docs/design.md` and [a link](x.md#y).\n\n## Index\n\n"
+            <> "**2026-11-13.** [Second](2026-11-13.md#second); "
+            <> "[Second](2026-11-13.md#second-1); [Third, *again*](2026-11-13.md#third-again)\n\n"
+            <> "**2026-11-12.** [First](2026-11-12.md#first)\n";
+    let day =
+        "# Decisions, 2026-11-13\n\n## Second\n\n*2026-11-13.* The second.\n\n"
+            <> "```\n## Fenced\n```\n\n## Second\n\n*2026-11-13.* Again.\n\n### A part\n\n"
+            <> "## Third, *again*\n\n*2026-11-13, decided 2026-11-20.* The third.\n";
+    let texts =
+        [#("docs/log/README.md", index),
+         #("docs/log/2026-11-13.md", day),
+         #("docs/log/2026-11-12.md", indexedDay)];
+    Test.equal(splitIn(List.map(texts, fn(#(file, _)) = file), texts), [])
+})
+
+// A file under docs/log/ named for no day, an entry that opens with no date
+// of its file's day or with nothing, an entry no link of its day's line
+// names, a link that names no entry of its line's day, a link that names an
+// entry an earlier link of its line named, a day as old as the one before it
+// or newer, and a line under the index that is no index line are each a line
+// naming the file and the line.
+let findsTheSplitBroken = Test.Case(name = "finds what a split log breaks", run = fn() = {
+    let index =
+        "# Decisions\n\n## Index\n\n"
+            <> "**2026-11-12.** [First](2026-11-12.md#first); [Gone](2026-11-12.md#gone)\n"
+            <> "**2026-11-13.** [Second](2026-11-13.md#second); [Second](2026-11-13.md#second)\n"
+            <> "**2026-11-13.** [Third](2026-11-12.md#third)\n"
+            <> "Not an index line\n"
+            <> "**2026-11-11.** [First](2026-11-11.md#first) and more\n";
+    let later =
+        "# Decisions, 2026-11-13\n\n## Second\n\n*2026-11-12.* A day early.\n\n"
+            <> "## Third\n\n*2026-11-13.* The third.\n";
+    let earlier = indexedDay <> "\n## Last\n";
+    let under =
+        ["docs/log/README.md",
+         "docs/log/2026-11-13.md",
+         "docs/log/notes.md",
+         "docs/log/2026-11-12.md",
+         "docs/log/sub/2026-11-14.md",
+         "docs/log/2026-11-1.md"];
+    let texts =
+        [#("docs/log/README.md", index),
+         #("docs/log/2026-11-13.md", later),
+         #("docs/log/2026-11-12.md", earlier)];
+    let unread = ": the line is no index line, **YYYY-MM-DD.** [Title](YYYY-MM-DD.md#anchor); …";
+    let noEntry = " names no entry of ";
+    let twice = " stands twice on 2026-11-13's line";
+    Test.equal(splitIn(under, texts),
+               ["docs/log/notes.md: a day's file is named YYYY-MM-DD.md",
+                "docs/log/sub/2026-11-14.md: a day's file is named YYYY-MM-DD.md",
+                "docs/log/2026-11-1.md: a day's file is named YYYY-MM-DD.md",
+                "docs/log/2026-11-13.md:3: the entry opens with no *2026-11-13.*",
+                "docs/log/2026-11-12.md:7: the entry opens with no *2026-11-12.*",
+                "docs/log/2026-11-13.md:7: *Third* is not in the index on 2026-11-13's line",
+                "docs/log/2026-11-12.md:7: *Last* is not in the index on 2026-11-12's line",
+                "docs/log/README.md:5: [Gone](2026-11-12.md#gone)" <> noEntry <> "2026-11-12.md",
+                "docs/log/README.md:6: [Second](2026-11-13.md#second)" <> twice,
+                "docs/log/README.md:7: [Third](2026-11-12.md#third)" <> noEntry <> "2026-11-13.md",
+                "docs/log/README.md:6: the index's days stand newest first, each once",
+                "docs/log/README.md:7: the index's days stand newest first, each once",
+                "docs/log/README.md:8" <> unread,
+                "docs/log/README.md:9" <> unread])
+})
+
+// Where docs/log/README.md is not tracked, or holds no "## Index" outside
+// fenced code, one line says so in place of the entries the index lacks;
+// where nothing is under docs/log/, nothing is held.
+let findsNoIndex = Test.Case(name = "finds a split log with no index", run = fn() = {
+    let fenced = "# Decisions\n\n```\n## Index\n```\n";
+    Test.equal(#(splitIn(["docs/log/2026-11-12.md"], [#("docs/log/2026-11-12.md", indexedDay)]),
+                 splitIn(["docs/log/README.md", "docs/log/2026-11-12.md"],
+                         [#("docs/log/README.md", fenced),
+                          #("docs/log/2026-11-12.md", indexedDay)]),
+                 splitIn([], [])),
+               #(["docs/log/README.md: no ## Index"], ["docs/log/README.md: no ## Index"], []))
+})
+
+// An anchor is GitHub's: the heading in lower case past ASCII too, every
+// character dropped but a letter, a combining mark, a digit of any script,
+// "_", "-" and a space, each space a hyphen, and a repeat numbered with the
+// first count after it that no heading took; every heading of a file
+// counts, its title among them.
+let writesAnchors = Test.Case(name = "writes a heading's anchor as GitHub does", run = fn() = {
+    let titles =
+        ["Decisions, 2026-11-13",
+         "ÉTÉ's *rule*: `a.b` (c)",
+         "A b",
+         "A b",
+         "a-b-1",
+         "A b",
+         "e\u{301}t\u{e9} ½ ٣ _x_"];
+    Test.equal(#(anchorsOf(titles),
+                 List.map(entriesOf("# Same\n\n## Same\n\n*x*\n"), fn(entry) = entry.anchor)),
+               #(["decisions-2026-11-13",
+                  "étés-rule-ab-c",
+                  "a-b",
+                  "a-b-1",
+                  "a-b-1-1",
+                  "a-b-2",
+                  "e\u{301}t\u{e9}--٣-_x_"],
+                 ["same-1"]))
 })
