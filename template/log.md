@@ -450,3 +450,7 @@ ernest-httpd's session said which of its launcher's differences are the template
 **The run.** ernest-httpd's `make run` serves its example site, with a configuration and two steps before it, where the template's runs the launcher with no argument, which that program refuses. `run` now takes its arguments from `RUN_ARGS` and first builds what `RUN_NEEDS` names, both among the variables a copy edits and empty by default, so that the Makefile below them stays one file. `EXAMPLES_MADE` moves among those variables too, since httpd's names two directories, and the documents an unpacked archive carries leave out each it names.
 
 **The forms.** A line may be a defect, and Ernest's tracker has a form for one, so *The work* files a line by the form that fits it, Defect or Feedback, as Ernest's `docs/clean_room.md` has it.
+
+## The index a paragraph a day, 2026-11-27
+
+The split log's index holds a paragraph a day, the days a blank line apart, and `tools/docs.ern` refuses two days with none between them. GitHub joins lines with no blank line between into one paragraph, so "a line a day" rendered as one run of links, where a reader of the index looks for a day (principle 1). Ernest's own index stands so, all 71 of its days, and the template's form, cut from it, had said a line; ernest-httpd's split set its days apart and showed the difference. One form is stated and held (principle 2).

@@ -13,18 +13,18 @@
 // day, YYYY-MM-DD.md, and each entry in it, a `## ` heading outside fenced
 // code, opens the first line after it that is not blank with `*` and the
 // file's day, then a period or a comma. README.md holds `## Index`, and
-// under it nothing but a line a day, `**YYYY-MM-DD.**` and its links, each
-// `[Title](YYYY-MM-DD.md#anchor)` and the next after `; `, the days newest
-// first and each once: every entry of a day's file is linked on its day's
-// line once, by its heading's text and its anchor, and every link names an
-// entry of its line's day. An anchor is GitHub's: the heading in lower case,
-// every character dropped but a letter, a combining mark, a digit, `_`, `-`
-// and a space, and each space a hyphen; a heading whose anchor an earlier
-// heading of the file took gets it with the first of `-1`, `-2` and on that
-// no heading took. A backticked docs/log.md or docs/log/README.md names the
-// log in either form. Each that does not hold is a line on standard error
-// naming the file and, where there is one, the line, and the program ends
-// with status 1.
+// under it nothing but a paragraph a day of one line, `**YYYY-MM-DD.**` and
+// its links, each `[Title](YYYY-MM-DD.md#anchor)` and the next after `; `,
+// the days newest first, each once and a blank line apart: every entry of a
+// day's file is linked on its day's line once, by its heading's text and its
+// anchor, and every link names an entry of its line's day. An anchor is
+// GitHub's: the heading in lower case, every character dropped but a letter,
+// a combining mark, a digit, `_`, `-` and a space, and each space a hyphen;
+// a heading whose anchor an earlier heading of the file took gets it with
+// the first of `-1`, `-2` and on that no heading took. A backticked
+// docs/log.md or docs/log/README.md names the log in either form. Each that
+// does not hold is a line on standard error naming the file and, where there
+// is one, the line, and the program ends with status 1.
 //
 // Every backticked path in a tracked document that begins with a directory
 // holding a tracked file names a tracked file or a directory that holds one,
@@ -1277,7 +1277,8 @@ fn indexOf(text : String) : Optional(List(#(Int, String))) = {
 // What the index breaks, as lines for standard error: an entry of a day's
 // file its day's line does not link, a link that names no entry of its
 // line's day or one its line named before, a day that stands after a day as
-// old or older, and a line that is not blank and is no index line.
+// old or older, a day on the line after another day's, with no blank line
+// between, and a line that is not blank and is no index line.
 fn indexFaults(lines : List(#(Int, String)), days : List(DayFile)) : List(String) = {
     let read =
         List.map(List.filter(lines, fn(#(_, line)) = !String.isEmpty(String.trim(line))),
@@ -1294,6 +1295,7 @@ fn indexFaults(lines : List(#(Int, String)), days : List(DayFile)) : List(String
     List.flatMap(days, fn(day) = unindexed(day, indexLines))
         <> List.flatMap(indexLines, fn(indexLine) = linkFaults(indexLine, days))
         <> disordered(indexLines)
+        <> adjacent(indexLines)
         <> unread
 }
 
@@ -1387,6 +1389,17 @@ fn disordered(indexLines : List(IndexLine)) : List(String) =
                        else
                            Some(placeOf(logIndex, indexLine.lineNumber)
                                     <> "the index's days stand newest first, each once"))
+
+// Each index line that stands on the line after another index line, with no
+// blank line between, as a line for standard error.
+fn adjacent(indexLines : List(IndexLine)) : List(String) =
+    List.filterMap(List.zip(List.drop(indexLines, 1), indexLines),
+                   fn(#(indexLine, before)) =
+                       if indexLine.lineNumber == before.lineNumber + 1 then
+                           Some(placeOf(logIndex, indexLine.lineNumber)
+                                    <> "the index's days stand a blank line apart")
+                       else
+                           None)
 
 //
 // Tests
@@ -1834,10 +1847,9 @@ let indexedDay : String = "# Decisions, 2026-11-12\n\n## First\n\n*2026-11-12.* 
 
 // A split log whose files are named for their days, whose entries open with
 // their day, and whose index links each entry on its day's line, the days
-// newest first, holds: a heading in fenced code and a deeper one are no
-// entry, a repeated heading is linked by its numbered anchor, a blank line
-// may stand between the index's lines, and the text above the index is not
-// read.
+// newest first and a blank line apart, holds: a heading in fenced code and a
+// deeper one are no entry, a repeated heading is linked by its numbered
+// anchor, and the text above the index is not read.
 let holdsTheSplit = Test.Case(name = "holds a log split by day", run = fn() = {
     let index =
         "# Decisions\n\nWhat stood above, `docs/design.md` and [a link](x.md#y).\n\n## Index\n\n"
@@ -1864,8 +1876,8 @@ let holdsTheSplit = Test.Case(name = "holds a log split by day", run = fn() = {
 let findsTheSplitBroken = Test.Case(name = "finds what a split log breaks", run = fn() = {
     let index =
         "# Decisions\n\n## Index\n\n"
-            <> "**2026-11-12.** [First](2026-11-12.md#first); [Gone](2026-11-12.md#gone)\n"
-            <> "**2026-11-13.** [Second](2026-11-13.md#second); [Second](2026-11-13.md#second)\n"
+            <> "**2026-11-12.** [First](2026-11-12.md#first); [Gone](2026-11-12.md#gone)\n\n"
+            <> "**2026-11-13.** [Second](2026-11-13.md#second); [Second](2026-11-13.md#second)\n\n"
             <> "**2026-11-13.** [Third](2026-11-12.md#third)\n"
             <> "Not an index line\n"
             <> "**2026-11-11.** [First](2026-11-11.md#first) and more\n";
@@ -1896,13 +1908,30 @@ let findsTheSplitBroken = Test.Case(name = "finds what a split log breaks", run 
                 "docs/log/2026-11-13.md:7: *Third* is not in the index on 2026-11-13's line",
                 "docs/log/2026-11-12.md:7: *Last* is not in the index on 2026-11-12's line",
                 "docs/log/README.md:5: [Gone](2026-11-12.md#gone)" <> noEntry <> "2026-11-12.md",
-                "docs/log/README.md:6: [Second](2026-11-13.md#second)" <> twice,
-                "docs/log/README.md:7: [Third](2026-11-12.md#third)" <> noEntry <> "2026-11-13.md",
-                "docs/log/README.md:6: the index's days stand newest first, each once",
+                "docs/log/README.md:7: [Second](2026-11-13.md#second)" <> twice,
+                "docs/log/README.md:9: [Third](2026-11-12.md#third)" <> noEntry <> "2026-11-13.md",
                 "docs/log/README.md:7: the index's days stand newest first, each once",
-                "docs/log/README.md:8" <> unread,
-                "docs/log/README.md:9" <> unread])
+                "docs/log/README.md:9: the index's days stand newest first, each once",
+                "docs/log/README.md:10" <> unread,
+                "docs/log/README.md:11" <> unread])
 })
+
+// Two days of the index on adjacent lines, with no blank line between, are a
+// line naming the second.
+let findsTheDaysAdjacent =
+    Test.Case(name = "finds an index's days on adjacent lines", run = fn() = {
+        let index =
+            "# Decisions\n\n## Index\n\n"
+                <> "**2026-11-13.** [Second](2026-11-13.md#second)\n"
+                <> "**2026-11-12.** [First](2026-11-12.md#first)\n";
+        let day = "# Decisions, 2026-11-13\n\n## Second\n\n*2026-11-13.* The second.\n";
+        let texts =
+            [#("docs/log/README.md", index),
+             #("docs/log/2026-11-13.md", day),
+             #("docs/log/2026-11-12.md", indexedDay)];
+        Test.equal(splitIn(List.map(texts, fn(#(file, _)) = file), texts),
+                   ["docs/log/README.md:6: the index's days stand a blank line apart"])
+    })
 
 // Where docs/log/README.md is not tracked, or holds no "## Index" outside
 // fenced code, one line says so in place of the entries the index lacks;
