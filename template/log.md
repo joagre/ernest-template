@@ -496,3 +496,7 @@ Checking only the files a copy takes whole with the four added was weighed and n
 ## The Rule form names where a rule was found, 2026-11-27
 
 On the user's word, what Ernest's session finds wrong in the template or asks of it comes as an issue on the template's tracker, and a message between the two sessions carries news alone (Ernest's `docs/clean_room.md`). The Rule form said a copy found the rule and asked for "The copy", which left Ernest's session out; it filed that as the template's issue #7, with the wording. The form now asks where the rule was found, a copy's repository or Ernest's, and what happened there, in Ernest's words. `template/design.md` §3 says the form brings a rule from a copy or from Ernest's session, and §5 that what Ernest's session asks of the template comes by an issue, the other way staying by message (principle 1: a form that misnames who fills it asks for a wrong answer).
+
+## What a copy keeps of the known issues, 2026-11-27
+
+ernest-epx took v0.11.1 and asked two things of `docs/known_issues.md`. The checker's Markdown line ended at "a line of `language_feedback.md`", which a copy does not hold, so it now ends at Ernest's feedback 320, in epx's words, and reads true wherever the checker goes. The line on the template's own `make test` is no checker's: `template/design.md` §3 now says the file holds the checker's lines, which a copy keeps, and the template's own, which a copy removes, and the README's step 6 lists them among what a copy removes.
