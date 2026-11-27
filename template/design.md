@@ -32,7 +32,7 @@ A file is in the template only where it has content on the first day. `README.md
 
 `docs/README.md` says what each document is. `SECURITY.md` says where a security hole goes, and GitHub shows it in the repository's *Security* tab; the setting that takes such a report is not copied with the template, so a copy turns it on.
 
-`.github/ISSUE_TEMPLATE/` holds a defect's issue form and a `config.yml`. The `config.yml` turns blank issues off and sends a security hole to private reporting. A copy changes the repository's address in it. The template's own `rule.yml` is the form a copy's rule comes back by, and a copy removes it.
+`.github/ISSUE_TEMPLATE/` holds a defect's issue form and a `config.yml`. The `config.yml` turns blank issues off and sends a security hole to private reporting. A copy changes the repository's address in it. The template's own `rule.yml` is the form a rule comes by, from a copy or from Ernest's session, and a copy removes it.
 
 `assets/` holds the repository's icon, 128 by 128, and its social preview on GitHub, 1280 by 640, with a README saying what each is. GitHub takes the preview from the repository's settings, so a copy replaces both pictures with its own and uploads its preview there.
 
@@ -56,7 +56,7 @@ Not committed: `build/`, each root's `build/`, `lib/`, the packages' archives am
 
 `CLAUDE.md` is a cut of Ernest's, in the same order. It holds what judgment cannot supply: what is the user's, who decides, and what the user wants of the work. It says nothing on how to think, and a mistake adds no rule to it.
 
-Ernest's repository is upstream of the template. A change to the way of working is agreed with Ernest's session, by a message between the two sessions, and decided by the user. A rule Ernest holds comes to the template whole, never weighed part by part for an application, but for what this section says changes or is dropped.
+Ernest's repository is upstream of the template. A change to the way of working is agreed with Ernest's session, by a message between the two sessions or, for what Ernest's session asks of the template, by an issue on the template's tracker, and decided by the user. A rule Ernest holds comes to the template whole, never weighed part by part for an application, but for what this section says changes or is dropped.
 
 What changes from Ernest's is what the report shaped. The normative document is `docs/design.md`, and the design changes first. Where the design is silent, a sentence is added to it. Every section of the design has a test whose comment names it. A defect or a gap of Ernest's is a line of `language_feedback.md` and what needed it waits, never worked around, but for a function Ernest can express over what the library has. A corner that only a built program meets is a line of `known_issues.md`.
 

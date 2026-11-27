@@ -1,11 +1,11 @@
 name: Rule
-description: A copy of the template found a rule of the way of working that the template's files lack, or hold wrong.
+description: A rule of the way of working that the template's files lack, or hold wrong, found in a copy of the template or in Ernest's repository.
 body:
   - type: input
     id: copy
     attributes:
-      label: The copy
-      description: The repository the rule was found in, and its commit.
+      label: Where it was found
+      description: The repository the rule was found in, a copy's or Ernest's, and its commit.
       placeholder: ernest-httpd f064e87
     validations:
       required: true
@@ -28,6 +28,6 @@ body:
     id: shown
     attributes:
       label: What showed it
-      description: What happened in the copy that the rule answers.
+      description: What happened there that the rule answers.
     validations:
       required: true
