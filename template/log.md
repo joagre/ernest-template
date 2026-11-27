@@ -468,3 +468,7 @@ Three of Ernest's answers became the template's code. `make doc` writes the modu
 **The dependent's packages.** It names each package of the checkout's `lib/` beside the program, by its directory and its `VERSION`, since §11.9 has a root manifest name every package its packages name, and a copy's first package would otherwise fail its tests for nothing in its code; `lib/` is read where `package.conf` would need a JSON reader in the Makefile.
 
 `tools/docs.ern` finds the index's heading by `List.findIndex` (KE3), the function it had written for itself.
+
+## A reader follows its brief instead, 2026-11-27
+
+`docs/agents.md` had a review's reader's brief carry two rules of `CLAUDE.md`, untracked files and the style guide, where `docs/full_review.md` has it keep one; ernest-httpd filed it as the template's issue #4. The two sentences now give every agent's brief its two lines and make a reader the exception, its brief standing in place of `CLAUDE.md`, so that `full_review.md` alone says what a reader keeps. Ernest's page took the same fix (Ernest's log, *A Reader Follows Its Brief Instead*).
