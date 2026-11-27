@@ -1,6 +1,6 @@
 # The template's design
 
-What `ernest-template` is, and why each of its files is there. This is the template's own document and not a copy's: the last step of `README.md` removes it. It states the design as it stands, and changes with the template. The template's history, where each rule came from and what each application taught it, is `TEMPLATE_LOG.md`'s.
+What `ernest-template` is, and why each of its files is there. This is the template's own document and not a copy's: the last step of `README.md` removes it. It states the design as it stands, and changes with the template. The template's history, where each rule came from and what each application taught it, is `template/log.md`'s.
 
 ## 1. What it is for
 
@@ -26,13 +26,13 @@ Everything the template does, the toolchain does already; the template only choo
 
 ## 3. The tree
 
-A file is in the template only where it has content on the first day. `README.md`, `CLAUDE.md`, `LICENSE`, the Zero-Clause BSD license as Ernest's own, which the README names, `CHANGES.md`, `VERSION`, `package.conf`, `Makefile`, `SECURITY.md` and `.gitignore` at the top; `bin/name`, the launcher, renamed for the program on the copy.
+A file is in the template only where it has content on the first day. `README.md`, `CLAUDE.md`, `LICENSE`, the Zero-Clause BSD license as Ernest's own, which the README names, `CHANGES.md`, `VERSION`, `package.conf`, `Makefile`, `SECURITY.md` and `.gitignore` at the top; `bin/name`, the launcher, renamed for the program on the copy; and `template/`, this note and the template's log, which a copy removes.
 
 `README.md` says what the program is for its reader and what it does, shows it once before *Building*, and then says where to begin, with central links only and no argument the program's own documents make. The showing is a picture, a session, or a few lines of the program's source. An Ernest block of the README is quoted and never written for the page: each of its parts, cut at its blank lines, stands in a tracked module once the module's comment lines are taken out, which `tools/docs.ern` holds. Under its title stands the epigraph, *The Importance of Being Ernest*, the line every application begun from the template keeps. The template's own README names the template in a line under the epigraph, since its top is the form a copy fills, and a copy removes that line.
 
 `docs/README.md` says what each document is. `SECURITY.md` says where a security hole goes, and GitHub shows it in the repository's *Security* tab; the setting that takes such a report is not copied with the template, so a copy turns it on.
 
-`.github/ISSUE_TEMPLATE/` holds a defect's issue form and a `config.yml`. The `config.yml` turns blank issues off and sends a security hole to private reporting. A copy changes the repository's address in it.
+`.github/ISSUE_TEMPLATE/` holds a defect's issue form and a `config.yml`. The `config.yml` turns blank issues off and sends a security hole to private reporting. A copy changes the repository's address in it. The template's own `rule.yml` is the form a copy's rule comes back by, and a copy removes it.
 
 `assets/` holds the repository's icon, 128 by 128, and its social preview on GitHub, 1280 by 640, with a README saying what each is. GitHub takes the preview from the repository's settings, so a copy replaces both pictures with its own and uploads its preview there.
 
@@ -55,6 +55,8 @@ Not committed: `build/`, each root's `build/`, `lib/`, the packages' archives am
 ## 5. The working rules
 
 `CLAUDE.md` is a cut of Ernest's, in the same order. It holds what judgment cannot supply: what is the user's, who decides, and what the user wants of the work. It says nothing on how to think, and a mistake adds no rule to it.
+
+Ernest's repository is upstream of the template. A change to the way of working is agreed with Ernest's session, by a message between the two sessions, and decided by the user. A rule Ernest holds comes to the template whole, never weighed part by part for an application, but for what this section says changes or is dropped.
 
 What changes from Ernest's is what the report shaped. The normative document is `docs/design.md`, and the design changes first. Where the design is silent, a sentence is added to it. Every section of the design has a test whose comment names it. A defect or a gap of Ernest's is a line of `language_feedback.md` and what needed it waits, never worked around, but for a function Ernest can express over what the library has. A corner that only a built program meets is a line of `known_issues.md`.
 
@@ -82,8 +84,8 @@ One ask Ernest leaves to the program. A program's version is its own fact: a `le
 
 It does not ship an empty file or directory. It does not copy Ernest's EUnit, its language-only documents or the readers of its reviews that read the language. It does not invent a dependency tool, and fetches no package's archive, which its author downloads. It does not run in a continuous-integration service: a workflow would have to install OTP 29 and build Ernest before the application's seconds of tests, and a release archive of Ernest that installs without a build would change that.
 
-It does not let the rules live in two places: an application is a copy, and what an application learns goes back here and from here into each copy, and into Ernest's `CLAUDE.md` where it applies there; `CLAUDE.md`, `docs/agents.md`, `tools/docs.ern` and `docs/full_review.md` are refreshed in an application by taking the template's again, the first but for its title and the sentence under it and the last but for the readers the application added, and the rules an Ernest program is written by are read from Ernest's installation, never copied.
+It does not let the rules live in two places: an application is a copy, and what an application learns goes back here and from here into each copy, and into Ernest's `CLAUDE.md` where it applies there; the files `CLAUDE.md`'s *What is the user's* calls the template's are refreshed in an application by taking the template's again, as it says, and the rules an Ernest program is written by are read from Ernest's installation, never copied.
 
 ## 9. How it is used
 
-The repository is a GitHub template repository: *Use this template* makes the copy, and `README.md`'s last section says the six steps a copy takes. The last step removes `TEMPLATE.md` and `TEMPLATE_LOG.md`, which are the template's own. The template is tagged when the way of working changes, and the copy's first log entry names the tag.
+The repository is a GitHub template repository: *Use this template* makes the copy, and `README.md`'s last section says the six steps a copy takes. The last step removes `template/`, the template's own design note and log, and its own issue form. The template is tagged when the way of working changes, and the copy's first log entry names the tag.

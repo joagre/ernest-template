@@ -1,6 +1,6 @@
 # The template's log
 
-The template's own dated record, newest last: where each rule of `TEMPLATE.md` came from and what each application taught the template. A copy removes it with `TEMPLATE.md`. It is never normative: `TEMPLATE.md` states the design as it stands.
+The template's own dated record, newest last: where each rule of `template/design.md` came from and what each application taught the template. A copy removes it with `template/design.md`. It is never normative: `template/design.md` states the design as it stands. An entry before *Ernest agrees* names the two by their former names, `TEMPLATE.md` and `TEMPLATE_LOG.md`.
 
 ## The design, 2026-10-20
 
@@ -428,3 +428,17 @@ A copy's log that nears 256 KB is split by day under `docs/log/`, in Ernest's fo
 **The date** is the one an entry's first paragraph opens with, `*2026-10-30.*` or `*2026-10-13, decided 2026-10-26.*`, not its heading's as in Ernest's log. Every entry of both copies opens so, and three of httpd's stand out of their date's order and go to their day's file.
 
 **No tool splits.** A copy splits once, by hand, and its `make test` holds the result. ernest-epx and ernest-httpd take the checker with the rest of `tools/docs.ern` from the final tag.
+
+## Ernest agrees, 2026-11-27
+
+The first step of the lock step after the full review. Ernest's session read what waited for it in `docs/findings.md` at `54f1eec`, against its own repository and both copies. It agreed with nine items, with four in other words, and objected in part to two (Ernest's log, *The Lines Go by the Tracker*). The user took every recommendation. `CLAUDE.md` gains the seven changes that waited, in Ernest's words where it gave them.
+
+**The release of `ern`.** "A candidate Ernest's session names" would be false in a stranger's copy, which takes the file whole, so the archive is "a release or a candidate for one". A commit waits until its release is published, not only made, since whoever clones it can install only what is published.
+
+**The files a copy takes whole.** They are not the same everywhere today. ernest-epx's `docs/release.md` has a step of its own, the window tried by hand, and ernest-httpd's Makefile has two targets of its own, so the sentence excepts what a copy added. The launcher is not named yet: ernest-httpd's differs in what it does, and its session says at the next step which difference is the template's. Ernest's `docs/clean_room.md` now points at the sentence, which is the list's one owner.
+
+**The lines go by the tracker.** A line of `docs/language_feedback.md` goes to Ernest as an issue, by the Feedback form Ernest's tracker gained for it. The session files it, and the issue holds the line whole, its program in it. Principle 2 decides one route for each kind, and principle 3 a public issue with a number, where a message is seen by two sessions alone. A line of ernest-httpd's fell between two messages on 2026-11-26 and had no answer until the user asked. A security hole never goes as an issue. The seventeen lines carried by message close by message.
+
+**A copy's upstream is the template**, so `CLAUDE.md` names one route for a rule, the template's tracker, which gains `rule.yml` beside the defect's form. The message between the template's session and Ernest's is the template's own, and stands in its design note's §5, with the rule that one of Ernest's comes whole but for what that section changes or drops.
+
+**`template/`.** `TEMPLATE.md` and `TEMPLATE_LOG.md` move to `template/design.md` and `template/log.md`, so that the top level holds only what a copy keeps and the README's last step removes one directory. Where Ernest's log, the copies' or this one cites the old names, the citation is history and stays. `docs/agents.md` no longer says a review's documents are read at the session's own effort, which stopped being true when the two efforts parted; Ernest's page drops it too.

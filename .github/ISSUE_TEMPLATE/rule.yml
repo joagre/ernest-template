@@ -1,0 +1,33 @@
+name: Rule
+description: A copy of the template found a rule of the way of working that the template's files lack, or hold wrong.
+body:
+  - type: input
+    id: copy
+    attributes:
+      label: The copy
+      description: The repository the rule was found in, and its commit.
+      placeholder: ernest-httpd f064e87
+    validations:
+      required: true
+  - type: input
+    id: file
+    attributes:
+      label: The file
+      description: The file of the template's that the rule changes, as CLAUDE.md's *What is the user's* names them.
+      placeholder: CLAUDE.md, The work
+    validations:
+      required: true
+  - type: textarea
+    id: rule
+    attributes:
+      label: The rule
+      description: The sentence as it would read there.
+    validations:
+      required: true
+  - type: textarea
+    id: shown
+    attributes:
+      label: What showed it
+      description: What happened in the copy that the rule answers.
+    validations:
+      required: true

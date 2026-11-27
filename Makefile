@@ -1,6 +1,7 @@
-# The program's build and tests: one Makefile, the same targets in every
-# application begun from ernest-template. The variables an application
-# edits stand first; the rest is the same everywhere.
+# The program's build and tests: one Makefile, the targets of every
+# application begun from ernest-template, beside any a copy adds of its own.
+# The variables an application edits stand first; the rest is the same
+# everywhere but for those targets.
 #
 #   make          builds: lib/ filled, and the program compiled after each
 #                 package package.conf names

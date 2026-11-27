@@ -4,7 +4,7 @@ How the Makefile, the launcher, the archive and the installation are arranged, t
 
 ## The Makefile
 
-One Makefile at the top. The variables an application edits stand first, and the rest is the same in every application, its targets among it: `all`, `lib`, `build`, `test`, `examples`, `run`, `doc`, `format`, `release`, `install`, `uninstall` and `clean`. There is no light run and no full run, since an application's whole suite runs in seconds, and where one day it does not, that is a defect of the tests to measure.
+One Makefile at the top. The variables an application edits stand first, and the rest is the same in every application, its targets among it: `all`, `lib`, `build`, `test`, `examples`, `run`, `doc`, `format`, `release`, `install`, `uninstall` and `clean`, beside any a copy adds of its own. There is no light run and no full run, since an application's whole suite runs in seconds, and where one day it does not, that is a defect of the tests to measure.
 
 **The load path.** The libraries of Ernest's own stand on every job's load path by the toolchain's own rule (§11.1, §11.2). The packages `package.conf` names stand under `lib/`, which is the manifest's alone, and every job started in the package, or given it by `--package-dir`, puts them on the load path (§11.9). The program's own Erlang applications stand under `erl/`, each built there by its own `make` with its `ebin` and its `priv`, and `--libs-dir erl` puts them on the load path of `ern test` and `ern run`. The Makefile writes no package's path.
 

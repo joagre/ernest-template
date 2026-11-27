@@ -322,7 +322,7 @@ fn findMissing(files : List(String), held : Held) : List(String) =
 // the tree their readers read, and a log the paths there when its entry was
 // written.
 fn namesTheTree(file : String) : Bool =
-    !List.contains(["docs/plan.md", "docs/findings.md", "TEMPLATE_LOG.md"], file)
+    !List.contains(["docs/plan.md", "docs/findings.md", "template/log.md"], file)
         && !isLog(file)
         && !String.startsWith(file, "docs/proposals/")
 
@@ -1510,7 +1510,7 @@ let leavesPathsUnchecked =
              "docs/log.md",
              "docs/log/README.md",
              "docs/log/2026-11-13.md",
-             "TEMPLATE_LOG.md",
+             "template/log.md",
              "docs/proposals/cache/proposal.md",
              "docs/logbook.md",
              "docs/design.md"];
@@ -1519,7 +1519,7 @@ let leavesPathsUnchecked =
                      ["README.md",
                       "docs/plan.md",
                       "docs/findings.md",
-                      "TEMPLATE_LOG.md",
+                      "template/log.md",
                       "docs/logbook.md",
                       "docs/design.md"]))
     })
