@@ -14,15 +14,15 @@ One Makefile at the top. The variables an application edits stand first, and the
 
 **The least release.** `package.conf`'s `ernest` is the least release the program is written for, and `ern build` refuses an earlier `ern` in its own words (§11.9). Until Ernest's 1.0 a later release may refuse the program, until the program rises to it. A development build passes where its three numbers do, since the applications are written against Ernest's unreleased builds to drive the language.
 
-**The pages.** `doc` writes the module pages, CommonMark, under `build/` with their index, `build/index.md`, and then the manual pages, roff, each beside its module's compiled form (§11.4).
+**The pages.** `doc` writes the module pages, CommonMark, under `build/doc/` with their index, `build/doc/index.md`, and then the manual pages, roff, under `build/man/`, each at its module's path, by `ern doc`'s `--doc-root` (§11.4).
 
-**Test.** `test` runs in a checkout alone, since the checker of the documents stands under `tools/`, which an archive does not carry, and refuses elsewhere.
+**Test.** `test` runs in a checkout alone, since the checker of the documents stands under `tools/`, which an archive does not carry, and refuses elsewhere. It builds a dependent too, in a temporary directory it removes: a `package.conf` that names the program, `lib/<name>` linked to the checkout, and one module, so that a module of the program that a dependent's `ern build` refuses fails the program's own `test` (§11.9). It names each package under the checkout's `lib/` too, by its directory and its `VERSION`, linked there, since a dependent names every package the program does.
 
 **The examples.** A program of `examples/` is an `.ern` file at its top, and what else stands under it is data. `examples` builds each into `examples/build/` with the program on its load path, and runs it with one argument, `build/examples/<program>` followed by `EXAMPLE_SUFFIX`, the path it writes; a status other than 0 fails it. `test` runs `examples`, where there is a program, before its check of the documents, since a document may name what an example wrote. `EXAMPLES_MADE`, among the variables an application edits, names each directory the build writes under `examples/`, `examples/build/` and any a copy adds; `clean` removes each, and the documents an unpacked archive carries leave each out.
 
 **Run.** `run` builds the program and then each target `RUN_NEEDS` names, and runs the launcher with the arguments `RUN_ARGS` names; both are among the variables an application edits, and empty by default. A library has nothing to run, and `run` says so.
 
-**Clean.** `clean` removes what the build wrote, and each package `ern unpack` wrote under `lib/` where its archive stands beside it, with `ern unpack`'s lock. It leaves the archives, a link or a directory put under `lib/` by hand, and what each Erlang application under `erl/` built.
+**Clean.** `clean` removes what the build wrote, `stage/` among it, and each package `ern unpack` wrote under `lib/` where its archive stands beside it, with `ern unpack`'s lock. It leaves the archives, a link or a directory put under `lib/` by hand, and what each Erlang application under `erl/` built.
 
 ## The launcher
 
@@ -34,9 +34,9 @@ It runs the `ern` on `PATH`, or the one `ERN` names, and before the run refuses,
 
 `release` refuses first, before it runs `test` and `doc`, under `make -j` too: a development build of `ern`, whose version text has `-dev` or `+<commit>` after the version (§11.7); in a checkout, a tracked file not committed, or a file it carries that git does not track, ignored or not; and another application's `priv/`.
 
-It then writes `build/<name>-<version>.tar.gz`, a package as §11.9 has one: `package.conf` and `VERSION`, the launcher where there is one, the files git tracks under `src/`, the compiled modules, the program's own Erlang, each package under `lib/`, the user's documents, and the `Makefile`, so that `make`, `make run` and `make install` run in the unpacked archive. One shape for an application and a library, so that any archive can be a dependency, and `ern unpack` takes it: one directory named as the archive, each member a directory or a regular file, each link copied through.
+It then stages the archive's tree in `stage/<name>-<version>/`, outside every build root, so that a release cut short leaves nothing `test` runs, and writes `build/<name>-<version>.tar.gz`, a package as §11.9 has one: `package.conf` and `VERSION`, the launcher where there is one, the files git tracks under `src/`, the compiled modules, the program's own Erlang, each package under `lib/`, the user's documents, and the `Makefile`, so that `make`, `make run` and `make install` run in the unpacked archive. One shape for an application and a library, so that any archive can be a dependency, and `ern unpack` takes it: one directory named as the archive, each member a directory or a regular file, each link copied through.
 
-Every module stands at `src/<name>.ern` or under `src/<name>/`, so that the archive can be a dependency: under a dependent's `lib/` the package is named, and the dependent's `ern build` refuses a module of it at any other namespace (§11.9). The program's own build holds no such rule, so a module elsewhere passes until a dependent builds it.
+Every module stands at `src/<name>.ern` or under `src/<name>/`, so that the archive can be a dependency: under a dependent's `lib/` the package is named, and the dependent's `ern build` refuses a module of it at any other namespace (§11.9). The program's own build holds no such rule, so `test` builds a dependent to hold it.
 
 A package under `lib/` travels as §11.9 has one: its `package.conf`, `VERSION`, `src/`, `ebin/` and `priv/`, and the compiled modules of its `build/`, and nothing else of it.
 
@@ -44,7 +44,7 @@ The program's own Erlang stands at the archive's top, as a package's does: every
 
 An archive carries the user's documents alone, each where it exists: `README.md`, `LICENSE`, `THIRD_PARTY_LICENSES`, `ACKNOWLEDGMENTS.md`, `CHANGES.md`, `docs/design.md`, `examples/`, `deploy/` and `assets/`, whose pictures the documents may show. The way of working stays in the repository: `CLAUDE.md`, the plan, the log, this page, `docs/release.md`, `docs/full_review.md` and `docs/agents.md`. `release` writes the archive's checksum beside it, `build/<name>-<version>.tar.gz.sha256`, and the two are published together.
 
-A library's archive also carries its pages, from `build/`, the one copy a checkout holds: the module pages under `docs/modules/`, their index as the README, and the manual pages under `docs/man/man3/`, where `man -M` finds them. A dependent's `lib/` then holds the pages of the release it stands on. An application's archive carries neither.
+A library's archive also carries its pages, from `build/doc/` and `build/man/`, the one copy a checkout holds: the module pages under `docs/modules/` at their paths, their index as the README, and the manual pages under `docs/man/man3/`, one directory, where `man -M` finds them. A dependent's `lib/` then holds the pages of the release it stands on. An application's archive carries neither.
 
 ## The installation
 

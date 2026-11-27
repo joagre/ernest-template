@@ -13,14 +13,14 @@ It needs [Ernest](https://ernest-lang.org) on your `PATH`, of the release `packa
 ```
 make            # builds: lib/ filled, each package and then the program compiled
 make test       # in a checkout: the layout, every module's tests, test/ and the examples where they exist,
-                # then the documents and the design's citations,
+                # a dependent's build of the program, then the documents and the design's citations,
                 # refusing any paragraph past 150 words, any comment or
                 # text a user reads that names the project's history,
                 # any command whose description stands without its #,
                 # and any Ernest block of the README that no module holds
 make examples   # each program of examples/ built and run, what it writes under build/examples/
 make run        # runs the program through its launcher with the arguments RUN_ARGS names, none by default
-make doc        # the module pages under build/, and the manual pages beside them
+make doc        # the module pages under build/doc/, and the manual pages under build/man/
 make release    # with a release of ern and each file it carries committed: the
                 # archive, build/<name>-<version>.tar.gz, and its checksum beside it
 make install    # builds, then installs under PREFIX, /usr/local by default, from a
@@ -31,7 +31,7 @@ make uninstall  # removes from PREFIX what make install put there, then share/do
 
 A package the program loads is an entry of `package.conf`, its name, version, URL and digest, as the report's §11.9 says. `make lib` runs `ern unpack`, which unpacks each package from its archive under `lib/`, `lib/<package>-<version>.tar.gz`, and says which archive to download where one is not there; it then builds each Erlang application `ERL_DEPS` names, a git submodule under `erl/`, by its own `make`. `make` builds each package before the program.
 
-Everything the program loads beyond the standard library and Ernest's own libraries is a package under `lib/` or an Erlang application under `erl/`, whose `ebin` `--libs-dir erl` puts on the load path of the tests and of the launcher, where there is one. A repository with an `erl/` is cloned with `--recursive`. A program of `examples/` is run with one argument, `build/examples/<program>` followed by the Makefile's `EXAMPLE_SUFFIX`, the path it writes. `make doc` writes the module pages, CommonMark, and the manual pages, roff, under `build/`; a library's archive carries the module pages under `docs/modules/` and the manual pages under `docs/man/man3/`, which `man -M` reads. `make format` lays the modules out. `make clean` removes what the build wrote and each package `ern unpack` wrote beside its archive, and leaves the archives, a link under `lib/` and what each Erlang application built.
+Everything the program loads beyond the standard library and Ernest's own libraries is a package under `lib/` or an Erlang application under `erl/`, whose `ebin` `--libs-dir erl` puts on the load path of the tests and of the launcher, where there is one. A repository with an `erl/` is cloned with `--recursive`. A program of `examples/` is run with one argument, `build/examples/<program>` followed by the Makefile's `EXAMPLE_SUFFIX`, the path it writes. `make doc` writes the module pages, CommonMark, under `build/doc/`, and the manual pages, roff, under `build/man/`; a library's archive carries the module pages under `docs/modules/` and the manual pages under `docs/man/man3/`, which `man -M` reads. `make format` lays the modules out. `make clean` removes what the build wrote and each package `ern unpack` wrote beside its archive, and leaves the archives, a link under `lib/` and what each Erlang application built.
 
 ## Running
 

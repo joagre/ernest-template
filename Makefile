@@ -7,9 +7,9 @@
 #                 package package.conf names
 #   make test     in a checkout: the layout, the tests of every module, test/
 #                 where it exists, make examples where there is a program to
-#                 build, and then the documents, the design's citations, and
-#                 the project's history kept out of the comments and what a
-#                 user reads
+#                 build, a dependent's build of the program, and then the
+#                 documents, the design's citations, and the project's history
+#                 kept out of the comments and what a user reads
 #   make examples each program of examples/ built and run, what it writes
 #                 under build/examples/
 #   make run      runs the program through its launcher with the arguments
@@ -19,13 +19,14 @@
 #                 from its archive by ern unpack, and then, in a checkout and
 #                 wherever erl/ stands, each Erlang application under erl/
 #                 built by its own make
-#   make doc      the module pages, CommonMark under build/, and the manual
-#                 pages, roff beside each module's compiled form
+#   make doc      the module pages, CommonMark under build/doc/, and the
+#                 manual pages, roff under build/man/
 #   make format   lays every module out
-#   make release  the archive, build/NAME-VERSION.tar.gz, and its checksum
-#                 beside it: its refusals first, then make test and make doc;
-#                 a library's carries the module pages under docs/modules/ and
-#                 the manual pages under docs/man/man3/
+#   make release  the archive, build/NAME-VERSION.tar.gz, staged in
+#                 stage/NAME-VERSION/, and its checksum beside it: its
+#                 refusals first, then make test and make doc; a library's
+#                 carries the module pages under docs/modules/ and the manual
+#                 pages under docs/man/man3/
 #   make install  builds, then installs under PREFIX, /usr/local by default,
 #                 from a checkout or an unpacked archive alike: the launcher
 #                 in bin/, build/'s modules, package.conf, lib/'s packages and
@@ -34,10 +35,10 @@
 #   make uninstall  removes from PREFIX what make install put there, and then
 #                 share/doc, share, lib and bin under it, each where it is
 #                 empty
-#   make clean    removes what the build wrote, and each package ern unpack
-#                 wrote under lib/ beside its archive; it leaves the archives,
-#                 the links under lib/, and what each Erlang application under
-#                 erl/ built
+#   make clean    removes what the build wrote, stage/ among it, and each
+#                 package ern unpack wrote under lib/ beside its archive; it
+#                 leaves the archives, the links under lib/, and what each
+#                 Erlang application under erl/ built
 
 NAME        = name
 # The program's own Erlang applications, each a submodule under erl/ of its
@@ -122,8 +123,19 @@ build: lib
 	$(ERN) build src
 
 # It runs in a checkout alone, since the checker of the documents stands
-# under tools/, which an archive does not carry. The documents come last,
-# since one may name what the examples wrote.
+# under tools/, which an archive does not carry. A dependent of the program
+# is built too, in a directory of mktemp's removed however the step ends: a
+# package.conf that names the program and the release the program's own
+# names, lib/NAME linked to the checkout, and one empty module, so that a
+# module of the program that a dependent's ern build refuses, one outside
+# src/NAME.ern and src/NAME/, fails make test in ern's words (report §11.9).
+# Since a dependent names every package the program does, its package.conf
+# names too each directory under lib/ that holds a package.conf, a link put
+# there by hand among them, by its name and its VERSION, after the program's
+# entry, and its lib/ links each to the checkout's; an archive and the lock
+# are passed over. The build runs in the dependent, which takes ERN by its
+# absolute path. The documents come last, since one may name what the
+# examples wrote.
 test: all
 	@test -d tools || \
 	    { echo "make test runs in a checkout of $(NAME), and this directory has no tools/"; exit 1; }
@@ -136,6 +148,24 @@ test: all
 	    $(ERN) test --load-path build $(RUN_LIBS) test/build; \
 	fi
 	@if test -n "$(EXAMPLES)"; then $(MAKE) --no-print-directory examples; fi
+	@echo "a dependent's build of $(NAME)"
+	@dependent=$$(mktemp -d) || exit 1; \
+	trap 'rm -rf "$$dependent"' EXIT; trap 'exit 1' HUP INT TERM; \
+	mkdir "$$dependent/src" "$$dependent/lib" && \
+	ln -s "$(CURDIR)" "$$dependent/lib/$(NAME)" || exit 1; \
+	entries='{"name": "$(NAME)", "version": "$(VERSION)"}'; \
+	for dir in lib/*/; do \
+	    dir=$${dir%/}; \
+	    test -f "$$dir/package.conf" || continue; \
+	    version=$$(tr -d '[:space:]' < "$$dir/VERSION") && \
+	    ln -s "$(CURDIR)/$$dir" "$$dependent/$$dir" || exit 1; \
+	    entries="$$entries, {\"name\": \"$${dir#lib/}\", \"version\": \"$$version\"}"; \
+	done; \
+	printf '{"ernest": "%s", "packages": [%s]}\n' \
+	    "$$(sed -n 's/.*"ernest" *: *"\([^"]*\)".*/\1/p' package.conf)" "$$entries" \
+	    > "$$dependent/package.conf" && \
+	: > "$$dependent/src/$(NAME)_dependent.ern" && \
+	cd "$$dependent" && $(if $(findstring /,$(ERN)),$(abspath $(ERN)),$(ERN)) build src
 	$(ERN) run tools/build/docs.erc
 
 # Each program of examples/ built with the program on its load path, then run
@@ -156,30 +186,26 @@ run: all $(RUN_NEEDS)
 	@test -x bin/$(NAME) || { echo "$(NAME) is a library: nothing to run"; exit 1; }
 	$(strip bin/$(NAME) $(RUN_ARGS))
 
-# The module pages, a CommonMark document for each module under build/ and
-# their index, build/index.md, and then the manual pages, each in roff beside
-# its module's compiled form, build/Ernest.Name.3ern for the module Name
-# (report §11.4).
+# The module pages, a CommonMark document for each module under build/doc/
+# at its module's path and their index, build/doc/index.md, and then the
+# manual pages, each in roff under build/man/ at its module's path,
+# build/man/Ernest.Name.3ern for the module Name (report §11.4).
 doc: all
-	$(ERN) doc src
-	$(ERN) doc --man src
+	$(ERN) doc --doc-root build/doc src
+	$(ERN) doc --man --doc-root build/man src
 
 format:
 	$(strip $(ERN) format src tools $(wildcard test) $(if $(EXAMPLES),examples))
 
-# The files under $(1) that the find test $(2) selects, copied into $(3) at
-# their paths under $(1), links copied through. A path that holds a -, which
-# no module's path does, is passed over: the staging directory and the
-# archive of make release.
-copied = (cd $(1) && find . -path '*-*' -prune -o $(2) -print | tar chf - -T -) | \
-	    tar xf - -C $(3)
-
-# The compiled modules of the package $(1), its build/, copied into $(2)/build
-# at their paths. Every copy of the compiled modules is made so, the program's
-# and each package's, into the archive and into the installation.
+# The compiled modules of the package $(1), each .erc of its build/, where
+# the pages and what the examples wrote stand too, copied into $(2)/build at
+# their paths, links copied through. Every copy of the compiled modules is
+# made so, the program's and each package's, into the archive and into the
+# installation.
 ercs = if test -d $(1)/build; then \
 	    mkdir -p $(2)/build && \
-	    $(call copied,$(1)/build,-name '*.erc',$(2)/build) || exit 1; \
+	    (cd $(1)/build && find . -name '*.erc' | tar chf - -T -) | tar xf - -C $(2)/build || \
+	        exit 1; \
 	fi
 
 # The packages under lib/ copied into $(1)/lib, each as report §11.9 has a
@@ -229,7 +255,10 @@ erlang = if test -n "$(ERL_DEPS)" && test -d erl; then \
 # the Makefile, so that make, make run and make install run in it; every
 # member a directory or a regular file. One shape for an application and a
 # library, so that any archive can be a dependency. Its checksum stands
-# beside it, for `sha256sum -c`.
+# beside it, for `sha256sum -c`. Its tree is staged in stage/NAME-VERSION/,
+# outside every build root, so that a release cut short leaves nothing make
+# test runs: emptied first, and removed once the archive is written, with
+# stage/ where nothing else stands in it.
 #
 # Its refusals come first, before make test and make doc run, under make -j
 # too: a development build of ern, whose version text has -dev or +commit
@@ -240,11 +269,11 @@ erlang = if test -n "$(ERL_DEPS)" && test -d erl; then \
 # the ebin/ and priv/ at the top where ERL_DEPS is empty; and another
 # application's priv/ under erl/.
 #
-# A library's archive carries its pages too, from build/, the one copy a
-# checkout holds: the module pages under docs/modules/ at their paths, with
-# the index as its README, and the manual pages under docs/man/man3/, where
-# man -M docs/man finds them. Neither the staging directory nor what the
-# examples wrote is among them. An application's archive carries neither.
+# A library's archive carries its pages too, from build/doc/ and build/man/,
+# the one copy a checkout holds: the module pages under docs/modules/ at
+# their paths, with the index as its README, and the manual pages under
+# docs/man/man3/, one directory, where man -M docs/man finds them. An
+# application's archive carries neither.
 release:
 	@version=$$($(ERN) --version) || exit 1; \
 	case $$version in *-dev|*+*) \
@@ -265,27 +294,27 @@ release:
 	fi
 	@$(privs)
 	@$(MAKE) --no-print-directory test doc
-	rm -rf build/$(NAME)-$(VERSION) && mkdir -p build/$(NAME)-$(VERSION)
-	@$(call ercs,.,build/$(NAME)-$(VERSION))
-	@$(call packages,build/$(NAME)-$(VERSION))
-	@$(call erlang,build/$(NAME)-$(VERSION))
-	if test -x bin/$(NAME); then mkdir -p build/$(NAME)-$(VERSION)/bin && \
-	    cp bin/$(NAME) build/$(NAME)-$(VERSION)/bin/; fi
+	rm -rf stage/$(NAME)-$(VERSION) && mkdir -p stage/$(NAME)-$(VERSION)
+	@$(call ercs,.,stage/$(NAME)-$(VERSION))
+	@$(call packages,stage/$(NAME)-$(VERSION))
+	@$(call erlang,stage/$(NAME)-$(VERSION))
+	if test -x bin/$(NAME); then mkdir -p stage/$(NAME)-$(VERSION)/bin && \
+	    cp bin/$(NAME) stage/$(NAME)-$(VERSION)/bin/; fi
 	tar chf - $(SOURCES) $(DOCS) Makefile VERSION package.conf | \
-	    tar xf - -C build/$(NAME)-$(VERSION)
+	    tar xf - -C stage/$(NAME)-$(VERSION)
 	@if test ! -x bin/$(NAME); then \
-	    pages=build/$(NAME)-$(VERSION)/docs; \
+	    pages=stage/$(NAME)-$(VERSION)/docs; \
 	    mkdir -p $$pages/modules $$pages/man/man3 && \
-	    $(call copied,build,-path ./examples -prune -o -name '*.md' ! -path ./index.md,$$pages/modules) && \
-	    cp build/index.md $$pages/modules/README.md || exit 1; \
-	    for page in $$(cd build && find . -path '*-*' -prune -o -path ./examples -prune -o \
-	            -name '*.3ern' -print); do \
-	        cp build/$$page $$pages/man/man3/ || exit 1; \
+	    cp -RL build/doc/. $$pages/modules/ && \
+	    mv $$pages/modules/index.md $$pages/modules/README.md || exit 1; \
+	    for page in $$(find build/man -name '*.3ern'); do \
+	        cp $$page $$pages/man/man3/ || exit 1; \
 	    done; \
 	fi
-	tar -czf build/$(NAME)-$(VERSION).tar.gz -C build $(NAME)-$(VERSION)
+	tar -czf build/$(NAME)-$(VERSION).tar.gz -C stage $(NAME)-$(VERSION)
 	cd build && sha256sum $(NAME)-$(VERSION).tar.gz > $(NAME)-$(VERSION).tar.gz.sha256
-	rm -rf build/$(NAME)-$(VERSION)
+	rm -rf stage/$(NAME)-$(VERSION)
+	@rmdir stage 2>/dev/null || true
 
 # Whether $(TREE) is an installation of the program: a directory that is
 # empty, or one that holds package.conf.
@@ -349,14 +378,15 @@ uninstall:
 	    rmdir $$dir 2>/dev/null || true; \
 	done
 
-# What the build, make doc and make examples wrote goes, and so does each
-# package ern unpack wrote under lib/, a directory beside its archive, as
-# lib/leaf beside lib/leaf-1.2.0.tar.gz, and the lock lib/.unpack. The
-# archives stay, and so do a link under lib/ and a directory there with no
-# archive beside it, as an unpacked archive's packages are. What each Erlang
-# application under erl/ built stays too, for its own make clean to remove.
+# What the build, make doc, make examples and make release wrote goes, stage/
+# among it, and so does each package ern unpack wrote under lib/, a directory
+# beside its archive, as lib/leaf beside lib/leaf-1.2.0.tar.gz, and the lock
+# lib/.unpack. The archives stay, and so do a link under lib/ and a directory
+# there with no archive beside it, as an unpacked archive's packages are.
+# What each Erlang application under erl/ built stays too, for its own make
+# clean to remove.
 clean:
-	rm -rf build tools/build test/build $(EXAMPLES_MADE)
+	rm -rf build stage tools/build test/build $(EXAMPLES_MADE)
 	@for dir in lib/*/; do \
 	    dir=$${dir%/}; \
 	    test -d "$$dir" && test ! -L "$$dir" || continue; \

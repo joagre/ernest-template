@@ -1268,9 +1268,8 @@ fn slugOf(title : String) : String =
 // The lines under the index's heading, "## Index" outside fenced code, each
 // with its index, or `None` where the text holds no such heading.
 fn indexOf(text : String) : Optional(List(#(Int, String))) = {
-    let #(index, _) <-
-        List.find(List.indexed(String.lines(unfenced(text))),
-                  fn(#(_, line)) = String.trimEnd(line) == "## Index");
+    let index <-
+        List.findIndex(String.lines(unfenced(text)), fn(line) = String.trimEnd(line) == "## Index");
     Some(List.drop(List.indexed(String.lines(text)), index + 1))
 }
 

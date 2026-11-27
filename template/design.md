@@ -46,7 +46,7 @@ The log is `docs/log.md` until it nears 256 KB, and then `docs/log/`, which the 
 
 Also when needed: `THIRD_PARTY_LICENSES` with the first borrowed file, an Erlang application under `erl/` among them, since the archive carries its compiled code, and `ACKNOWLEDGMENTS.md` with the first name; `deploy/`, what an operator of the program reads, which an archive carries; and for a library, `examples/`, programs that use it, which `docs/build.md`'s *The examples* runs.
 
-Not committed: `build/`, each root's `build/`, `lib/`, the packages' archives among it, and a node's key, `private-key.pem`.
+Not committed: `build/`, each root's `build/`, `lib/`, the packages' archives among it, `stage/`, where a release stages its archive, and a node's key, `private-key.pem`.
 
 ## 4. The Makefile, the launcher and the archive
 

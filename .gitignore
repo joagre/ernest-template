@@ -5,6 +5,9 @@ build/
 # The packages package.conf names, each archive and what ern unpack made of it
 lib/
 
+# What make release stages its archive in
+stage/
+
 # A node's private key, in its configuration directory
 private-key.pem
 
