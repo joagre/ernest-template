@@ -24,14 +24,15 @@
 #   make format   lays every module out
 #   make release  the archive, build/NAME-VERSION.tar.gz, staged in
 #                 stage/NAME-VERSION/, and its checksum beside it: its
-#                 refusals first, then make test and make doc; a library's
-#                 carries the module pages under docs/modules/ and the manual
-#                 pages under docs/man/man3/
+#                 refusals first, then make test and make doc, then those
+#                 that need erl/ built; a library's carries the module pages
+#                 under docs/modules/ and the manual pages under
+#                 docs/man/man3/
 #   make install  builds, then installs under PREFIX, /usr/local by default,
 #                 from a checkout or an unpacked archive alike: the launcher
 #                 in bin/, build/'s modules, package.conf, lib/'s packages and
-#                 the program's own Erlang in lib/NAME/, and the documents in
-#                 share/doc/NAME/
+#                 the program's own Erlang in lib/NAME/, of its priv/ what
+#                 ERL_PRIV names, and the documents in share/doc/NAME/
 #   make uninstall  removes from PREFIX what make install put there, and then
 #                 share/doc, share, lib and bin under it, each where it is
 #                 empty
@@ -44,6 +45,10 @@ NAME        = name
 # The program's own Erlang applications, each a submodule under erl/ of its
 # own name, in build order.
 ERL_DEPS    =
+# What of erl/NAME/priv/ the archive and the installation carry, and nothing
+# else of it: files or directories under it, each at its own path there, or
+# . for the whole.
+ERL_PRIV    =
 # What each program of examples/ writes, named by make examples: the suffix of
 # the one path it is given.
 EXAMPLE_SUFFIX =
@@ -72,6 +77,8 @@ RUN_LIBS      = $(if $(ERL_DEPS),--libs-dir erl)
 # The programs of examples/; what else stands under it is data, not built.
 EXAMPLES      = $(wildcard examples/*.ern)
 VERSION       = $(shell cat VERSION)
+# The paths ERL_PRIV names, each quoted, so that the shell expands none.
+PRIV_PATHS    = $(patsubst %,'%',$(ERL_PRIV))
 # Git on the checkout, read as whoever runs make, whose checkout it need not
 # be, which git refuses unless told it is safe.
 GIT           = git -c safe.directory=$(CURDIR)
@@ -223,24 +230,61 @@ packages = for dir in lib/*/; do \
 	    $(call ercs,$$dir,$(1)/$$dir); \
 	done
 
+# Whether ERL_PRIV is read: in a checkout, and wherever erl/ stands and
+# ERL_DEPS names an application. An unpacked archive has neither, and its
+# priv/ is carried as it stands.
+narrowed = { test -e .git || { test -n "$(ERL_DEPS)" && test -d erl; }; }
+
 # Another application's priv/ under erl/ refused, before anything is written,
-# since the host finds a package's priv/ only for the application named NAME.
+# since the host finds a package's priv/ only for the application named NAME,
+# and, where ERL_PRIV is read, a path it names that leaves priv/, absolute or
+# through a .. component.
 privs = for app in $(ERL_DEPS); do \
 	    test ! -e erl/$$app/priv || test $$app = $(NAME) || \
 	        { echo "erl/$$app has a priv/, which the host finds here only for the" \
 	            "application $(NAME): make $$app a package"; exit 1; }; \
+	done; \
+	! $(narrowed) || for path in $(PRIV_PATHS); do \
+	    case /$$path/ in //*|*/../*) \
+	        echo "ERL_PRIV names $$path, which is not under erl/$(NAME)/priv/"; exit 1 ;; \
+	    esac; \
 	done
 
+# What ERL_PRIV names refused, where it is read, once the build has made
+# erl/NAME/priv/ and before anything is written: nothing, where erl/NAME has
+# a priv/; anything, where it has none or ERL_DEPS names no application NAME,
+# a checkout with ERL_DEPS empty among them; and a path the build did not
+# make.
+carried = ! $(narrowed) || \
+	if test -n "$(filter $(NAME),$(ERL_DEPS))" && test -e erl/$(NAME)/priv; then \
+	    test -n "$(ERL_PRIV)" || \
+	        { echo "erl/$(NAME) has a priv/, and ERL_PRIV names nothing of it;" \
+	            "name what the archive carries, or . for all of it"; exit 1; }; \
+	    for path in $(PRIV_PATHS); do \
+	        test -e "erl/$(NAME)/priv/$$path" || \
+	            { echo "erl/$(NAME)/priv/$$path is not there, which ERL_PRIV names"; exit 1; }; \
+	    done; \
+	else \
+	    test -z "$(ERL_PRIV)" || \
+	        { echo "ERL_PRIV names $(strip $(ERL_PRIV)), and erl/$(NAME) has no priv/"; exit 1; }; \
+	fi
+
 # The program's own Erlang copied into $(1) as a package holds it (report
-# §11.9): from erl/, every application's ebin in one ebin/, and the priv/ of
-# the application named NAME beside it, where the host finds it by the
-# directory's name, privs having refused another's. Where there is no erl/,
-# an unpacked archive's, its ebin/ and priv/ as they stand.
+# §11.9). Where erl/ stands and ERL_DEPS names an application, every
+# application's ebin goes into one ebin/, and into priv/ beside it each path
+# ERL_PRIV names of erl/NAME/priv/, at its own path, where the host finds it
+# by the directory's name; privs and carried have refused the rest. Each path
+# is copied into its directory under priv/, a directory merged with what
+# stands there and a file replaced, so that a path beside . or under another
+# one named is copied again over itself. Elsewhere, an unpacked archive or a
+# checkout with ERL_DEPS empty, its ebin/ and priv/ as they stand.
 erlang = if test -n "$(ERL_DEPS)" && test -d erl; then \
 	    for app in $(ERL_DEPS); do \
 	        mkdir -p $(1)/ebin && cp -RL erl/$$app/ebin/. $(1)/ebin/ || exit 1; \
-	        test $$app = $(NAME) && test -e erl/$$app/priv || continue; \
-	        cp -RL erl/$$app/priv $(1)/priv || exit 1; \
+	    done; \
+	    for path in $(PRIV_PATHS); do \
+	        dir=$(1)/priv/$$(dirname "$$path") && mkdir -p "$$dir" && \
+	            cp -fRL "erl/$(NAME)/priv/$$path" "$$dir/" || exit 1; \
 	    done; \
 	else \
 	    for part in ebin priv; do \
@@ -266,8 +310,13 @@ erlang = if test -n "$(ERL_DEPS)" && test -d erl; then \
 # not committed, or a file the archive would carry that git does not track,
 # ignored or not: one under src/, whose module ern build would compile, a
 # document of DOCS, package.conf, VERSION, the Makefile, the launcher, and
-# the ebin/ and priv/ at the top where ERL_DEPS is empty; and another
-# application's priv/ under erl/.
+# the ebin/ and priv/ at the top where ERL_DEPS is empty; another
+# application's priv/ under erl/; and a path ERL_PRIV names that leaves
+# priv/, absolute or through a .. component. Once make test has built erl/,
+# and before the stage is written, it refuses an empty ERL_PRIV where
+# erl/NAME has a priv/, one that names a path where it has none or where
+# ERL_DEPS names no application NAME, ERL_DEPS empty among them, and a path
+# it names that the build did not make.
 #
 # A library's archive carries its pages too, from build/doc/ and build/man/,
 # the one copy a checkout holds: the module pages under docs/modules/ at
@@ -294,6 +343,7 @@ release:
 	fi
 	@$(privs)
 	@$(MAKE) --no-print-directory test doc
+	@$(carried)
 	rm -rf stage/$(NAME)-$(VERSION) && mkdir -p stage/$(NAME)-$(VERSION)
 	@$(call ercs,.,stage/$(NAME)-$(VERSION))
 	@$(call packages,stage/$(NAME)-$(VERSION))
@@ -327,7 +377,8 @@ emptied = test ! -d $(TREE) || test -L $(TREE) || \
 
 # What make builds, installed: an installation already there replaced
 # whole, so that no module of an older one is left. Before anything under
-# PREFIX is removed or written, it refuses a lib/NAME there that is not an
+# PREFIX is removed or written, it refuses another application's priv/ and
+# ERL_PRIV as make release does, a lib/NAME there that is not an
 # installation, empty or holding package.conf, and, where there is no
 # lib/NAME, a launcher of another program's. It removes the launcher first
 # and package.conf last, and copies package.conf first, so that lib/NAME is
@@ -349,6 +400,7 @@ install: all
 	        { echo "$(PREFIX)/bin/$(NAME) is there already and is not this program's"; exit 1; }; \
 	fi
 	@$(privs)
+	@$(carried)
 	rm -f $(PREFIX)/bin/$(NAME)
 	@$(emptied)
 	rm -rf $(TREE) $(DOC_DIR)
