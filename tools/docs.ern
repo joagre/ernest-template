@@ -7,6 +7,15 @@
 // file the program reads cannot be read or is not UTF-8, the program says so
 // on standard error and ends with status 1.
 //
+// A fenced block runs to a closing fence of its character at least as long as
+// the opening one, or to the end of the document. An opening fence is a run
+// of at least three backticks or three tildes at the line's trimmed start,
+// and the first word after the whole run is its block's language. A closing
+// fence is a run of the block's character, at least as long, at the line's
+// trimmed start, with nothing after it but spaces. Every other line of a
+// block is its content, a shorter fence or a fence of the other character
+// among them.
+//
 // The log is docs/log.md, or, once split by day, the files under docs/log/,
 // and git tracks one form, not both. No file of the log holds more than
 // 262,144 bytes. Under docs/log/, every file but README.md is named for a
@@ -29,17 +38,23 @@
 // Every backticked path in a tracked document that begins with a directory
 // holding a tracked file names a tracked file or a directory that holds one,
 // or a line on standard error names the file, the line and the path, once,
-// and the program ends with status 1. A path with a wildcard or a
-// metavariable, `*` or `<name>`, one holding a space, which is a command
-// line, one that ends in "/", and one under docs/man/ or docs/modules/, which
-// a library's archive alone holds, are passed over; the plan, the findings,
-// the logs and the proposals are left out. Every prose paragraph past 150
-// words, which no reader takes in whole, is listed on standard error for its
-// writer to split at its turn, and the program ends with status 1; the log
-// and the proposals are left out. A paragraph ends at a blank line, at a
-// fence, at a list item, and where a list item's lines stop being indented
-// past the item; one that begins with a heading, a table row or a tag,
-// indented or not, is no prose. Fenced code is read as neither.
+// and the program ends with status 1. A backticked path is the text of a code
+// span. A code span closes at a run of exactly as many backticks; a line
+// break in it is a space, and one space at each end is dropped when both are
+// there and the span is not all spaces. A span does not cross a blank line. A
+// run of backticks that no run of the same length closes, before the next
+// blank line, is text, and reading goes on after it. A path's line is the
+// line its span opens on. A path with a wildcard or a metavariable, `*` or
+// `<name>`, one holding a space, which is a command line, one that ends in
+// "/", and one under docs/man/ or docs/modules/, which a library's archive
+// alone holds, are passed over; the plan, the findings, the logs and the
+// proposals are left out. Every prose paragraph past 150 words, which no
+// reader takes in whole, is listed on standard error for its writer to split
+// at its turn, and the program ends with status 1; the log and the proposals
+// are left out. A paragraph ends at a blank line, at a fence, at a list item,
+// and where a list item's lines stop being indented past the item; one that
+// begins with a heading, a table row or a tag, indented or not, is no prose.
+// Fenced code is read as neither.
 //
 // A command in a fenced block, an Ernest block aside, gives its description
 // after `#`, so that the block pastes as shell: a line that begins with make,
@@ -102,18 +117,24 @@
 //     make test    runs it, as ern run tools/build/docs.erc
 //
 
+// Where a reading stands against fenced code as a document's lines go by:
+// outside a block, or inside one whose opening fence is a run of the
+// character, of the count given, and whose language is the first word after
+// the run, empty where there is none.
+type Fence = Outside | Inside(char : Char, count : Int, language : String)
+
 // A paragraph past the measure: its file, the number of the line it begins
 // on, the count of its words, and its first characters.
 type Paragraph = Paragraph(file : String, lineNumber : Int, count : Int, beginning : String)
 
 // Where the reading stands as a document's lines go by: the line's number,
-// whether it is inside a fence, and the paragraph begun and not yet ended,
+// the fenced block it is in, and the paragraph begun and not yet ended,
 // its first line's number and text, the count of its words, whether it is
 // prose, whether it is a list item and its indentation; and the paragraphs
 // found.
 type Reading =
     Reading(lineNumber : Int,
-            fence : Bool,
+            fence : Fence,
             firstLineNumber : Int,
             firstLine : String,
             count : Int,
@@ -135,20 +156,19 @@ type Word = Word(lineNumber : Int, text : String)
 type Citation = Citation(lineNumber : Int, section : Int)
 
 // Where the reading of a document's blocks of commands stands as its lines go
-// by: whether it is inside a fence and whether that block is Ernest, whether
-// the line before was a command or a line under one, whether that command
-// runs on, and the lines found.
+// by: the fenced block it is in, whether the line before was a command or a
+// line under one, whether that command runs on, and the lines found.
 type CommandReading =
-    CommandReading(fence : Bool, ernest : Bool, under : Bool, runsOn : Bool, found : List(String))
+    CommandReading(fence : Fence, under : Bool, runsOn : Bool, found : List(String))
 
 // A part of an Ernest block: the number of the line it begins on, from 1, and
 // its lines.
 type Part = Part(lineNumber : Int, lines : List(String))
 
 // Where the reading of a document's Ernest blocks stands as its lines go by:
-// whether it is inside a fence and whether that block is Ernest, the part
-// begun, none while its lines are empty, and the parts found.
-type BlockReading = BlockReading(fence : Bool, ernest : Bool, part : Part, parts : List(Part))
+// the fenced block it is in, the part begun, none while its lines are empty,
+// and the parts found.
+type BlockReading = BlockReading(fence : Fence, part : Part, parts : List(Part))
 
 // A heading of a document outside fenced code: the number of its line, its
 // level, the count of its "#", and its text.
@@ -341,27 +361,82 @@ fn missingIn(file : String, text : String, held : Held) : List(String) =
 fn placeOf(file : String, lineNumber : Int) : String =
     file <> ":" <> Int.toString(lineNumber) <> ": "
 
-// The backticked pieces of the text outside fenced code that begin with one
-// of the tops, each with its line's number; a wildcard or a metavariable,
-// `<name>`, names no one file, a piece that ends with "/" names a directory
-// the writer did not mean to pin, one that holds a space is a command line,
-// whose first word is the program the line runs and not a path the document
-// pins, and a manual page or a module page is there only in a library's
-// archive.
-fn pathsIn(text : String, tops : List(String)) : List(#(Int, String)) = {
-    let pieces = String.split(unfenced(text), "`");
-    let #(_, placed) =
-        List.mapFold(pieces,
-                     1,
-                     fn(lineNumber, piece) =
-                         #(lineNumber + List.size(String.split(piece, "\n")) - 1,
-                           #(lineNumber, piece)));
-    List.filterMap(List.indexed(placed),
-                   fn(#(index, #(lineNumber, piece))) =
-                       if index % 2 == 1 && isPath(piece, tops) then
-                           Some(#(lineNumber, piece))
-                       else
-                           None)
+// The code spans of the text outside fenced code whose text begins with one
+// of the tops, each with the number of the line it opens on; a wildcard or a
+// metavariable, `<name>`, names no one file, a span that ends with "/" names
+// a directory the writer did not mean to pin, one that holds a space is a
+// command line, whose first word is the program the line runs and not a path
+// the document pins, and a manual page or a module page is there only in a
+// library's archive.
+fn pathsIn(text : String, tops : List(String)) : List(#(Int, String)) =
+    List.filter(spansIn(String.toList(unfenced(text)), 1), fn(#(_, span)) = isPath(span, tops))
+
+// The code spans of the characters, which begin on the line of the number
+// given, each as its text with the number of the line it opens on. A span
+// opens at a run of backticks and closes at the next run of exactly as many
+// before a blank line; a run that none closes is text, and the reading goes
+// on after it.
+fn spansIn(chars : List(Char), lineNumber : Int) : List(#(Int, String)) =
+    match chars {
+        '`' :: _ -> {
+            let #(run, rest) = List.splitWhile(chars, fn(char) = char == '`');
+            match closedIn(rest, List.size(run), []) {
+                Some(#(content, beyond)) -> {
+                    let breaks = List.size(List.filter(content, fn(char) = char == '\n'));
+                    #(lineNumber, spanText(content)) :: spansIn(beyond, lineNumber + breaks)
+                }
+              | None ->
+                    spansIn(rest, lineNumber)
+            }
+        }
+      | '\n' :: rest ->
+            spansIn(rest, lineNumber + 1)
+      | _ :: rest ->
+            spansIn(rest, lineNumber)
+      | [] ->
+            []
+    }
+
+// The characters of a span up to the run of backticks of the count given
+// that closes it, and the characters after that run, or `None` where a blank
+// line or the end comes first; a longer run or a shorter one is the span's.
+// The content read so far is carried reversed.
+fn closedIn(chars : List(Char),
+            count : Int,
+            content : List(Char)) : Optional(#(List(Char), List(Char))) =
+    match chars {
+        '`' :: _ -> {
+            let #(run, rest) = List.splitWhile(chars, fn(char) = char == '`');
+            if List.size(run) == count then
+                Some(#(List.reverse(content), rest))
+            else
+                closedIn(rest, count, run <> content)
+        }
+      | '\n' :: rest when isBlankAhead(rest) ->
+            None
+      | char :: rest ->
+            closedIn(rest, count, char :: content)
+      | [] ->
+            None
+    }
+
+// Whether the characters, which begin a line, begin a blank one.
+fn isBlankAhead(chars : List(Char)) : Bool = {
+    let #(line, _) = List.splitWhile(chars, fn(char) = char != '\n');
+    String.isEmpty(String.trim(String.fromList(line)))
+}
+
+// A span's text: each line break in it a space, and one space dropped at
+// each end where both are there and the text is not all spaces.
+fn spanText(content : List(Char)) : String = {
+    let chars = List.map(content, fn(char) = if char == '\n' then ' ' else char);
+    let text = String.fromList(chars);
+    let inner =
+        Optional.andThen(String.stripPrefix(text, " "), fn(rest) = String.stripSuffix(rest, " "));
+    match inner {
+        Some(inner) when List.any(chars, fn(char) = char != ' ') -> inner
+      | _ -> text
+    }
 }
 
 fn isPath(piece : String, tops : List(String)) : Bool =
@@ -374,25 +449,67 @@ fn isPath(piece : String, tops : List(String)) : Bool =
         && !String.endsWith(piece, "/")
 
 // The text with its fenced blocks and their fences as empty lines, so that
-// each line keeps its number.
+// each line keeps its number; a block runs to its closing fence, or to the
+// text's end, as fenceAfter reads it.
 fn unfenced(text : String) : String = {
     let #(_, lines) =
         List.foldLeft(String.lines(text),
-                      #(false, []),
-                      fn(#(fence, lines), line) =
-                          if isFence(line) then
-                              #(!fence, "" :: lines)
-                          else if fence then
-                              #(fence, "" :: lines)
-                          else
-                              #(fence, line :: lines));
+                      #(Outside, []),
+                      fn(#(fence, lines), line) = match fenceAfter(fence, line) {
+                          Some(next) -> #(next, "" :: lines)
+                        | None when isInside(fence) -> #(fence, "" :: lines)
+                        | None -> #(fence, line :: lines)
+                      });
     String.join(List.reverse(lines), "\n")
 }
 
-fn isFence(line : String) : Bool = {
-    let trimmed = String.trimStart(line);
-    String.startsWith(trimmed, "```") || String.startsWith(trimmed, "~~~")
+// The fence the line leaves the reading in where the line is a fence that
+// opens a block outside one or closes the block it is in, or `None` where it
+// is neither, and so is text outside a block or the block's content. An
+// opening fence is a run of three backticks or more, or three tildes or
+// more, at the line's trimmed start; a closing fence is a run of the block's
+// character, as long as the opening one or longer, at the line's trimmed
+// start, with nothing after it but spaces.
+fn fenceAfter(fence : Fence, line : String) : Optional(Fence) = {
+    let chars = String.toList(String.trimStart(line));
+    match fence {
+        Outside ->
+            opening(chars)
+      | Inside(=char, =count) -> {
+            let #(run, rest) = List.splitWhile(chars, fn(each) = each == char);
+            if List.size(run) >= count && List.all(rest, fn(each) = each == ' ') then
+                Some(Outside)
+            else
+                None
+        }
+    }
 }
+
+// The block an opening fence at the characters' start opens, with the first
+// word after its run as the block's language, or `None` where they begin
+// with none.
+fn opening(chars : List(Char)) : Optional(Fence) =
+    match chars {
+        char :: _ when char == '`' || char == '~' -> {
+            let #(run, rest) = List.splitWhile(chars, fn(each) = each == char);
+            let language = match String.words(String.fromList(rest)) {
+                word :: _ -> word
+              | [] -> ""
+            };
+            if List.size(run) >= 3 then
+                Some(Inside(=char, count = List.size(run), =language))
+            else
+                None
+        }
+      | _ ->
+            None
+    }
+
+fn isInside(fence : Fence) : Bool =
+    match fence {
+        Outside -> false
+      | Inside() -> true
+    }
 
 //
 // The paragraphs
@@ -414,7 +531,7 @@ fn isCurrent(file : String) : Bool =
 fn paragraphsOf(file : String, text : String) : List(Paragraph) = {
     let begun =
         Reading(lineNumber = 0,
-                fence = false,
+                fence = Outside,
                 firstLineNumber = 0,
                 firstLine = "",
                 count = 0,
@@ -434,16 +551,13 @@ fn paragraphsOf(file : String, text : String) : List(Paragraph) = {
 
 // The reading once the line is read.
 fn paragraphStep(file : String, reading : Reading, line : String) : Reading =
-    if isFence(line) then
-        Reading(..ended(file, reading), fence = !reading.fence)
-    else if reading.fence then
-        reading
-    else if String.isEmpty(String.trim(line)) then
-        ended(file, reading)
-    else if isItem(line) then
-        counted(file, Reading(..ended(file, reading), item = true), line)
-    else
-        counted(file, reading, line)
+    match fenceAfter(reading.fence, line) {
+        Some(fence) -> Reading(..ended(file, reading), =fence)
+      | None when isInside(reading.fence) -> reading
+      | None when String.isEmpty(String.trim(line)) -> ended(file, reading)
+      | None when isItem(line) -> counted(file, Reading(..ended(file, reading), item = true), line)
+      | None -> counted(file, reading, line)
+    }
 
 // The line's words added to the paragraph, which it begins where none is
 // begun, or where it stands at or before a list item's indentation.
@@ -546,8 +660,7 @@ fn findBareDescriptions(files : List(String)) : List(String) =
 // another such line, that does not begin with "#". A command that ends in
 // "\" runs on to the next line, which is read as the command.
 fn bareDescriptionsIn(file : String, lines : List(String)) : List(String) = {
-    let begun =
-        CommandReading(fence = false, ernest = false, under = false, runsOn = false, found = []);
+    let begun = CommandReading(fence = Outside, under = false, runsOn = false, found = []);
     let last =
         List.foldLeft(List.indexed(lines),
                       begun,
@@ -560,35 +673,36 @@ fn bareDescriptionsIn(file : String, lines : List(String)) : List(String) = {
 // with.
 fn commandStep(place : String, reading : CommandReading, line : String) : CommandReading = {
     let trimmed = String.trim(line);
-    if isFence(line) then
-        CommandReading(..reading,
-                       fence = !reading.fence,
-                       ernest = isErnest(trimmed),
-                       under = false,
-                       runsOn = false)
-    else if !reading.fence || reading.ernest then
-        reading
-    else if reading.runsOn || isCommand(trimmed) then {
-        let found = if isBare(trimmed) then
-            (place <> "a description beside a command does not begin with `#`") :: reading.found
-        else
-            reading.found;
-        CommandReading(..reading, under = true, runsOn = String.endsWith(trimmed, "\\"), =found)
-    } else if reading.under && indentation(line) > 0 && !String.isEmpty(trimmed) then {
-        let found = if String.startsWith(trimmed, "#") then
-            reading.found
-        else
-            (place <> "a line under a command does not begin with `#`") :: reading.found;
-        CommandReading(..reading, =found)
-    } else
-        CommandReading(..reading, under = false, runsOn = false)
+    match fenceAfter(reading.fence, line) {
+        Some(fence) ->
+            CommandReading(..reading, =fence, under = false, runsOn = false)
+      | None when !isInside(reading.fence) || isErnest(reading.fence) ->
+            reading
+      | None when reading.runsOn || isCommand(trimmed) -> {
+            let found = if isBare(trimmed) then
+                (place <> "a description beside a command does not begin with `#`") :: reading.found
+            else
+                reading.found;
+            CommandReading(..reading, under = true, runsOn = String.endsWith(trimmed, "\\"), =found)
+        }
+      | None when reading.under && indentation(line) > 0 && !String.isEmpty(trimmed) -> {
+            let found = if String.startsWith(trimmed, "#") then
+                reading.found
+            else
+                (place <> "a line under a command does not begin with `#`") :: reading.found;
+            CommandReading(..reading, =found)
+        }
+      | None ->
+            CommandReading(..reading, under = false, runsOn = false)
+    }
 }
 
-// Whether a fence names Ernest as its block's language.
-fn isErnest(fence : String) : Bool =
-    match String.words(String.drop(fence, 3)) {
-        language :: _ -> language == "ernest"
-      | [] -> false
+// Whether the reading is inside a block whose opening fence names Ernest as
+// its language.
+fn isErnest(fence : Fence) : Bool =
+    match fence {
+        Inside(language = "ernest") -> true
+      | _ -> false
     }
 
 // A command: make and its words, or ern or a launcher under bin/ and a word
@@ -669,11 +783,7 @@ fn isComment(line : String) : Bool =
 // The parts of the Ernest blocks among the lines: each block's lines between
 // two blank lines, or between a blank line and a fence.
 fn partsOf(lines : List(String)) : List(Part) = {
-    let begun =
-        BlockReading(fence = false,
-                     ernest = false,
-                     part = Part(lineNumber = 0, lines = []),
-                     parts = []);
+    let begun = BlockReading(fence = Outside, part = Part(lineNumber = 0, lines = []), parts = []);
     let last =
         List.foldLeft(List.indexed(lines),
                       begun,
@@ -683,18 +793,19 @@ fn partsOf(lines : List(String)) : List(Part) = {
 
 // The reading once the line, of the number given, is read.
 fn blockStep(lineNumber : Int, reading : BlockReading, line : String) : BlockReading =
-    if isFence(line) then
-        BlockReading(..partEnded(reading),
-                     fence = !reading.fence,
-                     ernest = isErnest(String.trim(line)))
-    else if !reading.fence || !reading.ernest then
-        reading
-    else if String.isEmpty(String.trim(line)) then
-        partEnded(reading)
-    else if List.isEmpty(reading.part.lines) then
-        BlockReading(..reading, part = Part(=lineNumber, lines = [line]))
-    else
-        BlockReading(..reading, part = Part(..reading.part, lines = reading.part.lines <> [line]))
+    match fenceAfter(reading.fence, line) {
+        Some(fence) ->
+            BlockReading(..partEnded(reading), =fence)
+      | None when !isErnest(reading.fence) ->
+            reading
+      | None when String.isEmpty(String.trim(line)) ->
+            partEnded(reading)
+      | None when List.isEmpty(reading.part.lines) ->
+            BlockReading(..reading, part = Part(=lineNumber, lines = [line]))
+      | None ->
+            BlockReading(..reading,
+                         part = Part(..reading.part, lines = reading.part.lines <> [line]))
+    }
 
 // The part begun, where one is, kept among the parts found.
 fn partEnded(reading : BlockReading) : BlockReading =
@@ -1485,6 +1596,83 @@ let findsPaths = Test.Case(name = "finds the backticked paths", run = fn() = {
                [#(1, "src/a.ern"), #(6, "docs/b.md")])
 })
 
+// A code span closes at a run of exactly as many backticks, so a double
+// span that holds a backtick is one span, and the paths before it and after
+// it are found on their lines.
+let readsADoubleSpan = Test.Case(name = "reads a double span holding a backtick", run = fn() = {
+    let text = "`src/a.ern` and ``!#$%&'*+-.^_`|~``, a token\nmore\n`src/b.ern`\n";
+    Test.equal(pathsIn(text, ["src/"]), [#(1, "src/a.ern"), #(3, "src/b.ern")])
+})
+
+// A fenced block runs to a fence of its character at least as long as the
+// opening one, with nothing after it but spaces, or to the end: a shorter
+// fence, one of the other character and one with a word after it are its
+// content, and a longer one closes it.
+let readsTheFences = Test.Case(name = "reads a fenced block to its closing fence", run = fn() = {
+    let below = "\n`src/after.ern`\n";
+    Test.equal(#(pathsIn("````\n```\n`src/inside.ern`\n````" <> below, ["src/"]),
+                 pathsIn("```\n~~~\n`src/inside.ern`\n```" <> below, ["src/"]),
+                 pathsIn("```\n```ernest\n`src/inside.ern`\n```  " <> below, ["src/"]),
+                 pathsIn("~~~\n`src/inside.ern`\n~~~~~" <> below, ["src/"]),
+                 pathsIn("```\n`src/inside.ern`\n", ["src/"])),
+               #([#(5, "src/after.ern")],
+                 [#(5, "src/after.ern")],
+                 [#(5, "src/after.ern")],
+                 [#(4, "src/after.ern")],
+                 []))
+})
+
+// A run longer or shorter than the one that opens a span is the span's text.
+let readsALongerRun = Test.Case(name = "reads a longer or shorter run as a span's", run = fn() = {
+    let text = "``src/a.ern```x`` and ```src/b``c.ern```\n";
+    Test.equal(pathsIn(text, ["src/"]), [#(1, "src/a.ern```x"), #(1, "src/b``c.ern")])
+})
+
+// A run that no run as long closes before the next blank line is text, and
+// the reading goes on after it.
+let readsALoneBacktick = Test.Case(name = "reads a lone backtick as text", run = fn() = {
+    let text = "a lone ` here\n``src/a.ern``\n\nand ` again\n\n`src/b.ern`\n";
+    Test.equal(pathsIn(text, ["src/"]), [#(2, "src/a.ern"), #(6, "src/b.ern")])
+})
+
+// A span does not cross a blank line.
+let stopsAtABlankLine = Test.Case(name = "ends no span past a blank line", run = fn() = {
+    Test.equal(pathsIn("`src/a.ern\n\n`src/b.ern`\n", ["src/"]), [#(3, "src/b.ern")])
+})
+
+// A line break in a span is a space, so a span that holds one is no path,
+// and the line after it keeps its number.
+let readsALineBreak = Test.Case(name = "reads a line break in a span as a space", run = fn() = {
+    Test.equal(pathsIn("`src/a\n.ern` and `src/b.ern`\n", ["src/"]), [#(2, "src/b.ern")])
+})
+
+// One space at each end of a span is dropped where both are there and the
+// span is not all spaces.
+let dropsTheEndSpaces = Test.Case(name = "drops a span's space at each end", run = fn() = {
+    let text = "`` src/a.ern `` and ` src/b.ern` and `  src/c.ern  ` and `  `\n";
+    Test.equal(#(pathsIn(text, ["src/"]), spanText(String.toList("  "))),
+               #([#(1, "src/a.ern")], "  "))
+})
+
+// A paragraph inside a block of four backticks, after a line of three that
+// the block quotes, is not measured, and one after the block is.
+let measuresByTheFence = Test.Case(name = "measures a paragraph by the fence rule", run = fn() = {
+    let text = "````\n```\n" <> pastMeasure <> "\n````\n" <> pastMeasure <> "\n";
+    Test.equal(List.map(paragraphsOf("f.md", text),
+                        fn(paragraph) = #(paragraph.lineNumber, paragraph.count)),
+               [#(5, 151)])
+})
+
+// A command inside a block of four backticks fenced as Ernest, after a line
+// of three that the block quotes, is not read, and one in a plain block
+// after it is; a line of tildes inside a block of backticks is its content.
+let readsCommandsByTheFence = Test.Case(name = "reads commands by the fence rule", run = fn() = {
+    let text = "````ernest\n```\nmake  x\n````\n```\nmake  y\n```\n```\n~~~\nmake  z\n```\n";
+    Test.equal(bareDescriptionsIn("f.md", String.lines(text)),
+               ["f.md:6: a description beside a command does not begin with `#`",
+                "f.md:10: a description beside a command does not begin with `#`"])
+})
+
 // A path is held to what git tracks: a tracked file and a directory that
 // holds one name something, and a file git does not track names nothing,
 // a line naming the file and the line; the tops are the directories at the
@@ -1809,6 +1997,16 @@ let readsOnlyErnest = Test.Case(name = "reads only a block fenced as ernest", ru
     let text = "```\nfn nowhere() = 1\n```\n```erlang\nnowhere() -> 1.\n```\nfn nowhere() = 1\n";
     Test.equal(unquoted("README.md", String.lines(text), [quotedSource]), [])
 })
+
+// A block of four backticks fenced as Ernest is read as Ernest, and a line
+// of three backticks it quotes is its content, part of a part.
+let readsALongerErnestFence =
+    Test.Case(name = "reads a longer fence's block as ernest", run = fn() = {
+        let text =
+            "````ernest\nfn count(total : Int) : Int =\n    total + 1\n\n```\nfn nowhere() = 1\n````\n";
+        Test.equal(unquoted("README.md", String.lines(text), [quotedSource]),
+                   ["README.md:5" <> quotedNowhere])
+    })
 
 // A part whose lines stand in the module, but with a line of code between
 // two of them there, is found.

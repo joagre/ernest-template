@@ -472,3 +472,11 @@ Three of Ernest's answers became the template's code. `make doc` writes the modu
 ## A reader follows its brief instead, 2026-11-27
 
 `docs/agents.md` had a review's reader's brief carry two rules of `CLAUDE.md`, untracked files and the style guide, where `docs/full_review.md` has it keep one; ernest-httpd filed it as the template's issue #4. The two sentences now give every agent's brief its two lines and make a reader the exception, its brief standing in place of `CLAUDE.md`, so that `full_review.md` alone says what a reader keeps. Ernest's page took the same fix (Ernest's log, *A Reader Follows Its Brief Instead*).
+
+## A code span by its run, a fence by its length, 2026-11-27
+
+`tools/docs.ern` split a document's text at every backtick, so a double-backtick span holding a backtick, as ernest-httpd's design writes a token's characters, swapped prose and code to the end of the file: every path after it went unchecked, and `make test` passed. A fence closed at any line of three backticks or tildes, so a block of four that quoted a line of three ended there, as did a block of backticks at a line of tildes. ernest-httpd filed it as the template's issue #3. Ernest's 320, which has the checker read by `Markdown.parse`, waits for Ernest's MVP 4.5, so the defect is fixed now (principle 1: the checker reads a document as its reader sees it).
+
+The two rules are the library's, in its words, so that the checker and the library agree where 320 replaces the one with the other: a code span closes at a run of exactly as many backticks, a line break in it is a space, and one space at each end is dropped when both are there and the span is not all spaces; a fenced block runs to a closing fence of its character at least as long as the opening one, or to the end of the document. A span does not cross a blank line, since the checker reads no block that would end it, and a run that no run closes is text.
+
+Ernest's session agreed, and kept it to the two rules: reading spans by `Markdown.parse` would give one document two readers, which can disagree about what is fenced. The known issue narrows to what the checker still reads by its own rules.
