@@ -18,15 +18,17 @@ One Makefile at the top. The variables an application edits stand first, and the
 
 **Test.** `test` runs in a checkout alone, since the checker of the documents stands under `tools/`, which an archive does not carry, and refuses elsewhere.
 
-**The examples.** A program of `examples/` is an `.ern` file at its top, and what else stands under it is data. `examples` builds each into `examples/build/` with the program on its load path, and runs it with one argument, `build/examples/<program>` followed by `EXAMPLE_SUFFIX`, the path it writes; a status other than 0 fails it. `test` runs `examples`, where there is a program, before its check of the documents, since a document may name what an example wrote.
+**The examples.** A program of `examples/` is an `.ern` file at its top, and what else stands under it is data. `examples` builds each into `examples/build/` with the program on its load path, and runs it with one argument, `build/examples/<program>` followed by `EXAMPLE_SUFFIX`, the path it writes; a status other than 0 fails it. `test` runs `examples`, where there is a program, before its check of the documents, since a document may name what an example wrote. `EXAMPLES_MADE`, among the variables an application edits, names each directory the build writes under `examples/`, `examples/build` and any a copy adds; `clean` removes each, and the documents an unpacked archive carries leave each out.
+
+**Run.** `run` builds the program and then each target `RUN_NEEDS` names, and runs the launcher with the arguments `RUN_ARGS` names; both are among the variables an application edits, and empty by default. A library has nothing to run, and `run` says so.
 
 **Clean.** `clean` removes what the build wrote, and each package `ern unpack` wrote under `lib/` where its archive stands beside it, with `ern unpack`'s lock. It leaves the archives, a link or a directory put under `lib/` by hand, and what each Erlang application under `erl/` built.
 
 ## The launcher
 
-`bin/<name>` runs `ern run` on the module its own name names, with its root as the run's root package, `--package-dir`, and the program's own Erlang on the load path: its root's `ebin/` by `--load-path`, and its `erl/` by `--libs-dir`, each where it stands. It first follows the path it is run by through its links, so that a link to it runs it as the file itself does, under the file's name. Its root is `../lib/<name>/` where the module's compiled form stands there, beside an installed launcher, and `..` otherwise, a checkout or an unpacked archive: one file for the three.
+`bin/<name>` runs `ern run` on the module its own name names, with its root as the run's root package, `--package-dir`, and the program's own Erlang on the load path: its root's `ebin/` by `--load-path`, and its `erl/` by `--libs-dir`, each where it stands. It first follows the path it is run by through its links, by `realpath`, so that a link to it runs it as the file itself does, under the file's name. Its root is `../lib/<name>/` where the module's compiled form stands there, beside an installed launcher, and `..` otherwise, a checkout or an unpacked archive: one file for the three.
 
-It runs the `ern` on `PATH`, or the one `ERN` names. It forwards a leading `--config-dir dir`, the one option an operator gives, and refuses a `--config-dir` with nothing after it; everything after them goes to the program. The working directory stays the caller's.
+It runs the `ern` on `PATH`, or the one `ERN` names, and before the run refuses, with status 127, one it cannot find or that is not an executable file. It forwards a leading `--config-dir dir`, the one option an operator gives, and refuses a `--config-dir` with nothing after it; everything after them goes to the program. The working directory stays the caller's.
 
 ## The archive
 

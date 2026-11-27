@@ -12,8 +12,9 @@
 #                 user reads
 #   make examples each program of examples/ built and run, what it writes
 #                 under build/examples/
-#   make run      runs the program through its launcher with no argument;
-#                 bin/NAME takes the arguments
+#   make run      runs the program through its launcher with the arguments
+#                 RUN_ARGS names, after the targets RUN_NEEDS names, none by
+#                 default
 #   make lib      fills lib/: each package package.conf names unpacked there
 #                 from its archive by ern unpack, and then, in a checkout and
 #                 wherever erl/ stands, each Erlang application under erl/
@@ -45,6 +46,13 @@ ERL_DEPS    =
 # What each program of examples/ writes, named by make examples: the suffix of
 # the one path it is given.
 EXAMPLE_SUFFIX =
+# What the build writes under examples/, each directory: examples/build and
+# any the program's own targets write, which git ignores, make clean removes
+# and the documents leave out.
+EXAMPLES_MADE = examples/build
+# The arguments make run gives the launcher, and the targets it builds first.
+RUN_ARGS    =
+RUN_NEEDS   =
 
 # The ern on PATH, or ERN=path/to/ern, whose directory then stands first on
 # PATH for every target, so that whatever names ern by its name, a test or an
@@ -63,9 +71,6 @@ RUN_LIBS      = $(if $(ERL_DEPS),--libs-dir erl)
 # The programs of examples/; what else stands under it is data, not built.
 EXAMPLES      = $(wildcard examples/*.ern)
 VERSION       = $(shell cat VERSION)
-# What the build writes under examples/, which git ignores, make clean
-# removes and the documents leave out.
-EXAMPLES_MADE = examples/build
 # Git on the checkout, read as whoever runs make, whose checkout it need not
 # be, which git refuses unless told it is safe.
 GIT           = git -c safe.directory=$(CURDIR)
@@ -74,15 +79,15 @@ GIT           = git -c safe.directory=$(CURDIR)
 # docs/design.md, each where it exists, and the files under examples/,
 # deploy/ and assets/, whose pictures the documents may show. Of those three,
 # a checkout gives the files git tracks, so that no untracked file goes in.
-# An unpacked archive gives every file there but what make examples wrote
-# under EXAMPLES_MADE.
+# An unpacked archive gives every file there but those under each directory
+# EXAMPLES_MADE names.
 DOCS          = $(strip \
                 $(wildcard README.md LICENSE THIRD_PARTY_LICENSES ACKNOWLEDGMENTS.md \
                     CHANGES.md docs/design.md) \
                 $(if $(wildcard .git),\
                     $(shell $(GIT) ls-files examples deploy assets),\
                     $(shell find examples deploy assets -type f \
-                        ! -path '$(EXAMPLES_MADE)/*' 2>/dev/null)))
+                        $(foreach dir,$(EXAMPLES_MADE),! -path '$(dir)/*') 2>/dev/null)))
 # The sources make release takes: the files git tracks under src/, since a
 # release is made in a checkout alone, where make test runs. Elsewhere git
 # is not asked, since make expands the recipe before make test refuses.
@@ -147,9 +152,9 @@ examples: all
 	    echo "examples/$$name.ern wrote build/examples/$$name$(EXAMPLE_SUFFIX)"; \
 	done
 
-run: all
+run: all $(RUN_NEEDS)
 	@test -x bin/$(NAME) || { echo "$(NAME) is a library: nothing to run"; exit 1; }
-	bin/$(NAME)
+	$(strip bin/$(NAME) $(RUN_ARGS))
 
 # The module pages, a CommonMark document for each module under build/ and
 # their index, build/index.md, and then the manual pages, each in roff beside
