@@ -36,25 +36,26 @@
 // is one, the line, and the program ends with status 1.
 //
 // Every backticked path in a tracked document that begins with a directory
-// holding a tracked file names a tracked file or a directory that holds one,
-// or a line on standard error names the file, the line and the path, once,
-// and the program ends with status 1. A backticked path is the text of a code
-// span. A code span closes at a run of exactly as many backticks; a line
-// break in it is a space, and one space at each end is dropped when both are
-// there and the span is not all spaces. A span does not cross a blank line. A
-// run of backticks that no run of the same length closes, before the next
-// blank line, is text, and reading goes on after it. A path's line is the
-// line its span opens on. A path with a wildcard or a metavariable, `*` or
-// `<name>`, one holding a space, which is a command line, one that ends in
-// "/", and one under docs/man/ or docs/modules/, which a library's archive
-// alone holds, are passed over; the plan, the findings, the logs and the
-// proposals are left out. Every prose paragraph past 150 words, which no
-// reader takes in whole, is listed on standard error for its writer to split
-// at its turn, and the program ends with status 1; the log and the proposals
-// are left out. A paragraph ends at a blank line, at a fence, at a list item,
-// and where a list item's lines stop being indented past the item; one that
-// begins with a heading, a table row or a tag, indented or not, is no prose.
-// Fenced code is read as neither.
+// holding a tracked file, or with examples/, deploy/, erl/ or test/, names a
+// tracked file or a directory that holds one, or a line on standard error
+// names the file, the line and the path, once, and the program ends with
+// status 1. A backticked path is the text of a code span. A code span closes
+// at a run of exactly as many backticks; a line break in it is a space, and
+// one space at each end is dropped when both are there and the span is not
+// all spaces. A span does not cross a blank line. A run of backticks that no
+// run of the same length closes, before the next blank line, is text, and
+// reading goes on after it. A path's line is the line its span opens on. A
+// path with a wildcard or a metavariable, `*` or `<name>`, one holding a
+// space, which is a command line, one that ends in "/", and one under
+// docs/man/ or docs/modules/, which a library's archive alone holds, are
+// passed over; the plan, the findings, the logs and the proposals are left
+// out. Every prose paragraph past 150 words, which no reader takes in whole,
+// is listed on standard error for its writer to split at its turn, and the
+// program ends with status 1; the log and the proposals are left out. A
+// paragraph ends at a blank line, at a fence, at a list item, and where a
+// list item's lines stop being indented past the item; one that begins with a
+// heading, a table row or a tag, indented or not, is no prose. Fenced code is
+// read as neither.
 //
 // A command in a fenced block, an Ernest block aside, gives its description
 // after `#`, so that the block pastes as shell: a line that begins with make,
@@ -143,9 +144,9 @@ type Reading =
             indent : Int,
             found : List(Paragraph))
 
-// What git tracks, as a backticked path is held to it: the directories at
-// the top that hold a tracked file, each with its "/", and the tracked files
-// with the directories that hold them.
+// What git tracks, as a backticked path is held to it: the tops, the
+// directories at the top that hold a tracked file and the copy's, each once
+// with its "/", and the tracked files with the directories that hold them.
 type Held = Held(tops : List(String), paths : Set(String))
 
 // A word of a comment and the number of the line it stands on.
@@ -200,6 +201,11 @@ let logFile : String = "docs/log.md"
 let logDirectory : String = "docs/log/"
 
 let logIndex : String = "docs/log/README.md"
+
+// The directories the template's design, §3, names as a copy's when needed,
+// each a top whether git tracks a file under it or not; a directory added
+// there is added here.
+let copyTops : List(String) = ["examples/", "deploy/", "erl/", "test/"]
 
 // The most bytes a file of the log holds.
 let logCeiling : Int = 262144
@@ -274,17 +280,17 @@ fn trackedOf(output : Bytes) : Either(String, List(String)) =
         if List.isEmpty(names) then Left(nothingTracked) else Right(names)
     })
 
-// The directories at the top of the repository that hold a tracked file,
-// each with its "/", and every tracked file with each directory that holds
-// it, "a" and "a/b" for "a/b/c.md"; where git tracks the log in either form,
-// docs/log.md and docs/log/README.md both name it.
+// The directories at the top of the repository that hold a tracked file and
+// the copy's, each once with its "/", and every tracked file with each
+// directory that holds it, "a" and "a/b" for "a/b/c.md"; where git tracks the
+// log in either form, docs/log.md and docs/log/README.md both name it.
 fn heldOf(names : List(String)) : Held = {
     let tops =
         List.filterMap(names,
                        fn(name) =
                            Optional.map(String.splitOnce(name, "/"), fn(#(top, _)) = top <> "/"));
     let logs = if List.any(names, isLog) then [logFile, logIndex] else [];
-    Held(tops = List.unique(tops),
+    Held(tops = List.unique(tops <> copyTops),
          paths = Set.fromList(names <> List.flatMap(names, holdersOf) <> logs))
 }
 
@@ -1676,11 +1682,11 @@ let readsCommandsByTheFence = Test.Case(name = "reads commands by the fence rule
 // A path is held to what git tracks: a tracked file and a directory that
 // holds one name something, and a file git does not track names nothing,
 // a line naming the file and the line; the tops are the directories at the
-// top that hold a tracked file. Where git tracks the log in either form,
-// docs/log.md and docs/log/README.md both name it, and where in neither,
-// neither does.
+// top that hold a tracked file and the copy's, each once. Where git tracks
+// the log in either form, docs/log.md and docs/log/README.md both name it,
+// and where in neither, neither does.
 let holdsPathsToGit = Test.Case(name = "holds a path to what git tracks", run = fn() = {
-    let held = heldOf(["README.md", "src/a.ern", "docs/sub/b.md"]);
+    let held = heldOf(["README.md", "src/a.ern", "docs/sub/b.md", "test/a.ern"]);
     let text = "`src/a.ern` and `docs/sub`, `docs/sub/b.md`\n\n`docs/notes.txt`, `README.md`\n";
     let logs = "`docs/log.md` or `docs/log/README.md`\n";
     let split = heldOf(["docs/log/README.md", "docs/log/2026-11-13.md"]);
@@ -1690,12 +1696,21 @@ let holdsPathsToGit = Test.Case(name = "holds a path to what git tracks", run = 
                  missingIn("f.md", logs, held),
                  missingIn("f.md", logs, split),
                  missingIn("f.md", logs, whole)),
-               #(["src/", "docs/"],
+               #(["src/", "docs/", "test/", "examples/", "deploy/", "erl/"],
                  ["f.md:3: `docs/notes.txt` names nothing"],
                  ["f.md:1: `docs/log.md` names nothing",
                   "f.md:1: `docs/log/README.md` names nothing"],
                  [],
                  []))
+})
+
+// A path under a copy's top is held to what git tracks where git tracks
+// nothing under it: a path under deploy/ names nothing, and deploy/ itself,
+// which ends in "/", is passed over.
+let holdsTheCopyTops = Test.Case(name = "holds a path under a copy's top", run = fn() = {
+    let held = heldOf(["README.md", "src/a.ern"]);
+    Test.equal(missingIn("f.md", "`deploy/README.md` and `deploy/`\n", held),
+               ["f.md:1: `deploy/README.md` names nothing"])
 })
 
 // The plan, the findings, the logs and the proposals have no path checked,
