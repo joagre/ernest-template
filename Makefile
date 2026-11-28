@@ -367,11 +367,21 @@ release:
 	@rmdir stage 2>/dev/null || true
 
 # Whether $(TREE) is an installation of the program: a directory that is
-# empty, or one that holds package.conf.
-installation = { test -d $(TREE) && test -z "$$(ls -A $(TREE))" || test -f $(TREE)/package.conf; }
+# empty, or one that holds package.conf, or build/NAME.erc, which an install
+# of a release before package.conf came holds.
+installation = { test -d $(TREE) && test -z "$$(ls -A $(TREE))" || \
+	test -f $(TREE)/package.conf || test -f $(TREE)/build/$(NAME).erc; }
 
-# What $(TREE) holds but its package.conf removed, so that the rm -rf after
-# it removes package.conf last and $(TREE) is an installation at every step.
+# Into a $(TREE) that holds build/NAME.erc and no package.conf, package.conf
+# copied, before anything there is removed, so that emptied keeps it to the
+# last there too. A link is passed over, as emptied passes it over.
+adopted = test -L $(TREE) || test -f $(TREE)/package.conf || \
+	test ! -f $(TREE)/build/$(NAME).erc || \
+	{ echo "cp package.conf $(TREE)/package.conf"; cp package.conf $(TREE)/package.conf; }
+
+# What $(TREE) holds but its package.conf removed, which adopted has copied
+# into one that held none, so that the rm -rf after it removes package.conf
+# last and $(TREE) is an installation at every step.
 emptied = test ! -d $(TREE) || test -L $(TREE) || \
 	find $(TREE) -mindepth 1 -maxdepth 1 ! -name package.conf -exec rm -rf {} +
 
@@ -379,15 +389,17 @@ emptied = test ! -d $(TREE) || test -L $(TREE) || \
 # whole, so that no module of an older one is left. Before anything under
 # PREFIX is removed or written, it refuses another application's priv/ and
 # ERL_PRIV as make release does, a lib/NAME there that is not an
-# installation, empty or holding package.conf, and, where there is no
-# lib/NAME, a launcher of another program's. It removes the launcher first
-# and package.conf last, and copies package.conf first, so that lib/NAME is
-# an installation at every step and an install cut short leaves one the next
-# install replaces. The installation is a package, as the archive is, which
-# the launcher names its root package. It depends on all: under the ern that
-# built the modules, ern build compiles nothing again, so that an archive
-# installs as it was compiled, and under another ern it builds them again
-# from the sources the archive carries.
+# installation, empty or holding package.conf or build/NAME.erc, and, where
+# there is no lib/NAME, a launcher of another program's. Into one that holds
+# build/NAME.erc and no package.conf, it copies package.conf before anything
+# there is removed. It removes the launcher first and package.conf last, and
+# copies package.conf first, so that lib/NAME is an installation at every
+# step and an install cut short leaves one the next install replaces. The
+# installation is a package, as the archive is, which the launcher names its
+# root package. It depends on all: under the ern that built the modules, ern
+# build compiles nothing again, so that an archive installs as it was
+# compiled, and under another ern it builds them again from the sources the
+# archive carries.
 install: all
 	@test -x bin/$(NAME) || { echo "$(NAME) is a library: nothing to install"; exit 1; }
 	@test -f build/$(NAME).erc || \
@@ -401,6 +413,7 @@ install: all
 	fi
 	@$(privs)
 	@$(carried)
+	@$(adopted)
 	rm -f $(PREFIX)/bin/$(NAME)
 	@$(emptied)
 	rm -rf $(TREE) $(DOC_DIR)
@@ -414,15 +427,18 @@ install: all
 
 # What make install put under PREFIX removed: the launcher, lib/NAME and
 # share/doc/NAME, once lib/NAME is found an installation, empty or holding
-# package.conf, and nothing of a lib/NAME that is not one. The launcher goes
-# first and package.conf last, as make install removes them. Then share/doc,
-# share, lib and bin under PREFIX go, deepest first, each where it is empty,
+# package.conf or build/NAME.erc, and nothing of a lib/NAME that is not one.
+# Into one that holds build/NAME.erc and no package.conf, package.conf is
+# copied first, as make install copies it. The launcher goes first and
+# package.conf last, as make install removes them. Then share/doc, share,
+# lib and bin under PREFIX go, deepest first, each where it is empty,
 # whoever made it; PREFIX itself stays.
 uninstall:
 	@test -e $(TREE) || test -L $(TREE) || \
 	    { echo "no installation of $(NAME) under $(PREFIX)"; exit 1; }
 	@$(installation) || \
 	    { echo "$(TREE) holds no installation of $(NAME)"; exit 1; }
+	@$(adopted)
 	rm -f $(PREFIX)/bin/$(NAME)
 	@$(emptied)
 	rm -rf $(TREE) $(DOC_DIR)
