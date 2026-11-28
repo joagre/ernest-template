@@ -500,3 +500,7 @@ On the user's word, what Ernest's session finds wrong in the template or asks of
 ## What a copy keeps of the known issues, 2026-11-27
 
 ernest-epx took v0.11.1 and asked two things of `docs/known_issues.md`. The checker's Markdown line ended at "a line of `language_feedback.md`", which a copy does not hold, so it now ends at Ernest's feedback 320, in epx's words, and reads true wherever the checker goes. The line on the template's own `make test` is no checker's: `template/design.md` §3 now says the file holds the checker's lines, which a copy keeps, and the template's own, which a copy removes, and the README's step 6 lists them among what a copy removes.
+
+## The icon is Ernest's site's, 2026-11-28
+
+`assets/README.md` and `template/design.md` §3 called `icon.png` the repository's icon, which GitHub never shows: a repository shows its owner's avatar, and takes only its social preview. ernest-epx had to ask what used it, and filed it as the template's issue #8. Ernest's site does, where it lists the projects written in Ernest: it holds a copy of each listed project's icon, a PNG of 128 by 128, made by hand when the project is listed, and reads nothing from the project's repository (Ernest's log, *Projects, a Page of Their Own*). The two sentences now say so, in the words of Ernest's session (principle 1: a file says what uses it). What else the site lists of a project, its name and its purpose, is Ernest's, and the README's opening already gives the purpose it is read against.

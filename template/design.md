@@ -34,7 +34,7 @@ A file is in the template only where it has content on the first day. `README.md
 
 `.github/ISSUE_TEMPLATE/` holds a defect's issue form and a `config.yml`. The `config.yml` turns blank issues off and sends a security hole to private reporting. A copy changes the repository's address in it. The template's own `rule.yml` is the form a rule comes by, from a copy or from Ernest's session, and a copy removes it.
 
-`assets/` holds the repository's icon, 128 by 128, and its social preview on GitHub, 1280 by 640, with a README saying what each is. GitHub takes the preview from the repository's settings, so a copy replaces both pictures with its own and uploads its preview there.
+`assets/` holds the icon Ernest's site shows where it lists the program, a PNG of 128 by 128, copied into Ernest's site when the program is listed, and its social preview on GitHub, 1280 by 640, with a README saying what each is. GitHub takes the preview from the repository's settings, so a copy replaces both pictures with its own and uploads its preview there.
 
 `src/name.ern` is the entry module, a placeholder the copy renames and writes, so that the template's own `make test` is green and a copy begins green. Where every module stands is `docs/build.md`'s. Its one test's comment cites every section of the starter design until real tests do. `tools/docs.ern` is the checker, a source root of its own built into `tools/build/` and outside the archive.
 
